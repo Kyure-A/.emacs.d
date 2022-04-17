@@ -56,7 +56,7 @@
   ("C-u" . undo)
   ("C-r" . redo)
   ("C-s" . swiper)
-  ("C-<shift>-s" . second-sight)
+					;("C-<shift>-s" . second-sight)
   ("C-t" . multi-term)
   ("C-/" . other-window)
   ;; M-<any>
