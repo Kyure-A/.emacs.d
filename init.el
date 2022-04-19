@@ -694,6 +694,7 @@
     :hook (after-init . global-emojify-mode))
 
   (leaf fira-code-mode
+    :ensure t
     :doc "M-x fira-code-mode-install-fonts"
     :hook (prog-mode-hook)
     :custom (fira-code-mode-disabled-ligatures '("<>" "[]" "#{" "#(" "#_" "#_(" "x"))
