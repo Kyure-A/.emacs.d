@@ -448,7 +448,8 @@
     :require t
     :global-minor-mode smartparens-global-mode
     :config
-    (leaf smartparens-config :require t :after smartparens :config (sp-pair "<" ">")))
+					;(leaf smartparens-config :require t :after smartparens :config (sp-pair "<" ">"))
+    )
   
   (leaf visual-regexp
     :doc "ビジュアライズされた置換"
@@ -466,7 +467,7 @@
     :custom
     (yas-snippet-dirs . '("~/.emacs.d/snippets"))
     :config
-    (leaf yasnippet-snippets :ensure t :doc "各言語用のテンプレート　多分 clone して自分のディレクトリに落としたほうがいい")
+    (leaf yasnippet-snippets :ensure t :doc "各言語用のテンプレート 多分 clone して自分のディレクトリに落としたほうがいい")
     (leaf ivy-yasnippet :ensure t :require t :doc "yas-insert-snippet よりスニペットの挿入が可視化されるため見やすい")
     (leaf yatemplate :ensure t :config (leaf auto-insert-mode :global-minor-mode t) (yatemplate-fill-alist)))
   
@@ -478,10 +479,23 @@
   :doc "各言語のモード"
   :config
 
+  (leaf cc-mode
+    :tag "C" "C++"
+    :hook
+    (c-mode . (lambda () (setq c-basic-offset 4)))
+    (c++-mode . (lambda () (setq c-basic-offset 4)))
+    :custom (c-auto-newline . t) ; セミコロンを入力すると改行とインデントをする
+    )
+  
+  (leaf google-c-style
+    :tag "C" "C++"
+    :ensure t
+    :hook ((c-mode c++-mode) . google-c-style))
+
   (leaf ccls
     :tag "C++"
     :ensure t
-    :hook ((c-mode c++-mode objc-mode) .(lambda () (require 'ccls) (lsp)))
+    :hook ((c-mode c++-mode objc-mode) . (lambda () (require 'ccls) (lsp)))
     :config
     (ccls-executable "/usr/bin/ccls")
     (ccls-sem-highlight-method 'font-lock)
@@ -490,6 +504,7 @@
   (leaf csv-mode :ensure t :mode "\\.csv\\'")
 
   (leaf elpy
+    :tag "Python"
     :ensure t
     :init
     (elpy-enable)
