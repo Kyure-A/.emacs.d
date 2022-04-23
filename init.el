@@ -25,7 +25,7 @@
 (leaf *global-set-key
   :bind
   ;; C-c
-  ("C-c e b" . reload)
+  ("C-c e b" . reload-init-el)
   ("C-c e m" . menu-bar-mode)
   ("C-c l c" . leaf-convert-region-replace)
   ("C-c l t" . leaf-tree-mode)
@@ -56,7 +56,7 @@
   ("C-u" . undo)
   ("C-r" . redo)
   ("C-s" . swiper)
-					;("C-<shift>-s" . second-sight)
+  ("C-S" . second-sight)
   ("C-t" . multi-term)
   ("C-/" . other-window)
   ;; M-<any>
@@ -67,9 +67,12 @@
   ("C-<space>" . nil)
   ("<backspace>" . smart-hungry-delete-backward-char)
   ("C-<prior>" . centaur-tabs-backward)
-  ("C-<next>" . centaur-tabs-forward)
+  ("C-<next>" . centaur-tabs-forward))
+
+(leaf *defun
   :preface
-  (defun reload ()
+  ;; 適当
+  (defun reload-init-el ()
     "C-c e b"
     (interactive)
     (eval-buffer)
@@ -80,6 +83,7 @@
     (interactive)
     (split-window-right)
     (sly))
+  ;; buffer
   (defun remove-scratch-buffer ()
     (if (get-buffer "*scratch*")
 	(kill-buffer "*scratch*")))
@@ -91,8 +95,7 @@
         (kill-buffer "*Messages*")))
   (defun remove-warnings-buffer ()
     (if (get-buffer "*Warnings*")
-        (kill-buffer "*Warnings*")))
-  )
+        (kill-buffer "*Warnings*"))))
 
 
 
@@ -157,7 +160,7 @@
     :global-minor-mode t
     :hook (prog-mode-hook . goto-address-prog-mode))
 
-  (leaf hl-line :hook (emacs-startup-hook . global-hl-line-mode)) ; highlight
+  (leaf hl-line :hook (emacs-startup-hook . global-hl-line-mode)) ; 行をハイライトする
   
   (leaf mule-cmds
     :tag "builtin"
@@ -188,9 +191,9 @@
     :tag "builtin"
     :hook
     (window-setup-hook . delete-other-windows)
-					;(after-change-major-mode-hook . remove-scratch-buffer)
-					;(after-change-major-mode-hook . remove-messages-buffer)
-					;(after-change-major-mode-hook . remove-warnings-buffer)
+    (after-change-major-mode-hook . remove-scratch-buffer)
+    (after-change-major-mode-hook . remove-messages-buffer)
+    (after-change-major-mode-hook . remove-warnings-buffer)
     (minibuffer-exit-hook . remove-completions-buffer)
     :custom
     (inhibit-startup-screen . t)
@@ -448,7 +451,7 @@
     :require t
     :global-minor-mode smartparens-global-mode
     :config
-					;(leaf smartparens-config :require t :after smartparens :config (sp-pair "<" ">"))
+    ;;(leaf smartparens-config :require t :after smartparens :config (sp-pair "<" ">"))
     )
   
   (leaf visual-regexp
@@ -482,15 +485,18 @@
   (leaf cc-mode
     :tag "C" "C++"
     :hook
-    (c-mode . (lambda () (setq c-basic-offset 4)))
-    (c++-mode . (lambda () (setq c-basic-offset 4)))
-    :custom (c-auto-newline . t) ; セミコロンを入力すると改行とインデントをする
+    (c-mode . (lambda () (setq c-basic-offset 8) (indent-tabs-mode . nil)))
+    (c++-mode . (lambda () (setq c-basic-offset 8) (indent-tabs-mode . nil)))
+    :custom
+    (c-auto-newline . t) ; セミコロンを入力すると改行とインデントをする
+    (c-tab-always-indent . t)
     )
   
   (leaf google-c-style
     :tag "C" "C++"
     :ensure t
-    :hook ((c-mode c++-mode) . google-c-style))
+    :hook ((c-mode c++-mode) . (lambda () (google-set-c-style)))
+    )
 
   (leaf ccls
     :tag "C++"
@@ -578,7 +584,10 @@
     :tag "Common Lisp"
     :ensure t
     :custom (inferior-lisp-program . "/usr/bin/sbcl")
-    :config ;(leaf sly-autoloads :require t) ;(leaf slime-autoloads :ensure t) ;(load "~/.roswell/helper.el")
+    :config
+    ;;(leaf sly-autoloads :require t)
+    ;;(leaf slime-autoloads :ensure t)
+    ;;(load "~/.roswell/helper.el")
     )
 
   (leaf web-mode
