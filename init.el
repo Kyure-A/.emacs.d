@@ -56,7 +56,7 @@
   ("C-u" . undo)
   ("C-r" . redo)
   ("C-s" . swiper)
-  ("C-S" . second-sight)
+  ;;("C-S" . second-sight)
   ("C-t" . multi-term)
   ("C-/" . other-window)
   ;; M-<any>
@@ -103,6 +103,13 @@
   :doc "結構適当"
   :config
 
+  (leaf auto-save
+    :custom
+    (auto-save-file-name-transforms . '((".*" "~/tmp/" t)))
+    (auto-save-list-file-prefix . nil)
+    (auto-save-default . nil)
+    )
+
   (leaf bytecomp
     :custom
     (byte-compile-warnings . '(not cl-functions obsolete))
@@ -141,6 +148,15 @@
     :emacs<= "26.0"
     :global-minor-mode global-display-line-numbers-mode
     :config (custom-set-variables '(display-line-numbers-width-start t)))
+
+  (leaf display-time
+    :global-minor-mode t
+    :custom
+    (display-time-interval . 1)
+    (display-time-string-forms . '((format "%s:%s:%s" 24-hours minutes seconds)))
+    (display-time-day-and-date . t)
+    :config
+    )
 
   (leaf files
     :custom
@@ -293,10 +309,10 @@
     :global-minor-mode t
     :require t
     :config
-    (leaf sublimity-scroll :require t
-      :custom (sublimity-scroll-weight . 5) (sublimity-scroll-drift-length . 10))
     (leaf sublimity-attractive :require t
-      :custom (sublimity-attractive-centering-width . 200)))
+      :custom (sublimity-attractive-centering-width . 200))
+    (leaf sublimity-scroll :require t
+      :custom (sublimity-scroll-weight . 5) (sublimity-scroll-drift-length . 10)))
 
   (leaf undohist
     :ensure t
