@@ -4,7 +4,7 @@
 ;; Maintainer: Kyure_A <twitter.com/Kyure_A>
 
 ;;; Commentary:
-;;; scroll-bar-mode は OS によりけりだけれど horizontal-scroll-bar-mode は デフォルトで OFF
+;;; 基本的に bar 類は全部消す
 
 ;;; Code:
 
@@ -24,7 +24,8 @@
 			    ("org"   . "https://orgmode.org/elpa/")
 			    ("gnu"   . "https://elpa.gnu.org/packages/")))
   (package-initialize)
-  (setq package-enable-at-startup nil) ;https://www.reddit.com/r/emacs/comments/1rdstn/set_packageenableatstartup_to_nil_for_slightly/
+  (setq package-enable-at-startup nil)
+  ;; install
   (when (not (package-installed-p 'leaf))
     (package-refresh-contents)
     (package-install 'leaf)))
@@ -47,9 +48,12 @@
   (push '(fullscreen . maximized) default-frame-alist)
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
+  (scroll-bar-mode -1)
   (setq frame-inhibit-implied-resize t)
   (leaf doom-modeline :ensure t :global-minor-mode t :custom (doom-modeline-icon . t))
-  (leaf monokai-theme :ensure t :config (load-theme 'monokai t)))
+  ;;(leaf monokai-theme :ensure t :config (load-theme 'monokai t))
+  (leaf atom-one-dark-theme :ensure t :config (load-theme 'atom-one-dark t))
+  )
 
 
 (provide 'early-init)
