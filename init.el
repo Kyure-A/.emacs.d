@@ -145,7 +145,6 @@
 	  (dired-find-file)))))
 
   (leaf display-line-numbers
-    :emacs<= "26.0"
     :global-minor-mode global-display-line-numbers-mode
     :config (custom-set-variables '(display-line-numbers-width-start t)))
 
@@ -692,13 +691,13 @@
     (:dashboard-mode-map
      ("<f10>" . quit-dashboard))
     :custom
-					;(dashboard-startup-banner . "~/.emacs.d/assets/banner.png")
     (dashboard-items . '((bookmarks . 10)
 			 (recents  . 5)))
     (initial-buffer-choice . (lambda () (get-buffer "*dashboard*")))
     (dashboard-center-content . t)
     (dashboard-set-heading-icons . t)
     (dashboard-set-file-icons . t)
+    (dashboard-startup-banner . "~/.emacs.d/banner.png") ;; https://nippori30.herokuapp.com/newgame/post で生成した
     (dashboard-banner-logo-title . "Kyure_A's Emacs")
     :config
     (leaf projectile :ensure t)
