@@ -99,63 +99,27 @@
 
 
 
-(leaf *built-in
-  :doc "結構適当"
+(leaf *core-packages
+  :doc "Emacs そのものの設定"
   :config
 
   (leaf auto-save
     :custom
     (auto-save-file-name-transforms . '((".*" "~/tmp/" t)))
     (auto-save-list-file-prefix . nil)
-    (auto-save-default . nil)
-    )
+    (auto-save-default . nil))
 
   (leaf bytecomp
     :custom
     (byte-compile-warnings . '(not cl-functions obsolete))
     (debug-on-error . nil))
-
-  (leaf cl-lib :require t)
   
   (leaf color :require t)
   
   (leaf cus-edit
-    :tag "builtin"
+    :doc "custom が自動で設定を追記するのを無効にする"
     :url "https://emacs-jp.github.io/tips/emacs-in-2020"
     :custom `((custom-file . ,(locate-user-emacs-file "custom.el"))))
-
-  (leaf dired
-    :bind
-    (:dired-mode-map
-     ("RET" . dired-open-in-accordance-with-situation)
-     ("<right>" . dired-open-in-accordance-with-situation)
-     ("<left>" . dired-up-directory)
-     ("a" . dired-find-file))
-    :config
-    (leaf dired-toggle :ensure t)
-    (leaf dired-k :hook (dired-initial-position-hook . dired-k) :ensure t)
-    (put 'dired-find-alternate-file 'disabled nil)
-    :preface
-    (defun dired-open-in-accordance-with-situation ()
-      "https://nishikawasasaki.hatenablog.com/entry/20120222/1329932699"
-      (interactive)
-      (let ((file (dired-get-filename)))
-	(if (file-directory-p file)
-	    (dired-find-alternate-file)
-	  (dired-find-file)))))
-
-  (leaf display-line-numbers
-    :global-minor-mode global-display-line-numbers-mode
-    :config (custom-set-variables '(display-line-numbers-width-start t)))
-
-  (leaf display-time
-    :global-minor-mode t
-    :custom
-    (display-time-interval . 1)
-    (display-time-string-forms . '((format "%s:%s:%s" 24-hours minutes seconds)))
-    (display-time-day-and-date . t)
-    :config
-    )
 
   (leaf files
     :custom
@@ -166,44 +130,31 @@
       (add-to-list 'load-path default-directory)
       (normal-top-level-add-subdirs-to-load-path)))
 
-  (leaf *frame
-    :config
-    (set-frame-parameter nil 'unsplittable t) ; なるべくスクリーンを分割しないようにする マウスを使うと新しくウインドウを開くのであんまりいい設定ではない
-    )
-
-  (leaf goto-address
-    :global-minor-mode t
-    :hook (prog-mode-hook . goto-address-prog-mode))
-
-  (leaf hl-line :hook (emacs-startup-hook . global-hl-line-mode)) ; 行をハイライトする
+  (leaf frame :config (set-frame-parameter nil 'unsplittable t))
   
   (leaf mule-cmds
-    :tag "builtin"
     :config
     (set-language-environment "Japanese")
     (prefer-coding-system 'utf-8)
     (set-default 'buffer-file-coding-system 'utf-8))
 
   (leaf mwheel
-    :tag "builtin"
     :custom
     (mouse-wheel-progressive-speed . nil)
     (scroll-preserve-screen-position . 'always))
 
   (leaf recentf
-    :tag "builtin"
     :global-minor-mode t
     :custom
     (recentf-max-saved-items . 150)
     (recentf-auto-cleanup . 'never)
-    (recentf-exclude '("/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.cask/"))
+    (recentf-exclude '("/dotfiles" "/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.cask/"))
     :config
     (leaf recentf-ext :ensure t))
 
   (leaf save-place-mode :global-minor-mode t)
 
   (leaf startup
-    :tag "builtin"
     :hook
     (window-setup-hook . delete-other-windows)
     (after-change-major-mode-hook . remove-scratch-buffer)
@@ -215,10 +166,7 @@
     (initial-scratch-message . nil)
     (inhibit-startup-buffer-menu . t)
     (message-log-max . nil)
-    (ring-bell-function . 'ignore)
-    )
-
-  (leaf which-function-mode :custom (which-function-mode . t))
+    (ring-bell-function . 'ignore))
   
   )
 
@@ -227,33 +175,6 @@
 (leaf *inbox
   :doc "分類が面倒なパッケージを入れる"
   :config
-  
-  (leaf *deepl-translate
-    :commands my:deepl-translate
-    :bind (("C-x T" . my:deepl-translate))
-    :preface
-    (require 'url-util)
-    (defun my:deepl-translate (&optional string)
-      (interactive)
-      (setq string
-            (cond ((stringp string) string)
-                  ((use-region-p)
-                   (buffer-substring (region-beginning) (region-end)))
-                  (t
-                   (save-excursion
-                     (let (s)
-                       (forward-char 1)
-                       (backward-sentence)
-                       (setq s (point))
-                       (forward-sentence)
-                       (buffer-substring s (point)))))))
-      (run-at-time 0.1 nil 'deactivate-mark)
-      (browse-url
-       (concat
-	"https://www.deepl.com/translator#en/ja/"
-	(url-hexify-string string)
-	)))
-    )
   
   (leaf fast-scroll
     :ensure t
@@ -273,12 +194,9 @@
     :global-minor-mode t
     :custom (gcmh-verbose . t))
 
-  (leaf leaf
-    :require t
-    :config
-    (leaf leaf-keywords :ensure t :init (leaf-keywords-init))
-    (leaf leaf-convert :ensure t)
-    (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left)))
+  (leaf goto-address
+    :global-minor-mode t
+    :hook (prog-mode-hook . goto-address-prog-mode))
 
   (leaf magit :ensure t)
 
@@ -321,6 +239,8 @@
     (undohist-ignored-files . '("/tmp/" "COMMIT_EDITMSG" "/elpa"))
     :config
     (undohist-initialize))
+  
+  (leaf zone :doc "screen-saver" :require t :config (zone-when-idle 120))
   
   )
 
@@ -371,34 +291,27 @@
       "https://qiita.com/takaxp/items/2fde2c119e419713342b#counsel-find-file-%E3%82%92%E4%BD%BF%E3%82%8F%E3%81%AA%E3%81%84"
       (let ((completing-read-function #'completing-read-default)
 	    (completion-in-region-function #'completion--in-region))
-	(apply #'read-file-name-default args)))
+	(apply #'read-file-name-default args))))
+
+  (leaf dired
+    :bind
+    (:dired-mode-map
+     ("RET" . dired-open-in-accordance-with-situation)
+     ("<right>" . dired-open-in-accordance-with-situation)
+     ("<left>" . dired-up-directory)
+     ("a" . dired-find-file))
     :config
-    (leaf counsel-flycheck
-      :url "https://github.com/nathankot/dotemacs/blob/master/init.el#L709"
-      (defvar counsel-flycheck-history nil
-	"History for `counsel-flycheck'")
-      (defun counsel-flycheck ()
-	(interactive)
-	(if (not (bound-and-true-p flycheck-mode))
-	    (message "Flycheck mode is not available or enabled")
-	  (ivy-read "Error: "
-		    (let ((source-buffer (current-buffer)))
-		      (with-current-buffer (or (get-buffer flycheck-error-list-buffer)
-					       (progn
-						 (with-current-buffer
-						     (get-buffer-create flycheck-error-list-buffer)
-						   (flycheck-error-list-mode)
-						   (current-buffer))))
-			(flycheck-error-list-set-source source-buffer)
-			(flycheck-error-list-reset-filter)
-			(revert-buffer t t t)
-			(split-string (buffer-string) "\n" t " *")))
-		    :action (lambda (s &rest _)
-			      (-when-let* ( (error (get-text-property 0 'tabulated-list-id s))
-					    (pos (flycheck-error-pos error)) )
-				(goto-char (flycheck-error-pos error))))
-		    :history 'counsel-flycheck-history))))
-    )
+    (leaf dired-toggle :ensure t)
+    (leaf dired-k :hook (dired-initial-position-hook . dired-k) :ensure t)
+    (put 'dired-find-alternate-file 'disabled nil)
+    :preface
+    (defun dired-open-in-accordance-with-situation ()
+      "https://nishikawasasaki.hatenablog.com/entry/20120222/1329932699"
+      (interactive)
+      (let ((file (dired-get-filename)))
+	(if (file-directory-p file)
+	    (dired-find-alternate-file)
+	  (dired-find-file)))))
   
   (leaf flycheck
     :ensure t
@@ -430,7 +343,6 @@
   (leaf mwim :ensure t)
 
   (leaf paren
-    :tag "builtin"
     :global-minor-mode show-paren-mode
     :custom
     (show-paren-delay . 0)
@@ -474,6 +386,8 @@
     :ensure t
     :config (leaf visual-regexp-steroids :ensure t))
 
+  (leaf which-function-mode :custom (which-function-mode . t))
+  
   (leaf which-key
     :ensure t
     :global-minor-mode t
@@ -497,53 +411,6 @@
   :doc "各言語のモード"
   :config
 
-  (leaf cc-mode
-    :tag "C" "C++"
-    :hook
-    (c-mode . (lambda () (setq c-basic-offset 8) (indent-tabs-mode . nil)))
-    (c++-mode . (lambda () (setq c-basic-offset 8) (indent-tabs-mode . nil)))
-    :custom
-    (c-auto-newline . t) ; セミコロンを入力すると改行とインデントをする
-    (c-tab-always-indent . t)
-    )
-  
-  (leaf google-c-style
-    :tag "C" "C++"
-    :ensure t
-    :hook ((c-mode c++-mode) . (lambda () (google-set-c-style)))
-    )
-
-  (leaf ccls
-    :tag "C++"
-    :ensure t
-    :hook ((c-mode c++-mode objc-mode) . (lambda () (require 'ccls) (lsp)))
-    :config
-    (ccls-executable "/usr/bin/ccls")
-    (ccls-sem-highlight-method 'font-lock)
-    (ccls-use-default-rainbow-sem-highlight))
-
-  (leaf csv-mode :ensure t :mode "\\.csv\\'")
-
-  (leaf elpy
-    :tag "Python"
-    :ensure t
-    :init
-    (elpy-enable)
-    :config
-    (remove-hook 'elpy-modules 'elpy-module-highlight-indentation) ;; インデントハイライトの無効化
-    (remove-hook 'elpy-modules 'elpy-module-flymake) ;; flymakeの無効化
-    :custom
-    (elpy-rpc-python-command . "python3") ;; https://mako-note.com/ja/elpy-rpc-python-version/の問題を回避するための設定
-    (flycheck-python-flake8-executable . "flake8")
-    :bind (elpy-mode-map
-           ("C-c C-r f" . elpy-format-code))
-    :hook ((elpy-mode-hook . flycheck-mode))
-    )
-  
-  (leaf impatient-mode
-    :tag "html"
-    :ensure t)
-
   (leaf lsp-mode
     :url "https://blog.medalotte.net/archives/473"
     :tag "lsp"
@@ -560,18 +427,6 @@
     (lsp-prefer-capf . t)
     (lsp-headerline-breadcrumb-mode . t))
 
-  (leaf markdown-mode
-    :url "https://qiita.com/harumaki6511/items/45265a3113d40828d920"
-    :commands markdown-mode
-    :mode (("\\.md\\'" . gfm-mode)
-	   ("\\.markdown\\'" . gfm-mode))
-    :custom
-    (markdown-command . "github-markup")
-    (markdown-command-needs-filename . t)
-    (markdown-content-type . "application/xhtml+xml")
-    (markdown-css-paths . '("https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"))
-    (markdown-xhtml-header-content . "\n<style>\nbody {\n  box-sizing: border-box;\n  max-width: 740px;\n  width: 100%;\n  margin: 40px auto;\n  padding: 0 10px;\n}\n</style>\n<script>\ndocument.addEventListener('DOMContentLoaded', () => {\n  document.body.classList.add('markdown-body');\n});\n</script>\n"))
-
   (leaf oj
     :doc "Competitive programming tools client for AtCoder, Codeforces"
     :req "emacs-26.1" "quickrun-2.2"
@@ -583,17 +438,117 @@
              (oj-compiler-python . "cpython")
              (oj-default-online-judge . 'atcoder)))
 
-  (leaf org-mode
-    :tag "builtin"
-    :hook (org-capture-after-finalize-hook . (lambda () (delete-frame)))
-    :custom
-    (org-directory . "~/document/org")
-    (org-startup-truncated . nil)
-    (org-enforce-todo-dependencies . t)
+  (leaf *C++
     :config
-    (leaf org-beautify-theme :ensure t :config (load-theme 'org-beautify t))
-    (leaf org-bullets :require t :ensure t :hook (org-mode-hook . (lambda () (org-bullets-mode 1))))
+    
+    (leaf cc-mode
+      :hook
+      (c-mode . (lambda () (setq c-basic-offset 8) (indent-tabs-mode . nil)))
+      (c++-mode . (lambda () (setq c-basic-offset 8) (indent-tabs-mode . nil)))
+      :custom
+      (c-auto-newline . t) ; セミコロンを入力すると改行とインデントをする
+      (c-tab-always-indent . t))
+    
+    (leaf ccls
+      :ensure t
+      :hook ((c-mode c++-mode objc-mode) . (lambda () (require 'ccls) (lsp)))
+      :config
+      (ccls-executable "/usr/bin/ccls")
+      (ccls-sem-highlight-method 'font-lock)
+      (ccls-use-default-rainbow-sem-highlight))
+    
+    (leaf google-c-style
+      :ensure t
+      :hook ((c-mode c++-mode) . (lambda () (google-set-c-style))))
     )
+
+  (leaf *mark-up
+    :config
+    
+    (leaf csv-mode :ensure t :mode "\\.csv\\'")
+    
+    (leaf markdown-mode
+      :url "https://qiita.com/harumaki6511/items/45265a3113d40828d920"
+      :commands markdown-mode
+      :mode (("\\.md\\'" . gfm-mode)
+	     ("\\.markdown\\'" . gfm-mode))
+      :custom
+      (markdown-command . "github-markup")
+      (markdown-command-needs-filename . t)
+      (markdown-content-type . "application/xhtml+xml")
+      (markdown-css-paths . '("https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"))
+      (markdown-xhtml-header-content . "\n<style>\nbody {\n  box-sizing: border-box;\n  max-width: 740px;\n  width: 100%;\n  margin: 40px auto;\n  padding: 0 10px;\n}\n</style>\n<script>\ndocument.addEventListener('DOMContentLoaded', () => {\n  document.body.classList.add('markdown-body');\n});\n</script>\n"))
+
+    (leaf org-mode
+      :hook (org-capture-after-finalize-hook . (lambda () (delete-frame)))
+      :custom
+      (org-directory . "~/document/org")
+      (org-startup-truncated . nil)
+      (org-enforce-todo-dependencies . t)
+      :config
+      (leaf org-beautify-theme :ensure t :config (load-theme 'org-beautify t))
+      (leaf org-bullets :require t :ensure t :hook (org-mode-hook . (lambda () (org-bullets-mode 1)))))
+    
+    (leaf yatex
+      :doc "jis=2, UTF-8=4"
+      :ensure t
+      :mode "\\.tex$"
+      :custom
+      (YaTeX-nervous . nil)
+      (latex-message-kanji-code . 4)
+      (YaTeX-kanji-code . 4)
+      (YaTeX-coding-system . 4))
+    )
+
+  (leaf *web
+    :config
+
+    (leaf skewer-mode :ensure t :doc "M-x run-skewer")
+    
+    (leaf web-mode
+      :ensure t
+      :mode
+      "\\.[agj]sp\\'"
+      "\\.as[cp]x\\'"
+      "\\.djhtml\\'"
+      "\\.ejs\\'"
+      "\\.erb\\'"
+      "\\.html?$\\'"
+      "\\.js\\'"
+      "\\.jsx\\'"
+      "\\.mustache\\'"
+      "\\.php\\'"
+      "\\.phtml\\'"
+      "\\.tpl\\'"
+      "\\.tsx?\\'"
+      "\\.vue\\'"
+      :custom
+      (web-mode-markup-indent-offset . 2)
+      (web-mode-enable-auto-pairing . t)
+      (web-mode-enable-auto-closing . t)
+      (web-mode-tag-auto-close-style . 2)
+      (web-mode-enable-auto-quoting . nil)
+      (web-mode-enable-current-column-highlight . t)
+      (web-mode-enable-current-element-highlight . t)
+      :config
+      (with-eval-after-load 'web-mode (sp-local-pair '(web-mode) "<" ">" :actions :rem))
+      (put 'web-mode-markup-indent-offset 'safe-local-variable 'integerp))
+    )
+
+  (leaf elpy
+    :tag "Python"
+    :ensure t
+    :init
+    (elpy-enable)
+    :config
+    (remove-hook 'elpy-modules 'elpy-module-highlight-indentation) ;; インデントハイライトの無効化
+    (remove-hook 'elpy-modules 'elpy-module-flymake) ;; flymakeの無効化
+    :custom
+    (elpy-rpc-python-command . "python3") ;; https://mako-note.com/ja/elpy-rpc-python-version/の問題を回避するための設定
+    (flycheck-python-flake8-executable . "flake8")
+    :bind (elpy-mode-map
+           ("C-c C-r f" . elpy-format-code))
+    :hook ((elpy-mode-hook . flycheck-mode)))
 
   (leaf sly
     :tag "Common Lisp"
@@ -601,50 +556,8 @@
     :custom (inferior-lisp-program . "/usr/bin/sbcl")
     :config
     ;;(leaf sly-autoloads :require t)
-    ;;(leaf slime-autoloads :ensure t)
-    ;;(load "~/.roswell/helper.el")
+    ;; (load "~/.roswell/helper.el")
     )
-
-  (leaf web-mode
-    :tag "html" "css"
-    :ensure t
-    :mode
-    "\\.[agj]sp\\'"
-    "\\.as[cp]x\\'"
-    "\\.djhtml\\'"
-    "\\.ejs\\'"
-    "\\.erb\\'"
-    "\\.html?$\\'"
-    "\\.js\\'"
-    "\\.jsx\\'"
-    "\\.mustache\\'"
-    "\\.php\\'"
-    "\\.phtml\\'"
-    "\\.tpl\\'"
-    "\\.tsx?\\'"
-    "\\.vue\\'"
-    :custom
-    (web-mode-markup-indent-offset . 2)
-    (web-mode-enable-auto-pairing . t)
-    (web-mode-enable-auto-closing . t)
-    (web-mode-tag-auto-close-style . 2)
-    (web-mode-enable-auto-quoting . nil)
-    (web-mode-enable-current-column-highlight . t)
-    (web-mode-enable-current-element-highlight . t)
-    :config
-    (with-eval-after-load 'web-mode (sp-local-pair '(web-mode) "<" ">" :actions :rem))
-    (put 'web-mode-markup-indent-offset 'safe-local-variable 'integerp))
-
-  (leaf yatex
-    :tag "TeX"
-    :doc "jis=2, UTF-8=4"
-    :ensure t
-    :mode "\\.tex$"
-    :custom
-    (YaTeX-nervous . nil)
-    (latex-message-kanji-code . 4)
-    (YaTeX-kanji-code . 4)
-    (YaTeX-coding-system . 4))
 
   )
 
@@ -728,6 +641,17 @@
 	(setq dashboard-recover-layout-p nil)))
     )
 
+  (leaf display-line-numbers
+    :global-minor-mode global-display-line-numbers-mode
+    :config (custom-set-variables '(display-line-numbers-width-start t)))
+
+  (leaf display-time
+    :global-minor-mode t
+    :custom
+    (display-time-interval . 1)
+    (display-time-string-forms . '((format "%s:%s:%s" 24-hours minutes seconds)))
+    (display-time-day-and-date . t))
+
   (leaf emojify
     :ensure t
     :hook (after-init . global-emojify-mode))
@@ -753,6 +677,8 @@
     :require t
     :hook (prog-mode-hook . highlight-symbol-mode)
     :custom (highlight-symbol-idle-delay . 0.1))
+
+  (leaf hl-line :doc "highlight-line" :hook (emacs-startup-hook . global-hl-line-mode))
 
   (leaf page-break-lines
     :ensure t

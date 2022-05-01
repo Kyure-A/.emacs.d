@@ -30,6 +30,8 @@
     (package-refresh-contents)
     (package-install 'leaf)))
 
+(eval-and-compile (require 'cl-lib))
+
 (leaf *leaf
   :preface
   (leaf leaf-keywords :ensure t :init (leaf-keywords-init))
