@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: per
+# key: per
+# --
+per(i,${1:n}) {
+    $0
+}

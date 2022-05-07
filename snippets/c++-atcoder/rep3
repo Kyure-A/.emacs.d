@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: rep
+# key: rep
+# --
+rep3(i,${1:m},${2:n}) {
+    $0
+}
