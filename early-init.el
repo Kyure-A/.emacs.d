@@ -54,7 +54,8 @@
   (setq frame-inhibit-implied-resize t)
   (leaf doom-modeline :ensure t :global-minor-mode t :custom (doom-modeline-icon . t))
   ;;(leaf monokai-theme :ensure t :config (load-theme 'monokai t))
-  (leaf atom-one-dark-theme :ensure t :config (load-theme 'atom-one-dark t))
+  ;;(leaf atom-one-dark-theme :ensure t :config (load-theme 'atom-one-dark t))
+  (leaf vscode-dark-plus-theme :ensure t :config (load-theme 'vscode-dark-plus t))
   )
 
 
