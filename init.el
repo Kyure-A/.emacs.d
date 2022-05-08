@@ -475,6 +475,37 @@
       :hook ((c-mode c++-mode) . (lambda () (google-set-c-style))))
     )
 
+  (leaf *dart
+    :config
+    
+    (leaf dart-mode
+      :ensure t
+      :hook (dart-mode-hook . flycheck-mode)
+      :custom
+      (dart-enable-analysis-server . t))
+    
+    (leaf lsp-dart
+      :ensure t
+      :commands lsp
+      :hook ((dart-mode-hook . lsp))
+      :config
+      (dap-register-debug-template "Flutter :: Custom debug"
+				   (list :flutterPlatform "x86_64" :program "lib/main_debug.dart" :args
+					 '("--flavor" "customer_a"))))
+    )
+
+  (leaf *typescript
+    :config
+
+    (leaf typescript-mode :ensure t :mode "\\.ts\\'" "\\.tsx\\'")
+    
+    (leaf tide
+      :ensure t
+      :hook
+      (typescript-mode-hook . (lambda () (tide-setup) (flycheck-mode +1) (setq flycheck-check-syntax-automatically '(save mode-enabled)) (eldoc-mode +1) (tide-hl-identifier-mode +1) (company-mode +1)))
+      (before-save-hook . tide-format-before-save))
+    )
+
   (leaf *mark-up
     :config
     
@@ -517,17 +548,6 @@
     :config
 
     (leaf skewer-mode :ensure t :doc "M-x run-skewer")
-
-    (leaf typescript-mode
-      :ensure t
-      :mode "\\.ts\\'" "\\.tsx\\'"
-      :preface
-      (leaf tide
-	:ensure t
-	:hook
-	(typescript-mode-hook . (lambda () (tide-setup) (flycheck-mode +1) (setq flycheck-check-syntax-automatically '(save mode-enabled))
-				  (eldoc-mode +1) (tide-hl-identifier-mode +1) (company-mode +1)))
-	(before-save-hook . tide-format-before-save)))
     
     (leaf web-mode
       :ensure t
