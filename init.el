@@ -517,6 +517,17 @@
     :config
 
     (leaf skewer-mode :ensure t :doc "M-x run-skewer")
+
+    (leaf typescript-mode
+      :ensure t
+      :mode "\\.ts\\'" "\\.tsx\\'"
+      :preface
+      (leaf tide
+	:ensure t
+	:hook
+	(typescript-mode-hook . (lambda () (tide-setup) (flycheck-mode +1) (setq flycheck-check-syntax-automatically '(save mode-enabled))
+				  (eldoc-mode +1) (tide-hl-identifier-mode +1) (company-mode +1)))
+	(before-save-hook . tide-format-before-save)))
     
     (leaf web-mode
       :ensure t
@@ -533,7 +544,6 @@
       "\\.php\\'"
       "\\.phtml\\'"
       "\\.tpl\\'"
-      "\\.tsx?\\'"
       "\\.vue\\'"
       :custom
       (web-mode-markup-indent-offset . 2)
@@ -546,6 +556,7 @@
       :config
       (with-eval-after-load 'web-mode (sp-local-pair '(web-mode) "<" ">" :actions :rem))
       (put 'web-mode-markup-indent-offset 'safe-local-variable 'integerp))
+    
     )
 
   (leaf elpy
