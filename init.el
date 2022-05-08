@@ -63,6 +63,7 @@
   ("M-x" . counsel-M-x)
   ;; Modifier key
   ("<f2>" . vterm-toggle)
+  ("<f5>" . my/quickrun-sc)
   ("RET" . smart-newline)
   ("C-<return>" . newline)
   ("C-<space>" . nil)
@@ -70,7 +71,7 @@
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward))
 
-(leaf *defun
+(leaf *common-defun
   :preface
   ;; 適当
   (defun my/reload-init-el ()
@@ -158,7 +159,6 @@
   (leaf startup
     :hook
     (window-setup-hook . delete-other-windows)
-    (after-change-major-mode-hook . my/remove-scratch-buffer)
     (after-change-major-mode-hook . my/remove-messages-buffer)
     (after-change-major-mode-hook . my/remove-warnings-buffer)
     (minibuffer-exit-hook . my/remove-completions-buffer)
@@ -201,16 +201,6 @@
 
   (leaf magit :ensure t)
 
-  (leaf multi-term
-    :ensure t
-    :bind (:term-raw-map ("C-y" . term-paste)
-			 ("C-s" . swiper))
-    :custom
-    (multi-term-program . "/bin/zsh")
-    (term-buffer-maximum-size . 10000)
-    :config (add-to-list 'term-unbind-key-list '"M-x")
-    )
-
   (leaf promise :ensure t)
   
   (leaf request :ensure t)
@@ -241,16 +231,16 @@
     (vterm-max-scrollback . 5000)
     (vterm-buffer-name-string . "vterm: %s")
     (vterm-keymap-exceptions
-     . '("<f1>" "<f2>" "<f10>" "C-c" "C-x" "C-u" "C-g" "C-l" "C-s" "M-x" "M-o" "C-v" "M-v" "C-y" "M-y"))
+     . '("<f1>" "<f2>" "<f10>" "C-<return>" "C-<prior>" "C-<next>" "C-c" "C-g" "C-l" "C-s" "C-u" "C-v" "C-w" "C-x" "C-y" "M-v" "M-w" "M-x" "M-y"))
     (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
     :config
     (leaf vterm-toggle :ensure t)
     :preface
     (defun my/term-mode-p(&optional args)
-      (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode))
+      (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode))
     )
   
-  (leaf zone :doc "screen-saver" :require t :config (zone-when-idle 120))
+  (leaf zone :doc "screen-saver" :require t :config (zone-when-idle 1200))
   
   )
 
@@ -448,6 +438,19 @@
              (oj-compiler-python . "cpython")
              (oj-default-online-judge . 'atcoder)))
 
+  (leaf quickrun
+    :require t
+    :ensure t
+    :custom
+    :config
+    (push '("*quickrun*") popwin:special-display-config)
+    :preface
+    (defun my/quickrun-sc (start end)
+      (interactive "r")
+      (if mark-active
+	  (quickrun :start start :end end)
+	(quickrun))))
+
   (leaf *C++
     :config
     
@@ -497,7 +500,7 @@
       (org-enforce-todo-dependencies . t)
       :config
       (leaf org-beautify-theme :ensure t :config (load-theme 'org-beautify t))
-      (leaf org-bullets :require t :ensure t :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
+      (leaf org-bullets :require t :ensure t :hook ((org-mode-hook . (lambda () (org-bullets-mode 1))))))
     
     (leaf yatex
       :doc "jis=2, UTF-8=4"
@@ -588,8 +591,7 @@
     :require t
     :global-minor-mode t
     :hook
-    (dashboard-mode . centaur-tabs-local-mode)
-    (dired-mode . centaur-tabs-local-mode)
+    (sly-mrepl-mode . centaur-tabs-local-mode)
     :custom
     (centaur-tabs-height . 30)
     (centaur-tabs-set-icons . t)
@@ -620,6 +622,7 @@
                               "\*sdcv\*"
                               "\*Messages\*"
                               "\*Ido Completions\*"
+			      "\*scratch\*"
                               ))
 			 (buffer-name))
 	 "Emacs")
@@ -686,7 +689,7 @@
   (leaf emojify
     :ensure t
     :hook (after-init . global-emojify-mode))
-
+  
   (leaf fira-code-mode
     :ensure t
     :doc "M-x fira-code-mode-install-fonts"
@@ -736,7 +739,7 @@
 
   (leaf rainbow-mode
     :ensure t
-    :hook (prog-mode-hook))
+    :hook (web-mode-hook))
 
   (leaf solaire-mode :ensure t :config (solaire-global-mode +1))
   
