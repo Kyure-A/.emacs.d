@@ -25,13 +25,13 @@
 (leaf *global-set-key
   :bind
   ;; C-c
-  ("C-c e b" . reload-init-el)
+  ("C-c e b" . my/reload-init-el)
   ("C-c e m" . menu-bar-mode)
   ("C-c l c" . leaf-convert-region-replace)
   ("C-c l t" . leaf-tree-mode)
   ("C-c m" . macrostep-mode)
   ("C-c o" . org-capture)
-  ("C-c s" . sly-start)
+  ("C-c s" . my/sly-start)
   ("C-c t" . centaur-tabs-counsel-switch-group)
   ;; C-x
   ("C-x g" . magit-status)
@@ -57,11 +57,12 @@
   ("C-r" . redo)
   ("C-s" . swiper)
   ;;("C-S" . second-sight)
-  ("C-t" . multi-term)
+					;("C-t" . multi-term)
   ("C-/" . other-window)
   ;; M-<any>
   ("M-x" . counsel-M-x)
   ;; Modifier key
+  ("<f2>" . vterm-toggle)
   ("RET" . smart-newline)
   ("C-<return>" . newline)
   ("C-<space>" . nil)
@@ -72,28 +73,28 @@
 (leaf *defun
   :preface
   ;; 適当
-  (defun reload-init-el ()
+  (defun my/reload-init-el ()
     "C-c e b"
     (interactive)
     (eval-buffer)
-    (remove-warnings-buffer)
-    (remove-messages-buffer))
-  (defun sly-start ()
+    (my/remove-warnings-buffer)
+    (my/remove-messages-buffer))
+  (defun my/sly-start ()
     "sly の挙動を slime に似せる"
     (interactive)
     (split-window-right)
     (sly))
   ;; buffer
-  (defun remove-scratch-buffer ()
+  (defun my/remove-scratch-buffer ()
     (if (get-buffer "*scratch*")
 	(kill-buffer "*scratch*")))
-  (defun remove-completions-buffer ()
+  (defun my/remove-completions-buffer ()
     (if (get-buffer "*Completions*")
         (kill-buffer "*Completions*")))
-  (defun remove-messages-buffer ()
+  (defun my/remove-messages-buffer ()
     (if (get-buffer "*Messages*")
         (kill-buffer "*Messages*")))
-  (defun remove-warnings-buffer ()
+  (defun my/remove-warnings-buffer ()
     (if (get-buffer "*Warnings*")
         (kill-buffer "*Warnings*"))))
 
@@ -157,10 +158,10 @@
   (leaf startup
     :hook
     (window-setup-hook . delete-other-windows)
-    (after-change-major-mode-hook . remove-scratch-buffer)
-    (after-change-major-mode-hook . remove-messages-buffer)
-    (after-change-major-mode-hook . remove-warnings-buffer)
-    (minibuffer-exit-hook . remove-completions-buffer)
+    (after-change-major-mode-hook . my/remove-scratch-buffer)
+    (after-change-major-mode-hook . my/remove-messages-buffer)
+    (after-change-major-mode-hook . my/remove-warnings-buffer)
+    (minibuffer-exit-hook . my/remove-completions-buffer)
     :custom
     (inhibit-startup-screen . t)
     (initial-scratch-message . nil)
@@ -233,6 +234,21 @@
     (undohist-ignored-files . '("/tmp/" "COMMIT_EDITMSG" "/elpa"))
     :config
     (undohist-initialize))
+
+  (leaf vterm
+    :ensure t
+    :custom
+    (vterm-max-scrollback . 5000)
+    (vterm-buffer-name-string . "vterm: %s")
+    (vterm-keymap-exceptions
+     . '("<f1>" "<f2>" "<f10>" "C-c" "C-x" "C-u" "C-g" "C-l" "C-s" "M-x" "M-o" "C-v" "M-v" "C-y" "M-y"))
+    (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
+    :config
+    (leaf vterm-toggle :ensure t)
+    :preface
+    (defun my/term-mode-p(&optional args)
+      (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode))
+    )
   
   (leaf zone :doc "screen-saver" :require t :config (zone-when-idle 120))
   
@@ -584,10 +600,31 @@
     (centaur-tabs-show-navigation-buttons . t)
     (centaur-tabs-adjust-buffer-order . t)
     (centaur-tabs-cycle-scope . 'groups)
+    (centaur-tabs-buffer-groups-function . 'my/centaur-tabs-buffer-groups)
     :config
     (centaur-tabs-headline-match)
     (centaur-tabs-enable-buffer-reordering)
-    (centaur-tabs-change-fonts "arial" 90))
+    (centaur-tabs-change-fonts "arial" 90)
+    :preface
+    (defun my/centaur-tabs-buffer-groups ()
+      (list
+       (cond
+	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode)
+	 "Term")
+	((string-match-p (rx (or
+			      "\*dashboard\*"
+                              "\*Helm"
+                              "\*helm"
+                              "\*tramp"
+                              "\*Completions\*"
+                              "\*sdcv\*"
+                              "\*Messages\*"
+                              "\*Ido Completions\*"
+                              ))
+			 (buffer-name))
+	 "Emacs")
+	(t "Common"))))
+    )
 
   (leaf dashboard
     :url "https://qiita.com/minoruGH/items/b47430af6537ee69c6ef"
