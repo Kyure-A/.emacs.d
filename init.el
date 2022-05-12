@@ -459,7 +459,6 @@
       (c-mode . (lambda () (setq c-basic-offset 8) (indent-tabs-mode . nil)))
       (c++-mode . (lambda () (setq c-basic-offset 8) (indent-tabs-mode . nil)))
       :custom
-      (c-auto-newline . t) ; セミコロンを入力すると改行とインデントをする
       (c-tab-always-indent . t))
     
     (leaf ccls
