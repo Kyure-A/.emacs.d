@@ -607,7 +607,6 @@
 
 
 (leaf *visual
-  :doc "UI デザインを変化させるもの"
   :config
 
   (leaf all-the-icons
@@ -641,8 +640,8 @@
     (defun my/centaur-tabs-buffer-groups ()
       (list
        (cond
-	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode)
-	 "Term")
+	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode)
+	 "Terminal")
 	((string-match-p (rx (or
 			      "\*dashboard\*"
                               "\*Helm"
@@ -653,6 +652,7 @@
                               "\*Messages\*"
                               "\*Ido Completions\*"
 			      "\*scratch\*"
+			      "\*Flycheck errors\*"
                               ))
 			 (buffer-name))
 	 "Emacs")
@@ -775,7 +775,7 @@
   
   (leaf yascroll
     :ensure t
-    :doc ":global-minor-mode global-yascroll-bar-mode")
+    :global-minor-mode global-yascroll-bar-mode)
 
   )
 
