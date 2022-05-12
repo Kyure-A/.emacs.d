@@ -1,4 +1,5 @@
 /* include */
+// #include<bits/stdc++.h>
 #include <algorithm>
 #include <bitset>
 #include <cctype>
@@ -21,19 +22,23 @@
 #include <utility>
 #include <vector>
 using namespace std;
-/* define */
+/* Macro */
+#define all(container) (container).begin(), (container).end()
 #define ctoi(char) int(char) - 48
 #define rep(i,n) for (int i = 0; (i) < (int)(n); ++ (i))
 #define rep3(i,m,n) for (int i = (m); (i) < (int)(n); ++ (i))
 #define per(i,n) for (int i = (int)(n) - 1; (i) >= 0; -- (i))
 #define per3(i,m,n) for (int i = (int)(n) - 1; (i) >= (int)(m); -- (i))
-#define all(x) (x).begin(),(x).end()
+/* Type */
+// #define int long long
 #define cauto const auto&
-/* typedef */
 typedef long long int64;
 typedef long double ld;
-/* const */
-const double pi = acos(-1.0);
+/* Const */
+const double PI = acos(-1.0);
+const int64 MOD = 1000000007;
+const int64 _MOD = 998244353;
+
 
 int main ()
 {
