@@ -40,7 +40,7 @@ const int64 MOD = 1000000007;
 const int64 _MOD = 998244353;
 
 
-int main ()
+signed main ()
 {
   $0
 }
