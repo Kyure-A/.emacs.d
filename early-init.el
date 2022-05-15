@@ -32,6 +32,8 @@
 
 (eval-and-compile (require 'cl-lib))
 
+(add-to-list 'load-path "./.emacs.d/elisp")
+
 (leaf *leaf
   :preface
   (leaf leaf-keywords :ensure t :init (leaf-keywords-init))
@@ -40,22 +42,38 @@
   (leaf blackout :ensure t)
   (leaf el-get :ensure t :require t :config (add-to-list 'load-path "~/.emacs.d/el-get"))
   (leaf package-utils :ensure t)
-  (leaf use-package :ensure t))
+  (leaf use-package :ensure t)
+  )
 
 
 
-(leaf *theme
+(leaf *visual
   :doc "なんとなく起動時の見た目と起動後の見た目が大きく異なるのが気になるので early-init.el で呼び出したい見た目関連のものをまとめた"
   :preface
-  (push '(fullscreen . maximized) default-frame-alist)
-  (push '(menu-bar-lines . 0) default-frame-alist)
-  (push '(tool-bar-lines . 0) default-frame-alist)
+  (leaf doom-modeline :ensure t :global-minor-mode t :custom (doom-modeline-icon . t))
   (scroll-bar-mode -1)
   (setq frame-inhibit-implied-resize t)
-  (leaf doom-modeline :ensure t :global-minor-mode t :custom (doom-modeline-icon . t))
-  ;;(leaf monokai-theme :ensure t :config (load-theme 'monokai t))
+  (setq default-frame-alist
+	(append (list
+		 '(min-height . 1)
+		 '(height     . 45)
+		 '(min-width  . 1)
+		 '(width      . 81)
+		 '(vertical-scroll-bars . nil)
+		 '(internal-border-width . 24)
+		 '(left-fringe    . 1)
+		 '(right-fringe   . 1)
+		 '(fullscreen . maximized)
+		 '(tool-bar-lines . 0)
+		 '(menu-bar-lines . 0))))
+  )
+
+(leaf *theme
+  :doc "テーマ類をまとめた"
+  :preface
+  (leaf monokai-theme :ensure t :config (load-theme 'monokai t))
   ;;(leaf atom-one-dark-theme :ensure t :config (load-theme 'atom-one-dark t))
-  (leaf vscode-dark-plus-theme :ensure t :config (load-theme 'vscode-dark-plus t))
+  ;;(leaf vscode-dark-plus-theme :ensure t :config (load-theme 'vscode-dark-plus t))
   )
 
 
