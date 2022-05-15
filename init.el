@@ -742,8 +742,6 @@
     :hook (prog-mode-hook . highlight-symbol-mode)
     :custom (highlight-symbol-idle-delay . 0.1))
 
-  (leaf hl-line :doc "highlight-line" :hook (emacs-startup-hook . global-hl-line-mode))
-
   (leaf neotree
     :ensure t
     :custom
