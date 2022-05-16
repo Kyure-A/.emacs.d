@@ -3,8 +3,7 @@
 ;; Author: Kyure_A <twitter.com/Kyure_A>
 ;; Maintainer: Kyure_A <twitter.com/Kyure_A>
 
-;;; Commentary:
-;;; 基本的に bar 類は全部消す
+;;; Commentary: Nya
 
 ;;; Code:
 
@@ -18,11 +17,15 @@
 
 
 
+(require 'package)
+
 (eval-and-compile
   (customize-set-variable 'package-archives
 			  '(("melpa" . "https://melpa.org/packages/")
 			    ("org"   . "https://orgmode.org/elpa/")
 			    ("gnu"   . "https://elpa.gnu.org/packages/")))
+  (setq package-user-dir "~/.emacs.packages/elpa")
+  (add-to-list 'load-path "./elpa")
   (package-initialize)
   (setq package-enable-at-startup nil)
   ;; install
@@ -32,7 +35,7 @@
 
 (eval-and-compile (require 'cl-lib))
 
-(add-to-list 'load-path "./.emacs.d/elisp")
+(add-to-list 'load-path "./elisp")
 
 (leaf *leaf
   :preface
@@ -40,7 +43,7 @@
   (leaf leaf-convert :ensure t)
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))
   (leaf blackout :ensure t)
-  (leaf el-get :ensure t :require t :config (add-to-list 'load-path "~/.emacs.d/el-get"))
+  (leaf el-get :ensure t :require t :custom (el-get-package-directory . "~/.emacs.packages/el-get") :config (add-to-list 'load-path "./el-get"))
   (leaf package-utils :ensure t)
   (leaf use-package :ensure t)
   )
