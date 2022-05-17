@@ -312,6 +312,8 @@
 	(if (file-directory-p file)
 	    (dired-find-alternate-file)
 	  (dired-find-file)))))
+
+  (leaf editorconfig :ensure t :global-minor-mode t)
   
   (leaf flycheck
     :ensure t
@@ -523,14 +525,14 @@
       (markdown-xhtml-header-content . "\n<style>\nbody {\n  box-sizing: border-box;\n  max-width: 740px;\n  width: 100%;\n  margin: 40px auto;\n  padding: 0 10px;\n}\n</style>\n<script>\ndocument.addEventListener('DOMContentLoaded', () => {\n  document.body.classList.add('markdown-body');\n});\n</script>\n"))
 
     (leaf org-mode
-      :hook (org-capture-after-finalize-hook . (lambda () (delete-frame)))
       :custom
       (org-directory . "~/document/org")
       (org-startup-truncated . nil)
       (org-enforce-todo-dependencies . t)
       :config
       (leaf org-beautify-theme :ensure t :config (load-theme 'org-beautify t))
-      (leaf org-bullets :require t :ensure t :hook ((org-mode-hook . (lambda () (org-bullets-mode 1))))))
+      (leaf org-modern :ensure t :hook (org-mode-hook . org-modern-mode) (org-agenda-finalize-hook . org-modern-agenda))
+      )
     
     (leaf yatex
       :doc "jis=2, UTF-8=4"
