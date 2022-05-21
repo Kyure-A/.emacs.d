@@ -380,7 +380,7 @@
     :require t
     :global-minor-mode smartparens-global-mode
     :config
-    ;;(leaf smartparens-config :require t :after smartparens :config (sp-pair "<" ">"))
+    (leaf smartparens-config :require t :after smartparens :hook (web-mode-hook . (lambda () (sp-pair "<#" "#>"))))
     )
   
   (leaf visual-regexp
@@ -394,6 +394,8 @@
     :ensure t
     :global-minor-mode t
     :config (which-key-setup-side-window-bottom))
+
+  (leaf yafolding :ensure t :hook (prog-mode-hook . yafolding-mode))
   
   (leaf yasnippet
     :ensure t
