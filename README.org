@@ -1,0 +1,15 @@
+#+TITLE: README
+#+AUTHOR: Kyure_A
+#+OPTIONS: toc:nil
+
+[[file:./banner.png]]
+
+
+The installed packages are listed below (In preparation).
+
+- Emacs
+  - [[https://github.com/conao3/leaf.el][leaf.el]]
+    - [[https://github.com/conao3/leaf-keywords.el][leaf-keywords.el]]
+    - [[https://github.com/conao3/leaf-convert.el][leaf-convert.el]]
+    - [[https://github.com/conao3/leaf-tree.el][leaf-tree.el]]
+  - [[https://github.com/dimitri/el-get][el-get.el]]
