@@ -253,7 +253,11 @@
   (leaf aggressive-indent
     :ensure t
     :global-minor-mode global-aggressive-indent-mode)
-
+  
+  (leaf autorevert
+    :global-minor-mode global-auto-revert-mode
+    :custom (auto-revert-interval . 1))
+  
   (leaf company
     :tag "company"
     :ensure t
@@ -292,6 +296,8 @@
       (let ((completing-read-function #'completing-read-default)
 	    (completion-in-region-function #'completion--in-region))
 	(apply #'read-file-name-default args))))
+
+  (leaf delete-selection :global-minor-mode delete-selection-mode)
 
   (leaf dired
     :bind
@@ -342,7 +348,7 @@
     (leaf ivy-posframe :ensure t :global-minor-mode t
       :custom (ivy-posframe-display-functions-alist . '((t . ivy-posframe-display-at-frame-center)))))
 
-  (leaf mwim :ensure t)
+  (leaf mwim :doc "Enhanced C-a, C-e" :ensure t)
 
   (leaf paren
     :global-minor-mode show-paren-mode
@@ -352,7 +358,6 @@
 
   (leaf popwin
     :url "http://dev.ariel-networks.com/wp/archives/462"
-    :doc "It's just copied and pasted from the URL."
     :ensure t
     :custom
     (display-buffer-function . 'popwin:display-buffer)
@@ -403,7 +408,6 @@
     :custom
     (yas-snippet-dirs . '("~/.emacs.d/snippets"))
     :config
-    (leaf yasnippet-snippets :ensure t :doc "各言語用のテンプレート 多分 clone して自分のディレクトリに落としたほうがいい")
     (leaf ivy-yasnippet :ensure t :require t :doc "yas-insert-snippet よりスニペットの挿入が可視化されるため見やすい")
     (leaf yatemplate :ensure t :config (leaf auto-insert-mode :global-minor-mode t) (yatemplate-fill-alist)))
   
@@ -438,9 +442,12 @@
     :url "https://github.com/conao3/oj.el"
     :emacs>= 26.1
     :ensure t
-    :custom ((oj-compiler-c . "clang")
-             (oj-compiler-python . "cpython")
-             (oj-default-online-judge . 'atcoder)))
+    :custom
+    (oj-shell-program . "zsh")
+    (oj-open-home-dir . "~/oj-files/")
+    (oj-default-online-judge . 'atcoder)
+    (oj-compiler-c . "gcc")
+    (oj-compiler-python . "cpython"))
 
   (leaf quickrun
     :require t
@@ -619,6 +626,11 @@
     (leaf all-the-icons-dired :ensure t :hook (dired-mode . all-the-icons-dired-mode))
     (leaf all-the-icons-ivy :ensure t))
 
+  (leaf beacon
+    :ensure t
+    :global-minor-mode t
+    :custom (beacon-color . "red"))
+
   (leaf centaur-tabs
     :ensure t
     :require t
@@ -764,7 +776,7 @@
     (set-fontset-font "fontset-default"
 		      (cons page-break-lines-char page-break-lines-char)
 		      (face-attribute 'default :family)))
-
+  
   (leaf rainbow-delimiters
     :ensure t
     :hook (prog-mode-hook))
