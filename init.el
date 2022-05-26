@@ -56,8 +56,6 @@
   ("C-u" . undo)
   ("C-r" . redo)
   ("C-s" . swiper)
-  ;;("C-S" . second-sight)
-					;("C-t" . multi-term)
   ("C-/" . other-window)
   ;; M-<any>
   ("M-x" . counsel-M-x)
@@ -85,6 +83,14 @@
     (interactive)
     (split-window-right)
     (sly))
+  (defun my/tide-start ()
+    (interactive)
+    (tide-setup)
+    (flycheck-mode t)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode t)
+    (tide-hl-identifier-mode t)
+    (company-mode t))
   ;; buffer
   (defun my/remove-scratch-buffer ()
     (if (get-buffer "*scratch*")
@@ -195,13 +201,11 @@
     :global-minor-mode t
     :custom (gcmh-verbose . t))
 
-  (leaf goto-address
-    :global-minor-mode t
-    :hook (prog-mode-hook . goto-address-prog-mode))
+  (leaf goto-address :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
 
   (leaf magit :ensure t)
 
-  (leaf promise :ensure t)
+  (leaf promise :doc "非同期処理" :ensure t)
   
   (leaf request :ensure t)
 
@@ -250,13 +254,9 @@
   :doc "補完や構文のチェック, 入力に関するプラグイン"
   :config
 
-  (leaf aggressive-indent
-    :ensure t
-    :global-minor-mode global-aggressive-indent-mode)
+  (leaf aggressive-indent :ensure t :global-minor-mode global-aggressive-indent-mode)
   
-  (leaf autorevert
-    :global-minor-mode global-auto-revert-mode
-    :custom (auto-revert-interval . 1))
+  (leaf autorevert :global-minor-mode global-auto-revert-mode :custom (auto-revert-interval . 1))
   
   (leaf company
     :tag "company"
@@ -366,8 +366,6 @@
 
   (leaf redo+ :require t)
 
-  (leaf second-sight :el-get blue0513/second-sight :require t)
-
   (leaf smart-hungry-delete
     :url "https://github.com/hrehfeld/emacs-smart-hungry-delete/pull/7/commits/f49bb37edfa19bd605b425f8f0fe285a1d00987e"
     :el-get black7375/emacs-smart-hungry-delete
@@ -380,13 +378,12 @@
     :require t)
 
   (leaf smartparens
-    :doc "なんかうまく有効になっていない"
+    :doc "strict で C-k したときにカッコを削除しないようにできる"
     :ensure t
     :require t
-    :global-minor-mode smartparens-global-mode
+    :global-minor-mode smartparens-global-mode smartparens-global-strict-mode
     :config
-    (leaf smartparens-config :require t :after smartparens :hook (web-mode-hook . (lambda () (sp-pair "<#" "#>"))))
-    )
+    (leaf smartparens-config :require t :after smartparens :hook (web-mode-hook . (lambda () (sp-pair "<#" "#>")))))
   
   (leaf visual-regexp
     :doc "ビジュアライズされた置換"
@@ -408,14 +405,14 @@
     :custom
     (yas-snippet-dirs . '("~/.emacs.d/snippets"))
     :config
-    (leaf ivy-yasnippet :ensure t :require t :doc "yas-insert-snippet よりスニペットの挿入が可視化されるため見やすい")
+    (leaf ivy-yasnippet :doc "yas-insert-snippet よりスニペットの挿入が可視化されるため見やすい" :ensure t :require t)
     (leaf yatemplate :ensure t :config (leaf auto-insert-mode :global-minor-mode t) (yatemplate-fill-alist)))
   
   )
 
 
 
-(leaf *languages
+(leaf *programming
   :doc "各言語のモード"
   :config
 
@@ -482,8 +479,7 @@
     
     (leaf google-c-style
       :ensure t
-      :hook ((c-mode c++-mode) . (lambda () (google-set-c-style))))
-    )
+      :hook ((c-mode c++-mode) . (lambda () (google-set-c-style)))))
 
   (leaf *dart
     :config
@@ -501,20 +497,18 @@
       :config
       (dap-register-debug-template "Flutter :: Custom debug"
 				   (list :flutterPlatform "x86_64" :program "lib/main_debug.dart" :args
-					 '("--flavor" "customer_a"))))
-    )
+					 '("--flavor" "customer_a")))))
 
   (leaf *typescript
     :config
-
+    
     (leaf typescript-mode :ensure t :mode "\\.ts\\'" "\\.tsx\\'")
     
     (leaf tide
       :ensure t
       :hook
-      (typescript-mode-hook . (lambda () (tide-setup) (flycheck-mode +1) (setq flycheck-check-syntax-automatically '(save mode-enabled)) (eldoc-mode +1) (tide-hl-identifier-mode +1) (company-mode +1)))
-      (before-save-hook . tide-format-before-save))
-    )
+      (typescript-mode-hook . my/tide-start)
+      (before-save-hook . tide-format-before-save)))
 
   (leaf *mark-up
     :config
@@ -540,8 +534,7 @@
       (org-enforce-todo-dependencies . t)
       :config
       (leaf org-beautify-theme :ensure t :config (load-theme 'org-beautify t))
-      (leaf org-modern :ensure t :hook (org-mode-hook . org-modern-mode) (org-agenda-finalize-hook . org-modern-agenda))
-      )
+      (leaf org-modern :ensure t :hook (org-mode-hook . org-modern-mode) (org-agenda-finalize-hook . org-modern-agenda)))
     
     (leaf yatex
       :doc "jis=2, UTF-8=4"
@@ -551,12 +544,11 @@
       (YaTeX-nervous . nil)
       (latex-message-kanji-code . 4)
       (YaTeX-kanji-code . 4)
-      (YaTeX-coding-system . 4))
-    )
+      (YaTeX-coding-system . 4)))
 
   (leaf *web
     :config
-
+    
     (leaf skewer-mode :ensure t :doc "M-x run-skewer")
     
     (leaf web-mode
@@ -585,9 +577,7 @@
       (web-mode-enable-current-element-highlight . t)
       :config
       (with-eval-after-load 'web-mode (sp-local-pair '(web-mode) "<" ">" :actions :rem))
-      (put 'web-mode-markup-indent-offset 'safe-local-variable 'integerp))
-    
-    )
+      (put 'web-mode-markup-indent-offset 'safe-local-variable 'integerp)))
 
   (leaf elpy
     :tag "Python"
@@ -609,9 +599,8 @@
     :ensure t
     :custom (inferior-lisp-program . "/usr/bin/sbcl")
     :config
-    ;;(leaf sly-autoloads :require t)
-    ;; (load "~/.roswell/helper.el")
-    )
+    (load "~/.roswell/helper.el")
+    (leaf sly-autoloads :require t))
 
   )
 
@@ -672,8 +661,7 @@
                               ))
 			 (buffer-name))
 	 "Emacs")
-	(t "Common"))))
-    )
+	(t "Common")))))
 
   (leaf dashboard
     :url "https://qiita.com/minoruGH/items/b47430af6537ee69c6ef"
@@ -718,12 +706,9 @@
       (when (and dashboard-recover-layout-p
 		 (bound-and-true-p winner-mode))
 	(winner-undo)
-	(setq dashboard-recover-layout-p nil)))
-    )
+	(setq dashboard-recover-layout-p nil))))
   
-  (leaf display-line-numbers
-    ;;:global-minor-mode global-display-line-numbers-mode
-    :config (custom-set-variables '(display-line-numbers-width-start t)))
+  (leaf display-line-numbers :config (custom-set-variables '(display-line-numbers-width-start t)))
 
   (leaf display-time
     :global-minor-mode t
@@ -732,16 +717,13 @@
     (display-time-string-forms . '((format "%s:%s:%s" 24-hours minutes seconds)))
     (display-time-day-and-date . t))
 
-  (leaf emojify
-    :ensure t
-    :hook (after-init . global-emojify-mode))
+  (leaf emojify :ensure t :hook (after-init . global-emojify-mode))
   
   (leaf fira-code-mode
     :ensure t
     :doc "M-x fira-code-mode-install-fonts"
     :hook (prog-mode-hook)
-    :custom (fira-code-mode-disabled-ligatures '("<>" "[]" "#{" "#(" "#_" "#_(" "x"))
-    )
+    :custom (fira-code-mode-disabled-ligatures '("<>" "[]" "#{" "#(" "#_" "#_(" "x")))
   
   (leaf highlight-indent-guides
     :ensure t
@@ -777,19 +759,16 @@
 		      (cons page-break-lines-char page-break-lines-char)
 		      (face-attribute 'default :family)))
   
-  (leaf rainbow-delimiters
-    :ensure t
-    :hook (prog-mode-hook))
+  (leaf rainbow-delimiters :ensure t :hook (prog-mode-hook))
 
-  (leaf rainbow-mode
-    :ensure t
-    :hook (web-mode-hook))
+  (leaf rainbow-mode :ensure t :hook (web-mode-hook))
 
-  (leaf solaire-mode :ensure t :config (solaire-global-mode +1))
+  (leaf solaire-mode
+    :doc "使っていないバッファの色を少し暗くする"
+    :ensure t
+    :global-minor-mode solaire-global-mode)
   
-  (leaf yascroll
-    :ensure t
-    :global-minor-mode global-yascroll-bar-mode)
+  (leaf yascroll :ensure t :global-minor-mode global-yascroll-bar-mode)
 
   )
 
