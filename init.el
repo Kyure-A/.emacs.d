@@ -203,8 +203,6 @@
 
   (leaf goto-address :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
 
-  (leaf magit :ensure t)
-
   (leaf promise :doc "非同期処理" :ensure t)
   
   (leaf request :ensure t)
@@ -228,21 +226,6 @@
     (undohist-ignored-files . '("/tmp/" "COMMIT_EDITMSG" "/elpa"))
     :config
     (undohist-initialize))
-
-  (leaf vterm
-    :ensure t
-    :custom
-    (vterm-max-scrollback . 5000)
-    (vterm-buffer-name-string . "vterm: %s")
-    (vterm-keymap-exceptions
-     . '("<f1>" "<f2>" "<f10>" "C-<return>" "C-<prior>" "C-<next>" "C-c" "C-g" "C-l" "C-s" "C-u" "C-v" "C-w" "C-x" "C-y" "M-v" "M-w" "M-x" "M-y"))
-    (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
-    :config
-    (leaf vterm-toggle :ensure t)
-    :preface
-    (defun my/term-mode-p(&optional args)
-      (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode))
-    )
   
   (leaf zone :doc "screen-saver" :require t :config (zone-when-idle 1200))
   
@@ -318,8 +301,6 @@
 	(if (file-directory-p file)
 	    (dired-find-alternate-file)
 	  (dired-find-file)))))
-
-  (leaf editorconfig :ensure t :global-minor-mode t)
   
   (leaf flycheck
     :ensure t
@@ -413,8 +394,9 @@
 
 
 (leaf *programming
-  :doc "各言語のモード"
   :config
+
+  (leaf editorconfig :ensure t :global-minor-mode t)
 
   (leaf lsp-mode
     :url "https://blog.medalotte.net/archives/473"
@@ -431,6 +413,8 @@
     (create-lockfiles . nil)
     (lsp-prefer-capf . t)
     (lsp-headerline-breadcrumb-mode . t))
+
+  (leaf magit :ensure t)
 
   (leaf oj
     :doc "Competitive programming tools client for AtCoder, Codeforces"
@@ -458,6 +442,20 @@
       (if mark-active
 	  (quickrun :start start :end end)
 	(quickrun))))
+
+  (leaf vterm
+    :ensure t
+    :custom
+    (vterm-max-scrollback . 5000)
+    (vterm-buffer-name-string . "vterm: %s")
+    (vterm-keymap-exceptions
+     . '("<f1>" "<f2>" "<f10>" "C-<return>" "C-<prior>" "C-<next>" "C-c" "C-g" "C-l" "C-s" "C-u" "C-v" "C-w" "C-x" "C-y" "M-v" "M-w" "M-x" "M-y"))
+    (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
+    :config
+    (leaf vterm-toggle :ensure t)
+    :preface
+    (defun my/term-mode-p(&optional args)
+      (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode)))
 
   (leaf *C++
     :config
@@ -597,10 +595,10 @@
   (leaf sly
     :tag "Common Lisp"
     :ensure t
-    :custom (inferior-lisp-program . "/usr/bin/sbcl")
     :config
-    (load "~/.roswell/helper.el")
-    (leaf sly-autoloads :require t))
+    ;; (load "~/.roswell/helper.el")
+    ;; (leaf sly-autoloads :require t)
+    :custom (inferior-lisp-program . "/usr/bin/sbcl"))
 
   )
 
