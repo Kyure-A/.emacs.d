@@ -7,18 +7,10 @@
 
 ;; Coding rule:
 
-;; As much as possible, replace setq/setf as a list of dot pairs using ":custom".
-;; Keybindings to be set in the global-map are written in the "(leaf *global-set-key)" section.
-;; and keybindings to be set only in the active-map of each minor-mode are written in the "(leaf *minor-mode*)" section.
-;; The configuration of a package to make it more extensible should be written (on one line as much as possible) in "(leaf *package*) using :config".
-;; To use the package in .emacs.d/elisp, need to ":require t".
-;; Use ":global-minor-mode" to make it clear when enabling minor modes.
-;; I gave up writing init.el in English.
-;; これから日本語で書きます
-
-;; Todo:
-;; [] Add whitespace-mode
-;; [] centaur-tab will available in *help buffer
+;; なるべく setq/setf は custom でドット対のリストに書き換える
+;; global-map にセットするキーバインドは *global-set-key ブロックに書く
+;; 各マイナーモードの active-map にセットするキーバインドは各マイナーモードのブロックに書く
+;; 各マイナーモードを有効化するときは global-minor-mode 節に書く
 
 ;;; Code:
 
