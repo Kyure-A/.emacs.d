@@ -3,21 +3,25 @@
 ;; Author: Kyure_A <twitter.com/Kyure_A>
 ;; Maintainer: Kyure_A <twitter.com/Kyure_A>
 
-;;; Commentary: Nya
+;;; Commentary:
+
+;; Coding rule:
+
+;; eval-and-compile をなんとなくひとまとめにするために使っている
 
 ;;; Code:
 
 (eval-and-compile
   (defconst my-saved-file-name-handler-alist file-name-handler-alist)
-  (setq file-name-handler-alist nil)
-  (setq gc-cons-threshold most-positive-fixnum)
-  (add-hook 'emacs-startup-hook
-	    (lambda () (setq gc-cons-threshold 268435456))) ;; 256MB
+  (setq file-name-handler-alist nil) ;; Magic File Name を無効にする (起動が1秒は早くなる)
+  (setq gc-cons-threshold most-positive-fixnum) ;; 起動時の GC を止める
+  (add-hook 'emacs-startup-hook (lambda () (setq gc-cons-threshold 268435456))) ;; 256MB
   )
 
 
 
 (require 'package)
+(require 'cl-lib)
 
 (eval-and-compile
   (customize-set-variable 'package-archives
@@ -26,16 +30,13 @@
 			    ("gnu"   . "https://elpa.gnu.org/packages/")))
   (setq package-user-dir "~/.emacs.packages/elpa")
   (add-to-list 'load-path "./elpa")
+  (add-to-list 'load-path "./elisp")
   (package-initialize)
-  (setq package-enable-at-startup nil)
-  ;; install
+  (setq package-enable-at-startup nil) ;; (package-initialize) を抑制
+  ;; leaf が入っていないときに leaf を入れる
   (when (not (package-installed-p 'leaf))
     (package-refresh-contents)
     (package-install 'leaf)))
-
-(eval-and-compile (require 'cl-lib))
-
-(add-to-list 'load-path "./elisp")
 
 (leaf *leaf
   :preface
@@ -45,13 +46,25 @@
   (leaf blackout :ensure t)
   (leaf el-get :ensure t :require t :custom (el-get-package-directory . "~/.emacs.packages/el-get") :config (add-to-list 'load-path "./el-get"))
   (leaf package-utils :ensure t)
-  (leaf use-package :ensure t)
-  )
+  (leaf use-package :ensure t))
 
 
 
+(leaf startup
+  :hook
+  (window-setup-hook . delete-other-windows)
+  (after-change-major-mode-hook . my/remove-messages-buffer)
+  (after-change-major-mode-hook . my/remove-warnings-buffer)
+  (minibuffer-exit-hook . my/remove-completions-buffer)
+  :custom
+  (inhibit-startup-screen . t)
+  (initial-scratch-message . nil)
+  (inhibit-startup-buffer-menu . t)
+  (message-log-max . nil)
+  (ring-bell-function . 'ignore))
+
 (leaf *visual
-  :doc "なんとなく起動時の見た目と起動後の見た目が大きく異なるのが気になるので early-init.el で呼び出したい見た目関連のものをまとめた"
+  :doc "起動時の見た目と起動後の見た目が大きく異なるのが気になるので early-init.el で呼び出したい見た目関連のものをまとめた"
   :preface
   (leaf doom-modeline :ensure t :global-minor-mode t :custom (doom-modeline-icon . t))
   (scroll-bar-mode -1)
@@ -68,8 +81,7 @@
 		 '(right-fringe   . 1)
 		 '(fullscreen . maximized)
 		 '(tool-bar-lines . 0)
-		 '(menu-bar-lines . 0))))
-  )
+		 '(menu-bar-lines . 0)))))
 
 (leaf *theme
   :doc "テーマ類をまとめた"
@@ -82,4 +94,5 @@
 
 (provide 'early-init)
 
+;; End:
 ;;; early-init.el ends here

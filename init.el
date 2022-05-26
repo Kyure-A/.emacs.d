@@ -153,19 +153,6 @@
     (leaf recentf-ext :ensure t))
 
   (leaf save-place-mode :global-minor-mode t)
-
-  (leaf startup
-    :hook
-    (window-setup-hook . delete-other-windows)
-    (after-change-major-mode-hook . my/remove-messages-buffer)
-    (after-change-major-mode-hook . my/remove-warnings-buffer)
-    (minibuffer-exit-hook . my/remove-completions-buffer)
-    :custom
-    (inhibit-startup-screen . t)
-    (initial-scratch-message . nil)
-    (inhibit-startup-buffer-menu . t)
-    (message-log-max . nil)
-    (ring-bell-function . 'ignore))
   
   )
 
@@ -762,7 +749,7 @@
 
   )
 
-(setq file-name-handler-alist my-saved-file-name-handler-alist)
+(setq file-name-handler-alist my-saved-file-name-handler-alist) ;; Magic File Name を有効にする
 
 
 
