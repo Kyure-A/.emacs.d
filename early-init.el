@@ -39,12 +39,12 @@
     (package-install 'leaf)))
 
 (leaf *leaf
-  :preface
+  :config
   (leaf leaf-keywords :ensure t :init (leaf-keywords-init))
   (leaf leaf-convert :ensure t)
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))
   (leaf blackout :ensure t)
-  (leaf el-get :ensure t :require t :custom (el-get-package-directory . "~/.emacs.packages/el-get") :config (add-to-list 'load-path "./el-get"))
+  (leaf el-get :ensure t :require t :custom (el-get-package-directory . "~/.emacs.packages/el-get") :load-path "~/.emacs.d/el-get")
   (leaf package-utils :ensure t)
   (leaf use-package :ensure t))
 
@@ -53,19 +53,32 @@
 (leaf startup
   :hook
   (window-setup-hook . delete-other-windows)
-  (after-change-major-mode-hook . my/remove-messages-buffer)
-  (after-change-major-mode-hook . my/remove-warnings-buffer)
-  (minibuffer-exit-hook . my/remove-completions-buffer)
+  (after-change-major-mode-hook . init/remove-messages-buffer)
+  (after-change-major-mode-hook . init/remove-warnings-buffer)
+  (minibuffer-exit-hook . init/remove-completions-buffer)
   :custom
   (inhibit-startup-screen . t)
   (initial-scratch-message . nil)
   (inhibit-startup-buffer-menu . t)
   (message-log-max . nil)
-  (ring-bell-function . 'ignore))
+  (ring-bell-function . 'ignore)
+  :preface
+  (defun init/remove-scratch-buffer ()
+    (if (get-buffer "*scratch*")
+	(kill-buffer "*scratch*")))
+  (defun init/remove-completions-buffer ()
+    (if (get-buffer "*Completions*")
+        (kill-buffer "*Completions*")))
+  (defun init/remove-messages-buffer ()
+    (if (get-buffer "*Messages*")
+        (kill-buffer "*Messages*")))
+  (defun init/remove-warnings-buffer ()
+    (if (get-buffer "*Warnings*")
+        (kill-buffer "*Warnings*"))))
 
 (leaf *visual
   :doc "起動時の見た目と起動後の見た目が大きく異なるのが気になるので early-init.el で呼び出したい見た目関連のものをまとめた"
-  :preface
+  :config
   (leaf doom-modeline :ensure t :global-minor-mode t :custom (doom-modeline-icon . t))
   (scroll-bar-mode -1)
   (setq frame-inhibit-implied-resize t)
@@ -85,7 +98,7 @@
 
 (leaf *theme
   :doc "テーマ類をまとめた"
-  :preface
+  :config
   (leaf monokai-theme :ensure t :config (load-theme 'monokai t))
   ;;(leaf atom-one-dark-theme :ensure t :config (load-theme 'atom-one-dark t))
   ;;(leaf vscode-dark-plus-theme :ensure t :config (load-theme 'vscode-dark-plus t))

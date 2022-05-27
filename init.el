@@ -17,13 +17,13 @@
 (leaf *global-set-key
   :bind
   ;; C-c
-  ("C-c e b" . my/reload-init-el)
+  ("C-c e b" . init/reload-init-el)
   ("C-c e m" . menu-bar-mode)
   ("C-c l c" . leaf-convert-region-replace)
   ("C-c l t" . leaf-tree-mode)
   ("C-c m" . macrostep-mode)
   ("C-c o" . org-capture)
-  ("C-c s" . my/sly-start)
+  ("C-c s" . init/sly-start)
   ("C-c t" . centaur-tabs-counsel-switch-group)
   ;; C-x
   ("C-x g" . magit-status)
@@ -51,9 +51,10 @@
   ("C-/" . other-window)
   ;; M-<any>
   ("M-x" . counsel-M-x)
+  ("M-%" . vr/query-replace)
   ;; Modifier key
   ("<f2>" . vterm-toggle)
-  ("<f5>" . my/quickrun-sc)
+  ("<f5>" . init/quickrun-sc)
   ("RET" . smart-newline)
   ("C-<return>" . newline)
   ("C-<space>" . nil)
@@ -64,38 +65,25 @@
 (leaf *common-defun
   :preface
   ;; 適当
-  (defun my/reload-init-el ()
+  (defun init/reload-init-el ()
     "C-c e b"
     (interactive)
     (eval-buffer)
-    (my/remove-warnings-buffer)
-    (my/remove-messages-buffer))
-  (defun my/sly-start ()
+    (init/remove-warnings-buffer)
+    (init/remove-messages-buffer))
+  (defun init/sly-start ()
     "sly の挙動を slime に似せる"
     (interactive)
     (split-window-right)
     (sly))
-  (defun my/tide-start ()
+  (defun init/tide-start ()
     (interactive)
     (tide-setup)
     (flycheck-mode t)
     (setq flycheck-check-syntax-automatically '(save mode-enabled))
     (eldoc-mode t)
     (tide-hl-identifier-mode t)
-    (company-mode t))
-  ;; buffer
-  (defun my/remove-scratch-buffer ()
-    (if (get-buffer "*scratch*")
-	(kill-buffer "*scratch*")))
-  (defun my/remove-completions-buffer ()
-    (if (get-buffer "*Completions*")
-        (kill-buffer "*Completions*")))
-  (defun my/remove-messages-buffer ()
-    (if (get-buffer "*Messages*")
-        (kill-buffer "*Messages*")))
-  (defun my/remove-warnings-buffer ()
-    (if (get-buffer "*Warnings*")
-        (kill-buffer "*Warnings*"))))
+    (company-mode t)))
 
 
 
@@ -416,7 +404,7 @@
     :config
     (push '("*quickrun*") popwin:special-display-config)
     :preface
-    (defun my/quickrun-sc (start end)
+    (defun init/quickrun-sc (start end)
       (interactive "r")
       (if mark-active
 	  (quickrun :start start :end end)
@@ -429,11 +417,11 @@
     (vterm-buffer-name-string . "vterm: %s")
     (vterm-keymap-exceptions
      . '("<f1>" "<f2>" "<f10>" "C-<return>" "C-<prior>" "C-<next>" "C-c" "C-g" "C-l" "C-s" "C-u" "C-v" "C-w" "C-x" "C-y" "M-v" "M-w" "M-x" "M-y"))
-    (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
+    (vterm-toggle--vterm-buffer-p-function . 'init/term-mode-p)
     :config
     (leaf vterm-toggle :ensure t)
     :preface
-    (defun my/term-mode-p(&optional args)
+    (defun init/term-mode-p(&optional args)
       (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode)))
 
   (leaf *C++
@@ -484,7 +472,7 @@
     (leaf tide
       :ensure t
       :hook
-      (typescript-mode-hook . my/tide-start)
+      (typescript-mode-hook . init/tide-start)
       (before-save-hook . tide-format-before-save)))
 
   (leaf *mark-up
@@ -613,13 +601,13 @@
     (centaur-tabs-show-navigation-buttons . t)
     (centaur-tabs-adjust-buffer-order . t)
     (centaur-tabs-cycle-scope . 'groups)
-    (centaur-tabs-buffer-groups-function . 'my/centaur-tabs-buffer-groups)
+    (centaur-tabs-buffer-groups-function . 'init/centaur-tabs-buffer-groups)
     :config
     (centaur-tabs-headline-match)
     (centaur-tabs-enable-buffer-reordering)
     (centaur-tabs-change-fonts "arial" 90)
     :preface
-    (defun my/centaur-tabs-buffer-groups ()
+    (defun init/centaur-tabs-buffer-groups ()
       (list
        (cond
 	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode)
