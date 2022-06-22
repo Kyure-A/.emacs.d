@@ -171,8 +171,6 @@
   (leaf goto-address :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
 
   (leaf promise :doc "非同期処理" :ensure t)
-  
-  (leaf request :ensure t)
 
   (leaf sublimity
     :doc "smooth-scrolling"
@@ -184,6 +182,15 @@
       :custom (sublimity-attractive-centering-width . 200))
     (leaf sublimity-scroll :require t
       :custom (sublimity-scroll-weight . 5) (sublimity-scroll-drift-length . 10)))
+
+  (leaf tetris
+    :bind
+    (:tetris-mode-map
+     ("w" . tetris-rotate-prev)
+     ("a" . tetris-move-left)
+     ("s" . tetris-move-down)
+     ("d" . tetris-move-right)
+     ("RET" . tetris-move-bottom)))
 
   (leaf undohist
     :ensure t
@@ -324,12 +331,12 @@
     :url "https://ainame.hateblo.jp/entry/2013/12/08/162032"
     :el-get ainame/smart-newline.el
     :require t)
-
+  
   (leaf smartparens
-    :doc "strict で C-k したときにカッコを削除しないようにできる"
+    :doc "smartparens-global-strict-mode は C-k したときの括弧の保持含め括弧のバランスを保持しようとしてきてうざったいので消した"
     :ensure t
     :require t
-    :global-minor-mode smartparens-global-mode smartparens-global-strict-mode
+    :global-minor-mode smartparens-global-mode show-smartparens-global-mode
     :config
     (leaf smartparens-config :require t :after smartparens :hook (web-mode-hook . (lambda () (sp-pair "<#" "#>")))))
   
@@ -513,6 +520,8 @@
 
   (leaf *web
     :config
+    
+    (leaf request :ensure t)
     
     (leaf skewer-mode :ensure t :doc "M-x run-skewer")
     
@@ -736,8 +745,6 @@
   (leaf yascroll :ensure t :global-minor-mode global-yascroll-bar-mode)
 
   )
-
-(setq file-name-handler-alist my-saved-file-name-handler-alist) ;; Magic File Name を有効にする
 
 
 

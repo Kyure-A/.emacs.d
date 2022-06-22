@@ -12,11 +12,13 @@
 ;;; Code:
 
 (eval-and-compile
-  (defconst my-saved-file-name-handler-alist file-name-handler-alist)
+  (defconst init/saved-file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil) ;; Magic File Name を無効にする (起動が1秒は早くなる)
   (setq gc-cons-threshold most-positive-fixnum) ;; 起動時の GC を止める
-  (add-hook 'emacs-startup-hook (lambda () (setq gc-cons-threshold 268435456))) ;; 256MB
-  )
+  (add-hook 'emacs-startup-hook
+	    (lambda ()
+	      (setq gc-cons-threshold 268435456) ;; 256MB
+	      (setq file-name-handler-alist init/saved-file-name-handler-alist))))
 
 
 

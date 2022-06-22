@@ -43,4 +43,5 @@ const int64 _MOD = 998244353;
 signed main ()
 {
   $0
+  return 0;
 }
