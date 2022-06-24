@@ -12,6 +12,10 @@
 ;; 各マイナーモードの active-map にセットするキーバインドは各マイナーモードのブロックに書く
 ;; 各マイナーモードを有効化するときは global-minor-mode 節に書く
 
+;; todo:
+;; [] magit-status を centaur-tabs で使えるようにする
+;; [] copilot.el が動かないのでなんとかする
+
 ;;; Code:
 
 (leaf *global-set-key
@@ -71,19 +75,11 @@
     (eval-buffer)
     (init/remove-warnings-buffer)
     (init/remove-messages-buffer))
-  (defun init/sly-start ()
-    "sly の挙動を slime に似せる"
+  (defun init/toggle-centaur-tabs-local-mode()
     (interactive)
-    (split-window-right)
-    (sly))
-  (defun init/tide-start ()
-    (interactive)
-    (tide-setup)
-    (flycheck-mode t)
-    (setq flycheck-check-syntax-automatically '(save mode-enabled))
-    (eldoc-mode t)
-    (tide-hl-identifier-mode t)
-    (company-mode t)))
+    (call-interactively 'centaur-tabs-local-mode)
+    (call-interactively 'centaur-tabs-local-mode))
+  )
 
 
 
@@ -149,6 +145,8 @@
 (leaf *inbox
   :doc "分類が面倒なパッケージを入れる"
   :config
+
+  (leaf dash :doc "リスト管理 ライブラリ" :ensure t)
   
   (leaf fast-scroll
     :ensure t
@@ -171,6 +169,8 @@
   (leaf goto-address :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
 
   (leaf promise :doc "非同期処理" :ensure t)
+
+  (leaf s :doc "文字列ライブラリ" :ensure t)
 
   (leaf sublimity
     :doc "smooth-scrolling"
@@ -220,7 +220,7 @@
     :ensure t
     :global-minor-mode global-company-mode
     :bind
-    (:company-active-map ( "<tab>" . company-complete-common-or-cycle))
+					;(:company-active-map ( "<tab>" . company-complete-common-or-cycle))
     :custom
     (company-idle-delay . 0)
     (company-minimum-prefix-length . 2)
@@ -370,6 +370,27 @@
 (leaf *programming
   :config
 
+  (leaf copilot
+    :el-get "zerolfx/copilot.el"
+    :hook (prog-mode . copilot-mode)
+    :custom (copilot-node-executable . "~/.asdf/installs/nodejs/17.9.1/bin/node")
+    :config
+					; complete by copilot first, then company-mode
+    (defun my-tab ()
+      (interactive)
+      (or (copilot-accept-completion)
+	  (company-indent-or-complete-common nil)))
+
+					; modify company-mode behaviors
+    (with-eval-after-load 'company
+      ;; disable inline previews
+      (delq 'company-preview-if-just-one-frontend company-frontends)
+
+      (define-key company-mode-map (kbd "<tab>") 'my-tab)
+      (define-key company-mode-map (kbd "TAB") 'my-tab)
+      (define-key company-active-map (kbd "<tab>") 'my-tab)
+      (define-key company-active-map (kbd "TAB") 'my-tab)))
+
   (leaf editorconfig :ensure t :global-minor-mode t)
 
   (leaf lsp-mode
@@ -388,7 +409,9 @@
     (lsp-prefer-capf . t)
     (lsp-headerline-breadcrumb-mode . t))
 
-  (leaf magit :ensure t)
+  (leaf magit
+    :ensure t
+    :hook (magit-status-mode . init/toggle-centaur-tabs-local-mode))
 
   (leaf oj
     :doc "Competitive programming tools client for AtCoder, Codeforces"
@@ -480,7 +503,16 @@
       :ensure t
       :hook
       (typescript-mode-hook . init/tide-start)
-      (before-save-hook . tide-format-before-save)))
+      (before-save-hook . tide-format-before-save)
+      :config
+      (defun init/tide-start ()
+	(interactive)
+	(tide-setup)
+	(flycheck-mode t)
+	(setq flycheck-check-syntax-automatically '(save mode-enabled))
+	(eldoc-mode t)
+	(tide-hl-identifier-mode t)
+	(company-mode t))))
 
   (leaf *mark-up
     :config
@@ -571,10 +603,15 @@
   (leaf sly
     :tag "Common Lisp"
     :ensure t
+    :custom (inferior-lisp-program . "/usr/bin/sbcl")
     :config
     ;; (load "~/.roswell/helper.el")
     ;; (leaf sly-autoloads :require t)
-    :custom (inferior-lisp-program . "/usr/bin/sbcl"))
+    (defun init/sly-start ()
+      "sly の挙動を slime に似せる"
+      (interactive)
+      (split-window-right)
+      (sly)))
 
   )
 
@@ -598,8 +635,6 @@
     :ensure t
     :require t
     :global-minor-mode t
-    :hook
-    (sly-mrepl-mode . centaur-tabs-local-mode)
     :custom
     (centaur-tabs-height . 30)
     (centaur-tabs-set-icons . t)
@@ -619,7 +654,7 @@
     (defun init/centaur-tabs-buffer-groups ()
       (list
        (cond
-	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode)
+	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode 'magit-mode)
 	 "Terminal")
 	((string-match-p (rx (or
 			      "\*dashboard\*"
@@ -635,6 +670,12 @@
                               ))
 			 (buffer-name))
 	 "Emacs")
+	((string-match-p (rx (or
+			      "\*copilot events\*"
+			      "\*copilot stderr\*"
+                              ))
+			 (buffer-name))
+	 "Copilot")
 	(t "Common")))))
 
   (leaf dashboard
