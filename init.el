@@ -85,6 +85,7 @@
     "Kill ARG lines backward."
     (interactive "p")
     (kill-line (- 1 arg)))
+  
   )
 
 
@@ -95,7 +96,7 @@
 
   (leaf auto-save
     :custom
-    (auto-save-file-name-transforms . '((".*" "~/tmp/" t)))
+    (auto-save-file-name-transforms . '((".*" "~/.tmp/" t)))
     (auto-save-list-file-prefix . nil)
     (auto-save-default . nil))
 
@@ -244,14 +245,17 @@
     (counsel-find-file-ignore-regexp . (regexp-opt '("./" "../")))
     (read-file-name-function . #'disable-counsel-find-file)
     :preface
-    (defun disable-counsel-find-file (&rest args)
-      "Disable `counsel-find-file' and use the original `find-file' with ARGS."
-      "https://qiita.com/takaxp/items/2fde2c119e419713342b#counsel-find-file-%E3%82%92%E4%BD%BF%E3%82%8F%E3%81%AA%E3%81%84"
-      (let ((completing-read-function #'completing-read-default)
-	    (completion-in-region-function #'completion--in-region))
-	(apply #'read-file-name-default args))))
+    (leaf disable-counsel-find-file
+      :url "https://qiita.com/takaxp/items/2fde2c119e419713342b#counsel-find-file-%E3%82%92%E4%BD%BF%E3%82%8F%E3%81%AA%E3%81%84"
+      :preface
+      (defun disable-counsel-find-file (&rest args)
+	"Disable `counsel-find-file' and use the original `find-file' with ARGS."
+	(let ((completing-read-function #'completing-read-default)
+	      (completion-in-region-function #'completion--in-region))
+	  (apply #'read-file-name-default args))))
+    )
 
-  (leaf delete-selection :global-minor-mode delete-selection-mode)
+  (leaf delete-selection :doc "delete から overwrite に改名したほうがいい" :global-minor-mode delete-selection-mode)
 
   (leaf dired
     :bind
@@ -259,19 +263,47 @@
      ("RET" . dired-open-in-accordance-with-situation)
      ("<right>" . dired-open-in-accordance-with-situation)
      ("<left>" . dired-up-directory)
-     ("a" . dired-find-file))
+     ("a" . dired-find-file)
+     ("e" . wdired-change-to-wdired-mode))
     :config
     (leaf dired-toggle :ensure t)
     (leaf dired-k :hook (dired-initial-position-hook . dired-k) :ensure t)
+    (leaf wdired :require t)
     (put 'dired-find-alternate-file 'disabled nil)
     :preface
-    (defun dired-open-in-accordance-with-situation ()
-      "https://nishikawasasaki.hatenablog.com/entry/20120222/1329932699"
-      (interactive)
-      (let ((file (dired-get-filename)))
-	(if (file-directory-p file)
-	    (dired-find-alternate-file)
-	  (dired-find-file)))))
+
+    (leaf dired-open-in-accordance-with-situation
+      :url "https://nishikawasasaki.hatenablog.com/entry/20120222/1329932699"
+      :preface
+      (defun dired-open-in-accordance-with-situation ()
+	(interactive)
+	(let ((file (dired-get-filename)))
+	  (if (file-directory-p file)
+	      (dired-find-alternate-file)
+	    (dired-find-file)))))
+
+    (leaf dired-zip-files
+      :url "https://stackoverflow.com/questions/1431351/how-do-i-uncompress-unzip-within-emacs"
+      :preface
+      (defun dired-zip-files (zip-file)
+	"Create an archive containing the marked files."
+	(interactive "sEnter name of zip file: ")
+	;; create the zip file
+	(let ((zip-file (if (string-match ".zip$" zip-file) zip-file (concat zip-file ".zip"))))
+	  (shell-command
+	   (concat "zip "
+		   zip-file
+		   " "
+		   (init/concat-string-list
+		    (mapcar
+		     '(lambda (filename)
+			(file-name-nondirectory filename))
+		     (dired-get-marked-files))))))
+	(revert-buffer))
+      
+      (defun init/concat-string-list (list)
+	"Return a string which is a concatenation of all elements of the list separated by spaces"
+	(mapconcat '(lambda (obj) (format "%s" obj)) list " "))))
   
   (leaf flycheck
     :ensure t
@@ -341,13 +373,14 @@
     :ensure t
     :require t
     :custom
-    (undohist-directory . "~/.emacs.d/undo-history")
-    (undohist-ignored-files . '("/tmp/" "COMMIT_EDITMSG" "/elpa"))
+    (undohist-directory . "~/.emacs.d/.tmp/undo-history")
+    (undohist-ignored-files . '("/.tmp/" "COMMIT_EDITMSG" "/elpa"))
     :config
     (undohist-initialize))
 
   (leaf undo-tree
     :ensure t
+    :custom (undo-tree-history-directory-alist . '(("." . "~/.emacs.d/.tmp")))
     :global-minor-mode t)
   
   (leaf visual-regexp
