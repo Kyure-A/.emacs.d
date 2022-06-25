@@ -656,10 +656,10 @@
        (cond
 	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode 'magit-mode)
 	 "Terminal")
+	((derived-mode-p 'emacs-lisp-mode)
+	 "Emacs")
 	((string-match-p (rx (or
 			      "\*dashboard\*"
-                              "\*Helm"
-                              "\*helm"
                               "\*tramp"
                               "\*Completions\*"
                               "\*sdcv\*"
@@ -676,6 +676,12 @@
                               ))
 			 (buffer-name))
 	 "Copilot")
+	((string-match-p (rx (or
+			      "\*clang-error\*"
+			      "\*clang-output\*"
+                              ))
+			 (buffer-name))
+	 "Clang")
 	(t "Common")))))
 
   (leaf dashboard
