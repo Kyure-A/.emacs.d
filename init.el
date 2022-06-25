@@ -21,13 +21,13 @@
 (leaf *global-set-key
   :bind
   ;; C-c
-  ("C-c e b" . init/reload-init-el)
+  ("C-c e b" . my/reload-init-el)
   ("C-c e m" . menu-bar-mode)
   ("C-c l c" . leaf-convert-region-replace)
   ("C-c l t" . leaf-tree-mode)
   ("C-c m" . macrostep-mode)
   ("C-c o" . org-capture)
-  ("C-c s" . init/sly-start)
+  ("C-c s" . my/sly-start)
   ("C-c t" . centaur-tabs-counsel-switch-group)
   ;; C-x
   ("C-x g" . magit-status)
@@ -60,7 +60,7 @@
   ("M-%" . vr/query-replace)
   ;; Modifier key
   ("<f2>" . vterm-toggle)
-  ("<f5>" . init/quickrun-sc)
+  ("<f5>" . my/quickrun-sc)
   ("RET" . smart-newline)
   ("C-<return>" . newline)
   ("C-<space>" . nil)
@@ -71,13 +71,13 @@
 (leaf *common-defun
   :preface
   ;; 適当
-  (defun init/reload-init-el ()
+  (defun my/reload-init-el ()
     "C-c e b"
     (interactive)
     (eval-buffer)
-    (init/remove-warnings-buffer)
-    (init/remove-messages-buffer))
-  (defun init/toggle-centaur-tabs-local-mode()
+    (my/remove-warnings-buffer)
+    (my/remove-messages-buffer))
+  (defun my/toggle-centaur-tabs-local-mode()
     (interactive)
     (call-interactively 'centaur-tabs-local-mode)
     (call-interactively 'centaur-tabs-local-mode))
@@ -217,8 +217,6 @@
     :tag "company"
     :ensure t
     :global-minor-mode global-company-mode
-    :bind
-					;(:company-active-map ( "<tab>" . company-complete-common-or-cycle))
     :custom
     (company-idle-delay . 0)
     (company-minimum-prefix-length . 2)
@@ -294,14 +292,14 @@
 	   (concat "zip "
 		   zip-file
 		   " "
-		   (init/concat-string-list
+		   (my/concat-string-list
 		    (mapcar
 		     '(lambda (filename)
 			(file-name-nondirectory filename))
 		     (dired-get-marked-files))))))
 	(revert-buffer))
       
-      (defun init/concat-string-list (list)
+      (defun my/concat-string-list (list)
 	"Return a string which is a concatenation of all elements of the list separated by spaces"
 	(mapconcat '(lambda (obj) (format "%s" obj)) list " "))))
   
@@ -418,21 +416,16 @@
     :hook (prog-mode . copilot-mode)
     :custom (copilot-node-executable . "~/.asdf/installs/nodejs/17.9.1/bin/node")
     :config
-					; complete by copilot first, then company-mode
-    (defun my-tab ()
-      (interactive)
-      (or (copilot-accept-completion)
-	  (company-indent-or-complete-common nil)))
-
-					; modify company-mode behaviors
-    (with-eval-after-load 'company
-      ;; disable inline previews
-      (delq 'company-preview-if-just-one-frontend company-frontends)
-
-      (define-key company-mode-map (kbd "<tab>") 'my-tab)
-      (define-key company-mode-map (kbd "TAB") 'my-tab)
-      (define-key company-active-map (kbd "<tab>") 'my-tab)
-      (define-key company-active-map (kbd "TAB") 'my-tab)))
+    (delq 'company-preview-if-just-one-frontend company-frontends)
+    (leaf company-copilot-tab
+      :url "https://github.com/zerolfx/copilot.el/blob/9b13478720581580a045ac76ad68be075466a963/readme.md?plain=1#L152"
+      :after company
+      :bind (:company-active-map ( "<tab>" . company-copilot-tab))
+      :preface
+      (defun company-copilot-tab ()
+	(interactive)
+	(or (copilot-accept-completion)
+	    (company-indent-or-complete-common nil)))))
 
   (leaf editorconfig :ensure t :global-minor-mode t)
 
@@ -454,7 +447,7 @@
 
   (leaf magit
     :ensure t
-    :hook (magit-status-mode . init/toggle-centaur-tabs-local-mode))
+    :hook (magit-status-mode . my/toggle-centaur-tabs-local-mode))
 
   (leaf oj
     :doc "Competitive programming tools client for AtCoder, Codeforces"
@@ -477,7 +470,7 @@
     :config
     (push '("*quickrun*") popwin:special-display-config)
     :preface
-    (defun init/quickrun-sc (start end)
+    (defun my/quickrun-sc (start end)
       (interactive "r")
       (if mark-active
 	  (quickrun :start start :end end)
@@ -490,11 +483,11 @@
     (vterm-buffer-name-string . "vterm: %s")
     (vterm-keymap-exceptions
      . '("<f1>" "<f2>" "<f10>" "C-<return>" "C-<prior>" "C-<next>" "C-c" "C-g" "C-l" "C-s" "C-u" "C-v" "C-w" "C-x" "C-y" "M-v" "M-w" "M-x" "M-y"))
-    (vterm-toggle--vterm-buffer-p-function . 'init/term-mode-p)
+    (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
     :config
     (leaf vterm-toggle :ensure t)
     :preface
-    (defun init/term-mode-p(&optional args)
+    (defun my/term-mode-p(&optional args)
       (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode)))
 
   (leaf *C++
@@ -545,10 +538,10 @@
     (leaf tide
       :ensure t
       :hook
-      (typescript-mode-hook . init/tide-start)
+      (typescript-mode-hook . my/tide-start)
       (before-save-hook . tide-format-before-save)
       :config
-      (defun init/tide-start ()
+      (defun my/tide-start ()
 	(interactive)
 	(tide-setup)
 	(flycheck-mode t)
@@ -650,7 +643,7 @@
     :config
     ;; (load "~/.roswell/helper.el")
     ;; (leaf sly-autoloads :require t)
-    (defun init/sly-start ()
+    (defun my/sly-start ()
       "sly の挙動を slime に似せる"
       (interactive)
       (split-window-right)
@@ -688,13 +681,13 @@
     (centaur-tabs-show-navigation-buttons . t)
     (centaur-tabs-adjust-buffer-order . t)
     (centaur-tabs-cycle-scope . 'groups)
-    (centaur-tabs-buffer-groups-function . 'init/centaur-tabs-buffer-groups)
+    (centaur-tabs-buffer-groups-function . 'my/centaur-tabs-buffer-groups)
     :config
     (centaur-tabs-headline-match)
     (centaur-tabs-enable-buffer-reordering)
     (centaur-tabs-change-fonts "arial" 90)
     :preface
-    (defun init/centaur-tabs-buffer-groups ()
+    (defun my/centaur-tabs-buffer-groups ()
       (list
        (cond
 	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode 'magit-mode)
