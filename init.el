@@ -13,6 +13,7 @@
 ;; 各マイナーモードを有効化するときは global-minor-mode 節に書く
 
 ;; todo:
+;; 初めて init.el を読み込んだときのみ実行してほしいコマンドをいい感じに初回のみ実行するようにできないか
 ;; [] magit-status を centaur-tabs で使えるようにする
 ;; [x] copilot.el が動かないのでなんとかする
 
@@ -114,7 +115,7 @@
 
   (leaf files
     :custom
-    (backup-directory-alist . '((".*" . "~/.backup")))
+    (backup-directory-alist . '((".*" . "~/.tmp")))
     (create-lockfiles . nil)
     :config
     (let ((default-directory (locate-user-emacs-file "./elisp")))
@@ -139,7 +140,8 @@
     :custom
     (recentf-max-saved-items . 150)
     (recentf-auto-cleanup . 'never)
-    (recentf-exclude '("/dotfiles" "/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.cask/"))
+    (recentf-exclude
+     '("/dotfiles" "/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.tmp/"))
     :config
     (leaf recentf-ext :ensure t))
 
@@ -721,7 +723,6 @@
 	(t "Common")))))
 
   (leaf dashboard
-    :url "https://qiita.com/minoruGH/items/b47430af6537ee69c6ef"
     :ensure t
     :init (dashboard-setup-startup-hook)
     :bind
@@ -740,30 +741,41 @@
     :config
     (leaf projectile :ensure t)
     :preface
-    (defun dashboard-goto-recent-files ()
-      "Go to recent files."
-      (interactive)
-      (funcall (local-key-binding "r")))
-    (defun open-dashboard ()
-      "Open the *dashboard* buffer and jump to the first widget."
-      (interactive)
-      (delete-other-windows)
-      ;; Refresh dashboard buffer
-      (if (get-buffer dashboard-buffer-name)
-	  (kill-buffer dashboard-buffer-name))
-      (dashboard-insert-startupify-lists)
-      (switch-to-buffer dashboard-buffer-name)
-      ;; Jump to the first section
-      (goto-char (point-min))
-      (dashboard-goto-recent-files))
-    (defun quit-dashboard ()
-      "Quit dashboard window."
-      (interactive)
-      (quit-window t)
-      (when (and dashboard-recover-layout-p
-		 (bound-and-true-p winner-mode))
-	(winner-undo)
-	(setq dashboard-recover-layout-p nil))))
+    (leaf dashboard-goto-recent-files
+      :url "https://qiita.com/minoruGH/items/b47430af6537ee69c6ef"
+      :preface
+      (defun dashboard-goto-recent-files ()
+	"Go to recent files."
+	(interactive)
+	(funcall (local-key-binding "r"))))
+
+    (leaf open-dashboard
+      :url "https://qiita.com/minoruGH/items/b47430af6537ee69c6ef"
+      :preface
+      (defun open-dashboard ()
+	"Open the *dashboard* buffer and jump to the first widget."
+	(interactive)
+	(delete-other-windows)
+	;; Refresh dashboard buffer
+	(if (get-buffer dashboard-buffer-name)
+	    (kill-buffer dashboard-buffer-name))
+	(dashboard-insert-startupify-lists)
+	(switch-to-buffer dashboard-buffer-name)
+	;; Jump to the first section
+	(goto-char (point-min))
+	(dashboard-goto-recent-files)))
+
+    (leaf quit-dashboard
+      :url "https://qiita.com/minoruGH/items/b47430af6537ee69c6ef"
+      :preface
+      (defun quit-dashboard ()
+	"Quit dashboard window."
+	(interactive)
+	(quit-window t)
+	(when (and dashboard-recover-layout-p
+		   (bound-and-true-p winner-mode))
+	  (winner-undo)
+	  (setq dashboard-recover-layout-p nil)))))
   
   (leaf display-line-numbers :config (custom-set-variables '(display-line-numbers-width-start t)))
 
