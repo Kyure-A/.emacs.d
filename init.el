@@ -14,7 +14,7 @@
 
 ;; todo:
 ;; [] magit-status を centaur-tabs で使えるようにする
-;; [] copilot.el が動かないのでなんとかする
+;; [x] copilot.el が動かないのでなんとかする
 
 ;;; Code:
 
@@ -35,6 +35,7 @@
   ("C-x i" . nil)
   ("C-x i i" . ivy-yasnippet)
   ("C-x i n" . ivy-yasnippet-new-snippet)
+  ("C-x u" . undo-tree-visualize)
   ;; C-l
   ("C-l" . nil)
   ("C-l C-l" . lsp)
@@ -49,11 +50,12 @@
   ;; C-<any>
   ("C-a" . mwim-beginning-of-code-or-line)
   ("C-e" . mwim-end-of-code-or-line)
-  ("C-u" . undo)
-  ("C-r" . redo)
+  ("C-u" . undo-tree-undo)
+  ("C-r" . undo-tree-redo)
   ("C-s" . swiper)
   ("C-/" . other-window)
   ;; M-<any>
+  ("M-k" . backward-kill-line)
   ("M-x" . counsel-M-x)
   ("M-%" . vr/query-replace)
   ;; Modifier key
@@ -79,6 +81,10 @@
     (interactive)
     (call-interactively 'centaur-tabs-local-mode)
     (call-interactively 'centaur-tabs-local-mode))
+  (defun backward-kill-line (arg)
+    "Kill ARG lines backward."
+    (interactive "p")
+    (kill-line (- 1 arg)))
   )
 
 
@@ -191,15 +197,6 @@
      ("s" . tetris-move-down)
      ("d" . tetris-move-right)
      ("RET" . tetris-move-bottom)))
-
-  (leaf undohist
-    :ensure t
-    :require t
-    :custom
-    (undohist-directory . "~/.emacs.d/undo-history")
-    (undohist-ignored-files . '("/tmp/" "COMMIT_EDITMSG" "/elpa"))
-    :config
-    (undohist-initialize))
   
   (leaf zone :doc "screen-saver" :require t :config (zone-when-idle 1200))
   
@@ -339,6 +336,19 @@
     :global-minor-mode smartparens-global-mode show-smartparens-global-mode
     :config
     (leaf smartparens-config :require t :after smartparens :hook (web-mode-hook . (lambda () (sp-pair "<#" "#>")))))
+
+  (leaf undohist
+    :ensure t
+    :require t
+    :custom
+    (undohist-directory . "~/.emacs.d/undo-history")
+    (undohist-ignored-files . '("/tmp/" "COMMIT_EDITMSG" "/elpa"))
+    :config
+    (undohist-initialize))
+
+  (leaf undo-tree
+    :ensure t
+    :global-minor-mode t)
   
   (leaf visual-regexp
     :doc "ビジュアライズされた置換"
