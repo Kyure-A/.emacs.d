@@ -123,6 +123,10 @@
       (normal-top-level-add-subdirs-to-load-path)))
 
   (leaf frame :config (set-frame-parameter nil 'unsplittable t))
+
+  (leaf lisp-interaction
+    :bind
+    (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
   
   (leaf mule-cmds
     :config
@@ -160,8 +164,8 @@
   (leaf fast-scroll
     :ensure t
     :require t
-    :global-minor-mode t
     :hook
+    (after-init-hook . fast-scroll-mode)
     (fast-scroll-start-hook . (lambda () (flycheck-mode -1)))
     (fast-scroll-end-hook . (lambda () (flycheck-mode 1)))
     :custom
@@ -172,7 +176,7 @@
   
   (leaf gcmh
     :ensure t
-    :global-minor-mode t
+    :hook (after-init-hook . gcmh-mode)
     :custom (gcmh-verbose . t))
 
   (leaf goto-address :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
@@ -380,8 +384,10 @@
 
   (leaf undo-tree
     :ensure t
-    :custom (undo-tree-history-directory-alist . '(("." . "~/.emacs.d/.tmp")))
-    :global-minor-mode t)
+    :global-minor-mode t
+    :custom
+    (undo-tree-auto-save-history . t)
+    (undo-tree-history-directory-alist . '(("." . "~/.emacs.d/.tmp"))))
   
   (leaf visual-regexp
     :doc "ビジュアライズされた置換"
@@ -660,7 +666,7 @@
 
   (leaf all-the-icons
     :ensure t
-    :config ;(all-the-icons-install-fonts t)
+    :config
     (leaf all-the-icons-dired :ensure t :hook (dired-mode . all-the-icons-dired-mode))
     (leaf all-the-icons-ivy :ensure t))
 
@@ -736,7 +742,7 @@
     (dashboard-center-content . t)
     (dashboard-set-heading-icons . t)
     (dashboard-set-file-icons . t)
-    (dashboard-startup-banner . "~/.emacs.d/banner.png") ;; https://nippori30.herokuapp.com/newgame/post で生成した
+    (dashboard-startup-banner . "~/.emacs.d/banner.png")
     (dashboard-banner-logo-title . "Kyure_A's Emacs")
     :config
     (leaf projectile :ensure t)
@@ -790,7 +796,6 @@
   
   (leaf fira-code-mode
     :ensure t
-    :doc "M-x fira-code-mode-install-fonts"
     :hook (prog-mode-hook)
     :custom (fira-code-mode-disabled-ligatures '("<>" "[]" "#{" "#(" "#_" "#_(" "x")))
   
@@ -842,6 +847,12 @@
   )
 
 
+
+(unless (file-exists-p "~/.emacs.d/.tmp/first-startup-over")
+  (make-empty-file "~/.emacs.d/.tmp/first-startup-over")
+  (fira-code-mode-install-fonts t)
+  (all-the-icons-install-fonts t)
+  )
 
 (provide 'init)
 
