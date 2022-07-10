@@ -223,6 +223,7 @@
     :tag "company"
     :ensure t
     :global-minor-mode global-company-mode
+    :bind (:company-active-map ( "<tab>" . company-complete-common-or-cycle))
     :custom
     (company-idle-delay . 0)
     (company-minimum-prefix-length . 2)
@@ -355,8 +356,7 @@
   (leaf redo+ :require t)
 
   (leaf smart-hungry-delete
-    :url "https://github.com/hrehfeld/emacs-smart-hungry-delete/pull/7/commits/f49bb37edfa19bd605b425f8f0fe285a1d00987e"
-    :el-get black7375/emacs-smart-hungry-delete
+    :ensure t
     :require t
     :config (smart-hungry-delete-add-default-hooks))
 
@@ -384,7 +384,7 @@
 
   (leaf undo-tree
     :ensure t
-    :global-minor-mode t
+    :global-minor-mode global-undo-tree-mode
     :custom
     (undo-tree-auto-save-history . t)
     (undo-tree-history-directory-alist . '(("." . "~/.emacs.d/.tmp"))))
@@ -428,7 +428,7 @@
     (leaf company-copilot-tab
       :url "https://github.com/zerolfx/copilot.el/blob/9b13478720581580a045ac76ad68be075466a963/readme.md?plain=1#L152"
       :after company
-      :bind (:company-active-map ( "<tab>" . company-copilot-tab))
+      :bind ;; (:company-active-map ( "<tab>" . company-copilot-tab))
       :preface
       (defun company-copilot-tab ()
 	(interactive)
@@ -796,7 +796,7 @@
   
   (leaf fira-code-mode
     :ensure t
-    :hook (prog-mode-hook)
+    :hook ;; (prog-mode-hook . fira-code-mode) ;; wsl2 だとバグる
     :custom (fira-code-mode-disabled-ligatures '("<>" "[]" "#{" "#(" "#_" "#_(" "x")))
   
   (leaf highlight-indent-guides
