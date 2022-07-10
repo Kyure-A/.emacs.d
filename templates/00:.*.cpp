@@ -31,6 +31,7 @@ using namespace std;
 #define rep3(i,m,n) for (int i = (m); (i) < (int)(n); ++ (i))
 #define per(i,n) for (int i = (int)(n) - 1; (i) >= 0; -- (i))
 #define per3(i,m,n) for (int i = (int)(n) - 1; (i) >= (int)(m); -- (i))
+#define (container).push_front(int) insert((container).begin(), (int))
 
 /* Type */
 // #define int long long
