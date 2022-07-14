@@ -1,28 +1,8 @@
 /* include */
-// #include<bits/stdc++.h>
-#include <algorithm>
-#include <bitset>
-#include <cctype>
-#include <cmath>
-#include <cstdio>
-#include <cstdint>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <deque>
-#include <functional>
-#include <iomanip>
-#include <iostream>
-#include <list>
-#include <map>
-#include <numeric>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <string>
-#include <utility>
-#include <vector>
+#include<bits/stdc++.h>
 using namespace std;
+// #include<atcoder/all>
+// using namespace atcoder
 
 /* Macro */
 #define all(container) (container).begin(), (container).end()
@@ -31,18 +11,16 @@ using namespace std;
 #define rep3(i,m,n) for (int i = (m); (i) < (int)(n); ++ (i))
 #define per(i,n) for (int i = (int)(n) - 1; (i) >= 0; -- (i))
 #define per3(i,m,n) for (int i = (int)(n) - 1; (i) >= (int)(m); -- (i))
-#define (container).push_front(int) insert((container).begin(), (int))
 
 /* Type */
 // #define int long long
 #define cauto const auto&
-typedef long long int64;
 typedef long double ld;
 
 /* Const */
 const double PI = acos(-1.0);
-const int64 MOD = 1000000007;
-const int64 _MOD = 998244353;
+const long long  MOD = 1000000007;
+const long long _MOD = 998244353;
 
 
 signed main ()

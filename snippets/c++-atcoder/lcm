@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: lcm
+# key: lcm
+# --
+
+long long lcm(long long a, long long b)
+  {
+    long long d = gcd(a, b);
+    return a / d * b;
+  }
