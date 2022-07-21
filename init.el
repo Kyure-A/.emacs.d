@@ -547,6 +547,8 @@
     :tag "convenience" "emacs>=24.3"
     :url "https://github.com/emacsorphanage/popwin"
     :emacs>= 24.3
+    :ensure t
+    :require t
     :custom
     (display-buffer-function . 'popwin:display-buffer)
     (popwin:special-display-config  . t)
