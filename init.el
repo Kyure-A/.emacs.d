@@ -18,6 +18,11 @@
 
 ;;; Code:
 
+(when (< emacs-major-version 27)
+  (require 'early-init))
+
+;; ---------------------------------------------------------------------------------------------- ;;
+
 (leaf *global-set-key
   :bind
   ;; C-c
@@ -68,6 +73,8 @@
   ("<backspace>" . smart-hungry-delete-backward-char)
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward))
+
+;; ---------------------------------------------------------------------------------------------- ;;
 
 (leaf *common-defun
   :preface
