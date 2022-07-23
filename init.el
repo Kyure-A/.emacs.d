@@ -72,7 +72,9 @@
   ("C-<space>" . nil)
   ("<backspace>" . smart-hungry-delete-backward-char)
   ("C-<prior>" . centaur-tabs-backward)
-  ("C-<next>" . centaur-tabs-forward))
+  ("C-<next>" . centaur-tabs-forward)
+  :config
+  (defalias 'yes-or-no-p 'y-or-n-p))
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
