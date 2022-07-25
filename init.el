@@ -19,7 +19,7 @@
 ;;; Code:
 
 (when (< emacs-major-version 27)
-  (require 'early-init))
+  (load "~/.emacs.d/early-init.el"))
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
