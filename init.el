@@ -266,13 +266,10 @@
     :config
     (leaf emacs-webkit
       :config
-      (straight-use-package '(webkit :type git :host github :repo "akirakyle/emacs-webkit"
-				     :branch "main"
-				     :files (:defaults "*.js" "*.css" "*.so")
-				     :pre-build ("make"))))
+      ;(straight-use-package '(webkit :type git :host github :repo "akirakyle/emacs-webkit" :branch "main" :files (:defaults "*.js" "*.css" "*.so") :pre-build ("make"))))
     (leaf webkit :require t :bind ("s-b" . webkit))
     (leaf webkit-ace :require t)
-    (leaf webkit-dark :require t))
+    (leaf webkit-dark :require t)))
   
   (leaf zone :doc "screen-saver" :tag "builtin" :require t :config (zone-when-idle 1200))
   
@@ -604,7 +601,7 @@
     :ensure t :require t
     :require t
     :custom
-    (undohist-directory . "~/.emacs.d/.tmp/undo-history")
+    (undohist-directory . "~/.emacs.d/.tmp/")
     (undohist-ignored-files . '("/.tmp/" "COMMIT_EDITMSG" "/elpa"))
     :config
     (undohist-initialize))
@@ -1048,6 +1045,17 @@
     :added "2022-08-28"
     :require t
     :mode "\\.hdl$")
+
+  (leaf yaml-mode
+    :doc "Major mode for editing YAML files"
+    :req "emacs-24.1"
+    :tag "yaml" "data" "emacs>=24.1"
+    :url "https://github.com/yoshiki/yaml-mode"
+    :emacs>= 24.1
+    :ensure t
+    :mode
+    "\\.yml$"
+    "\\.yaml$")
 
   )
 
