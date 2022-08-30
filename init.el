@@ -27,6 +27,7 @@
   :bind
   ;; C-c
   ("C-c e b" . my/reload-init-el)
+  ("C-c e e" . my/open-scratch)
   ("C-c e m" . menu-bar-mode)
   ("C-c l c" . leaf-convert-region-replace)
   ("C-c l t" . leaf-tree-mode)
@@ -95,7 +96,6 @@
     "Kill ARG lines backward."
     (interactive "p")
     (kill-line (- 1 arg)))
-  
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -132,10 +132,6 @@
       (normal-top-level-add-subdirs-to-load-path)))
 
   (leaf frame :config (set-frame-parameter nil 'unsplittable t))
-
-  (leaf lisp-interaction
-    :bind
-    (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
   
   (leaf mule-cmds
     :config
@@ -265,6 +261,18 @@
      ("s" . tetris-move-down)
      ("d" . tetris-move-right)
      ("RET" . tetris-move-bottom)))
+
+  (leaf *webkit
+    :config
+    (leaf emacs-webkit
+      :config
+      (straight-use-package '(webkit :type git :host github :repo "akirakyle/emacs-webkit"
+				     :branch "main"
+				     :files (:defaults "*.js" "*.css" "*.so")
+				     :pre-build ("make"))))
+    (leaf webkit :require t :bind ("s-b" . webkit))
+    (leaf webkit-ace :require t)
+    (leaf webkit-dark :require t))
   
   (leaf zone :doc "screen-saver" :tag "builtin" :require t :config (zone-when-idle 1200))
   
@@ -896,6 +904,13 @@
 	(tide-hl-identifier-mode t)
 	(company-mode t))))
 
+  (leaf *lisp
+    :config
+    
+    (leaf lisp-interaction
+      :bind
+      (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp))))
+
   (leaf *mark-up
     :config
 
@@ -1026,6 +1041,13 @@
       (interactive)
       (split-window-right)
       (sly)))
+
+  (leaf vhdl-mode
+    :doc "major mode for editing VHDL code"
+    :tag "builtin" "nand2tetris"
+    :added "2022-08-28"
+    :require t
+    :mode "\\.hdl$")
 
   )
 
