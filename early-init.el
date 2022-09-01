@@ -48,20 +48,6 @@
   (leaf blackout :ensure t)
   (leaf el-get :ensure t :require t :custom (el-get-package-directory . "~/.emacs.packages/el-get") :load-path "~/.emacs.d/el-get")
   (leaf package-utils :ensure t)
-  (leaf straight
-    :config
-    (defvar bootstrap-version)
-    (let ((bootstrap-file
-	   (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-	  (bootstrap-version 6))
-      (unless (file-exists-p bootstrap-file)
-	(with-current-buffer
-            (url-retrieve-synchronously
-             "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-             'silent 'inhibit-cookies)
-	  (goto-char (point-max))
-	  (eval-print-last-sexp)))
-      (load bootstrap-file nil 'nomessage)))
   (leaf use-package :ensure t))
 
 
