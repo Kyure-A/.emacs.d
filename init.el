@@ -796,16 +796,24 @@
     :emacs>= 25.1
     :ensure t :require t
     :custom
-    (vterm-max-scrollback . 5000)
-    (vterm-buffer-name-string . "vterm: %s")
+    (vterm-buffer-name-string . t)
+    (vterm-clear-scrollback-when-clearing . t)
     (vterm-keymap-exceptions
      . '("<f1>" "<f2>" "<f10>" "C-<return>" "C-<prior>" "C-<next>" "C-c" "C-g" "C-l" "C-s" "C-u" "C-v" "C-w" "C-x" "C-y" "M-v" "M-w" "M-x" "M-y"))
+    (vterm-max-scrollback . 5000)
     (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
     :config
     (leaf vterm-toggle :ensure t :require t)
     :preface
     (defun my/term-mode-p(&optional args)
-      (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode)))
+      (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode))
+    (push (list "find-file-below"
+		(lambda (path)
+		  (if-let* ((buf (find-file-noselect path))
+                            (window (display-buffer-below-selected buf nil)))
+                      (select-window window)
+                    (message "Failed to open file: %s" path))))
+	  vterm-eval-cmds))
 
   (leaf *C++
     :config
