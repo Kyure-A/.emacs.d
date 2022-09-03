@@ -603,7 +603,7 @@
     :ensure t :require t
     :require t
     :custom
-    (undohist-directory . "~/.emacs.d/.tmp/undo-history")
+    (undohist-directory . "~/.emacs.d/.tmp/")
     (undohist-ignored-files . '("/.tmp/" "COMMIT_EDITMSG" "/elpa"))
     :config
     (undohist-initialize))
@@ -1055,6 +1055,17 @@
     :added "2022-08-28"
     :require t
     :mode "\\.hdl$")
+
+  (leaf yaml-mode
+    :doc "Major mode for editing YAML files"
+    :req "emacs-24.1"
+    :tag "yaml" "data" "emacs>=24.1"
+    :url "https://github.com/yoshiki/yaml-mode"
+    :emacs>= 24.1
+    :ensure t
+    :mode
+    "\\.yml$"
+    "\\.yaml$")
 
   )
 
