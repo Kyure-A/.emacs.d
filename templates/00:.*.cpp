@@ -1,8 +1,7 @@
 /* include */
 #include<bits/stdc++.h>
 using namespace std;
-// #include<atcoder/all>
-// using namespace atcoder
+// #include<atcoder/all> using namespace atcoder;
 
 /* Macro */
 #define all(container) (container).begin(), (container).end()
@@ -15,6 +14,7 @@ using namespace std;
 /* Type */
 // #define int long long
 #define cauto const auto&
+typedef long long i64;
 typedef long double ld;
 
 /* Const */
