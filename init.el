@@ -218,8 +218,18 @@
     :hook (after-init-hook . gcmh-mode)
     :custom (gcmh-verbose . t))
 
+  (leaf good-scroll
+    :doc "Good pixel line scrolling"
+    :req "emacs-27.1"
+    :tag "emacs>=27.1"
+    :url "https://github.com/io12/good-scroll.el"
+    :added "2022-09-09"
+    :emacs>= 27.1
+    :ensure t
+    :require t)
+  
   (leaf goto-address :tag "builtin" :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
-
+  
   (leaf promise
     :doc "Promises/A+"
     :req "emacs-25.1"
@@ -238,6 +248,13 @@
     :doc "The long lost Emacs string manipulation library."
     :tag "strings"
     :ensure t :require t)
+
+  (leaf smooth-scrolling
+    :doc "Make emacs scroll smoothly"
+    :tag "convenience"
+    :url "http://github.com/aspiers/smooth-scrolling/"
+    :added "2022-09-09"
+    :ensure t)
 
   (leaf sublimity
     :doc "smooth-scrolling, minimap and distraction-free mode"
@@ -727,6 +744,14 @@
     :after nadvice
     :global-minor-mode t)
 
+  (leaf exec-path-from-shell
+    :doc "Get environment variables such as $PATH from the shell"
+    :req "emacs-24.1" "cl-lib-0.6"
+    :tag "environment" "unix" "emacs>=24.1"
+    :url "https://github.com/purcell/exec-path-from-shell"
+    :emacs>= 24.1
+    :ensure t)
+
   (leaf lsp-mode
     :doc "LSP mode"
     :req "emacs-26.1" "dash-2.18.0" "f-0.20.0" "ht-2.3" "spinner-1.7.3" "markdown-mode-2.3" "lv-0"
@@ -878,6 +903,14 @@
     
     )
 
+  (leaf *javascript
+    :config
+    
+    (leaf nodejs-repl
+      :doc "Run Node.js REPL"
+      :ensure t
+      :require t))
+
   (leaf *typescript
     :config
     
@@ -965,7 +998,21 @@
 	:url "https://github.com/minad/org-modern"
 	:emacs>= 27.1
 	:ensure t :require t
-	:hook (org-mode-hook . org-modern-mode) (org-agenda-finalize-hook . org-modern-agenda)))
+	:hook
+	;;(org-mode-hook . org-modern-mode)
+	;;(org-agenda-finalize-hook . org-modern-agenda)
+	)
+
+      (leaf org-superstar
+	:doc "Prettify headings and plain lists in Org mode"
+	:req "org-9.1.9" "emacs-26.1"
+	:tag "outlines" "faces" "emacs>=26.1"
+	:url "https://github.com/integral-dw/org-superstar-mode"
+	:added "2022-09-13"
+	:emacs>= 26.1
+	:ensure t
+	:after org
+	:hook (org-mode-hook . org-superstar-mode)))
     
     (leaf yatex
       :doc "Yet Another tex-mode for emacs //野鳥//"
