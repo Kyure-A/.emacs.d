@@ -2,7 +2,4 @@
 # name: per
 # key: per
 # --
-per(i,${1:n})
-    {
-      $0
-    }
+per(i,${1:n}) $0

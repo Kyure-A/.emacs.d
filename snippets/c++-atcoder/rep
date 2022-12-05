@@ -2,7 +2,4 @@
 # name: rep
 # key: rep
 # --
-rep(i,${1:n})
-    {
-      $0
-    }
+rep(i,${1:n}) $0
