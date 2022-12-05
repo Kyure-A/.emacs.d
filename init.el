@@ -750,7 +750,14 @@
     :tag "environment" "unix" "emacs>=24.1"
     :url "https://github.com/purcell/exec-path-from-shell"
     :emacs>= 24.1
-    :ensure t)
+    :ensure t
+    :defun (exec-path-from-shell-initialize)
+    :custom
+    (exec-path-from-shell-check-startup-files . nil)
+    (exec-path-from-shell-arguments . nil)
+    (exec-path-from-shell-variables . '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
+					"GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))
+    :config (exec-path-from-shell-initialize))
 
   (leaf lsp-mode
     :doc "LSP mode"
