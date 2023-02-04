@@ -836,6 +836,7 @@
     (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
     :config
     (leaf vterm-toggle :ensure t :require t)
+    (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
     :preface
     (defun my/term-mode-p(&optional args)
       (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode))
