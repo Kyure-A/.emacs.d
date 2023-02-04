@@ -1,0 +1,26 @@
+# -*- mode: snippet -*-
+# name: bfs_template
+# key: bfs
+# --
+
+// 頂点番号が 1 から始まっていた場合は 正規化 (デクリメントして 0-indexed に) することを忘れない！
+
+vector<int> distance(n, -1); // -1 の場合は未訪問
+queue<int> que; // first in first out
+
+distance[0] = 0; que.push(0); // 初期化
+
+// Start
+while (!que.empty())
+{
+    auto v = que.front(); que.pop(); // v に実質的に queue の先頭を移動
+
+    // v に隣接している頂点をすべて調べる
+    for (auto near_v : ${1:Graph[v]})
+    {
+        if (distance[near_v] != -1) continue; 
+        
+        distance[near_v] = distance[v] + 1;
+        que.push(near_v); // 次に訪れるために追加する
+    }
+}
