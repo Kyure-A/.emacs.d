@@ -47,7 +47,7 @@ class UnionFind
     return true;
   }
 
-  bool samep (long long x, long long y)
+  bool same (long long x, long long y)
   {
     return root(x) == root(y);
   }
