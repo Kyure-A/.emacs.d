@@ -14,13 +14,15 @@ using namespace std;
 #define per(i,n) for (int i = (int)(n) - 1; (i) >= 0; -- (i))
 #define per3(i,m,n) for (int i = (int)(n) - 1; (i) >= (int)(m); -- (i))
 // #define int long long
-/* ------------------------------ function ------------------------------ */
+/* ------------------------------ function ------------------------------*/
+template<typename T> inline bool chmax(T &a, T b) { return ((a < b) ? (a = b, true) : (false)); }
+template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, true) : (false)); }
 template<typename T> T lcm(T a, T b) {return a / gcd(a, b) * b;}
 /* ------------------------------  const  ------------------------------ */
 const double PI = acos(-1.0);
 const long long  MOD = 1000000007;
 const long long _MOD = 998244353;
-/* ------------------------------  code   ------------------------------ */
+/* ------------------------------   code  ------------------------------ */
 
 signed main ()
 {
