@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: next_permutation
+# key: permutation
+# --
+do
+  {
+    $0
+  }
+while (next_permutation(${1:vec}.begin(), ${2:vec}.end()));

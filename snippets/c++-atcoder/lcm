@@ -3,8 +3,8 @@
 # key: lcm
 # --
 
-long long lcm(long long a, long long b)
-  {
-    long long d = gcd(a, b);
-    return a / d * b;
-  }
+template<typename T>
+T lcm(T a, T b)
+{
+  return a / gcd(a, b) * b;
+}
