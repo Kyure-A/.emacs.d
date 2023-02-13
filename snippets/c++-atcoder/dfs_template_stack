@@ -1,19 +1,19 @@
 # -*- mode: snippet -*-
-# name: bfs_template
-# key: bfs
+# name: dfs_template_stack
+# key: dfs
 # --
 
 // 1-indexed
 
 vector<int> distance(n + 1, -1); // -1 の場合は未訪問
-queue<int> que; // first in first out
+stack<int> stk; // last in first out
 
-distance[1] = 0; que.emplace(1); // 初期化
+distance[1] = 0; stk.emplace(1); // 初期化
 
 // Start
-while (!que.empty())
+while (!stk.empty())
 {
-    auto v = que.front(); que.pop(); // v に実質的に queue の先頭を移動
+    auto v = stk.top(); stk.pop(); // v に実質的に stack の一番上を移動
 
     // v に隣接している頂点をすべて調べる
     for (auto near_v : ${1:graph[v]})
@@ -21,6 +21,6 @@ while (!que.empty())
         if (distance[near_v] != -1) continue; 
         
         distance[near_v] = distance[v] + 1;
-        que.emplace(near_v); // 次に訪れるために追加する
+        stk.emplace(near_v); // 次に訪れるために追加する
     }
 }
