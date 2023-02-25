@@ -30,7 +30,7 @@
 			  '(("melpa" . "https://melpa.org/packages/")
 			    ("org"   . "https://orgmode.org/elpa/")
 			    ("gnu"   . "https://elpa.gnu.org/packages/")))
-  (setq package-user-dir "~/.emacs.packages/elpa")
+  (setq package-user-dir "~/.emacs_packages/elpa")
   (add-to-list 'load-path "./elpa")
   (add-to-list 'load-path "./elisp")
   (package-initialize)
@@ -46,7 +46,12 @@
   (leaf leaf-convert :ensure t)
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))
   (leaf blackout :ensure t)
-  (leaf el-get :ensure t :require t :custom (el-get-package-directory . "~/.emacs.packages/el-get") :load-path "~/.emacs.d/el-get")
+  (leaf el-get :ensure t
+    :require t
+    :custom
+    (el-get-package-directory . "~/.emacs_packages/el-get")
+    (el-get-dir . "~/.emacs_packages/el-get")
+    :load-path "~/.emacs.d/el-get")
   (leaf package-utils :ensure t)
   (leaf use-package :ensure t))
 
