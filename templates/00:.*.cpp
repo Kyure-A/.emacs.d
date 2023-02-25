@@ -1,6 +1,6 @@
 /* ------------------------------ include ------------------------------ */
 #include <bits/stdc++.h>
-// #include <atcoder/all>
+// #include <atcoder/modint>
 // #include <boost/multiprecision/cpp_int.hpp>
 /* ------------------------------  using  ------------------------------ */
 using namespace std;
@@ -19,9 +19,11 @@ template<typename T> inline bool chmax(T &a, T b) { return ((a < b) ? (a = b, tr
 template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, true) : (false)); }
 template<typename T> T lcm(T a, T b) {return a / gcd(a, b) * b;}
 /* ------------------------------  const  ------------------------------ */
-const double PI = acos(-1.0);
-const long long  MOD = 1000000007;
-const long long _MOD = 998244353;
+constexpr double PI = acos(-1.0);
+constexpr int dx[4] = {1, 0, -1, 0};
+constexpr int dy[4] = {0, 1, 0, -1};
+constexpr long long  MOD = 1000000007;
+constexpr long long _MOD = 998244353;
 /* ------------------------------   code  ------------------------------ */
 
 signed main ()

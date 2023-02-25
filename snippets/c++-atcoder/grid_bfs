@@ -1,0 +1,40 @@
+# -*- mode: snippet -*-
+# name: grid_bfs
+# key: grid_bfs
+# reference: https://ei1333.github.io/luzhiled/snippets/graph/grid-bfs.html
+# --
+
+// O(HW)
+vector<vector<int>> grid_bfs(vector<string> &str, char start, string wall)
+{
+  const int dx[4] = {1, 0, -1, 0}, dy[4] = {0, 1, 0, -1};
+  const int height = str.size(), width = str[0].size();
+  vector<vector<int>> distance(height, vector<int>(width, -1)); // -1 の場合は未訪問
+  queue<pair<int, int>> que; // first in first out
+  for (int i = 0; i < height; ++i)
+    {
+      for (int j = 0; j < (int)str[i].size(); ++j)
+	{
+	  if (str[i][j] == start)
+	    {
+	      que.emplace(i, j);
+	      distance[i][j] = 0;
+	    }
+	}
+    }
+
+  while (!que.empty())
+    {
+      auto grid = que.front(); que.pop();
+      for (int i = 0; i < 4; ++i)
+	{
+	  int nx = grid.second + dx[i], ny = grid.first + dy[i];
+	  if (nx < 0 or ny < 0 or nx >= width or ny >= height) continue;
+	  if (distance[ny][nx] != -1) continue;
+	  if (wall.find(str[ny][nx]) != string::npos) continue;
+	  distance[ny][nx] = distance[grid.first][grid.second] + 1;
+	  que.emplace(ny, nx);
+	}
+    }
+  return distance;
+}

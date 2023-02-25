@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: next_permutation
+# name: do_next_permutation
 # key: permutation
 # --
 do

@@ -1018,6 +1018,20 @@
       (YaTeX-coding-system . 4))
     )
 
+  (leaf *shellscript
+    :config
+    (leaf shell-script-mode :require t)
+    
+    (leaf flymake-shellcheck
+      :doc "A bash/sh Flymake backend powered by ShellCheck"
+      :req "emacs-26"
+      :tag "emacs>=26"
+      :url "https://github.com/federicotdn/flymake-shellcheck"
+      :added "2023-02-13"
+      :emacs>= 26
+      :ensure t)
+    )
+  
   (leaf *web
     :config
 
