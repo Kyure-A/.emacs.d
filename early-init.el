@@ -20,7 +20,7 @@
 	      (setq gc-cons-threshold 268435456) ;; 256MB
 	      (setq file-name-handler-alist init/saved-file-name-handler-alist))))
 
-
+;; ---------------------------------------------------------------------------------------------- ;;
 
 (require 'package)
 (require 'cl-lib)
@@ -46,7 +46,8 @@
   (leaf leaf-convert :ensure t)
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))
   (leaf blackout :ensure t)
-  (leaf el-get :ensure t
+  (leaf el-get
+    :ensure t
     :require t
     :custom
     (el-get-package-directory . "~/.emacs_packages/el-get")
@@ -55,7 +56,7 @@
   (leaf package-utils :ensure t)
   (leaf use-package :ensure t))
 
-
+;; ---------------------------------------------------------------------------------------------- ;;
 
 (leaf startup
   :hook
@@ -111,7 +112,8 @@
   ;;(leaf vscode-dark-plus-theme :ensure t :config (load-theme 'vscode-dark-plus t))
   )
 
-
+;; ---------------------------------------------------------------------------------------------- ;;
+
 (provide 'early-init)
 
 ;; End:

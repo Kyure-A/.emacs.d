@@ -12,10 +12,6 @@
 ;; 各マイナーモードの active-map にセットするキーバインドは各マイナーモードのブロックに書く
 ;; 各マイナーモードを有効化するときは global-minor-mode 節に書く
 
-;; todo:
-;; [] magit-status を centaur-tabs で使えるようにする
-;; [] emacs>= を追加する（C++ までした）
-
 ;;; Code:
 
 (when (< emacs-major-version 27)
@@ -74,6 +70,14 @@
   ("<backspace>" . smart-hungry-delete-backward-char)
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward)
+  ("<mouse-8>" . centaur-tabs-backward)
+  ("<double-mouse-8>" . centaur-tabs-backward)
+  ("<triple-mouse-8>" . centaur-tabs-backward)
+  ("<drag-mouse-8>" . centaur-tabs-backward)
+  ("<mouse-9>" . centaur-tabs-forward)
+  ("<double-mouse-9>" . centaur-tabs-forward)
+  ("<triple-mouse-9>" . centaur-tabs-forward)
+  ("<drag-mouse-9>" . centaur-tabs-forward)
   :config
   (defalias 'yes-or-no-p 'y-or-n-p))
 
@@ -95,8 +99,7 @@
   (defun backward-kill-line (arg)
     "Kill ARG lines backward."
     (interactive "p")
-    (kill-line (- 1 arg)))
-  )
+    (kill-line (- 1 arg))))
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
@@ -279,7 +282,7 @@
      ("d" . tetris-move-right)
      ("RET" . tetris-move-bottom)))
   
-  (leaf zone :doc "screen-saver" :tag "builtin" :require t :config (zone-when-idle 1200))
+  ;; (leaf zone :doc "screen-saver" :tag "builtin" :require t :config (zone-when-idle 1200))
   
   )
 
@@ -644,15 +647,7 @@
     :req "cl-lib-0.2"
     :tag "feedback" "visual" "replace" "regexp"
     :url "https://github.com/benma/visual-regexp.el/"
-    :ensure t :require t
-    :config
-    (leaf visual-regexp-steroids
-      :doc "Extends visual-regexp to support other regexp engines"
-      :req "visual-regexp-1.1"
-      :tag "feedback" "visual" "python" "replace" "regexp" "foreign" "external"
-      :url "https://github.com/benma/visual-regexp-steroids.el/"
-      :ensure t :require t
-      :after visual-regexp))
+    :ensure t :require t)
 
   (leaf which-function-mode :tag "builtin" :custom (which-function-mode . t))
 
@@ -917,7 +912,15 @@
     (leaf nodejs-repl
       :doc "Run Node.js REPL"
       :ensure t
-      :require t))
+      :require t)
+    
+    (leaf vue-mode
+      :doc "Major mode for vue component based on mmm-mode"
+      :req "mmm-mode-0.5.5" "vue-html-mode-0.2" "ssass-mode-0.2" "edit-indirect-0.1.4"
+      :tag "languages"
+      :added "2023-02-26"
+      :ensure t
+      :after mmm-mode vue-html-mode ssass-mode edit-indirect))
 
   (leaf *typescript
     :config
@@ -1186,6 +1189,7 @@
     :global-minor-mode t
     :custom
     (centaur-tabs-height . 30)
+    (centaur-tabs-hide-tabs-hooks . nil)
     (centaur-tabs-set-icons . t)
     (centaur-tabs-set-bar . 'under)
     (x-underline-at-descent-line . t)
@@ -1241,10 +1245,6 @@
     :emacs>= 26.1
     :ensure t :require t
     :init (dashboard-setup-startup-hook)
-    :bind
-    ("<f10>" . open-dashboard)
-    (:dashboard-mode-map
-     ("<f10>" . quit-dashboard))
     :custom
     (dashboard-items . '((bookmarks . 10)
 			 (recents  . 5)))
@@ -1263,46 +1263,7 @@
       :url "https://github.com/bbatsov/projectile"
       :emacs>= 25.1
       :ensure t :require t
-      :global-minor-mode t)
-    
-    (leaf dashboard-goto-recent-files
-      :url "https://qiita.com/minoruGH/items/b47430af6537ee69c6ef"
-      :after dashboard
-      :preface
-      (defun dashboard-goto-recent-files ()
-	"Go to recent files."
-	(interactive)
-	(funcall (local-key-binding "r"))))
-
-    (leaf open-dashboard
-      :url "https://qiita.com/minoruGH/items/b47430af6537ee69c6ef"
-      :after dashboard
-      :preface
-      (defun open-dashboard ()
-	"Open the *dashboard* buffer and jump to the first widget."
-	(interactive)
-	(delete-other-windows)
-	;; Refresh dashboard buffer
-	(if (get-buffer dashboard-buffer-name)
-	    (kill-buffer dashboard-buffer-name))
-	(dashboard-insert-startupify-lists)
-	(switch-to-buffer dashboard-buffer-name)
-	;; Jump to the first section
-	(goto-char (point-min))
-	(dashboard-goto-recent-files)))
-
-    (leaf quit-dashboard
-      :url "https://qiita.com/minoruGH/items/b47430af6537ee69c6ef"
-      :after dashboard
-      :preface
-      (defun quit-dashboard ()
-	"Quit dashboard window."
-	(interactive)
-	(quit-window t)
-	(when (and dashboard-recover-layout-p
-		   (bound-and-true-p winner-mode))
-	  (winner-undo)
-	  (setq dashboard-recover-layout-p nil)))))
+      :global-minor-mode t))
   
   (leaf display-line-numbers
     :doc "interface for display-line-numbers"
