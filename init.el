@@ -973,6 +973,8 @@
       :emacs>= 27.1
       :ensure t :require t
       :mode "\\.csv\\'")
+
+    (leaf html+-mode :require nil)
     
     (leaf markdown-mode
       :doc "Major mode for Markdown-formatted text"
@@ -1068,7 +1070,7 @@
       "\\.djhtml\\'"
       "\\.ejs\\'"
       "\\.erb\\'"
-      "\\.html?$\\'"
+      "\\.html\\'"
       "\\.js\\'"
       "\\.jsx\\'"
       "\\.mustache\\'"
