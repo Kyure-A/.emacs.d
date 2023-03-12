@@ -17,7 +17,7 @@
   (setq gc-cons-threshold most-positive-fixnum) ;; 起動時の GC を止める
   (add-hook 'emacs-startup-hook
 	    (lambda ()
-	      (setq gc-cons-threshold 268435456) ;; 256MB
+	      (setq gc-cons-threshold 536870912) ;; 512MB
 	      (setq file-name-handler-alist init/saved-file-name-handler-alist))))
 
 ;; ---------------------------------------------------------------------------------------------- ;;

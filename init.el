@@ -945,6 +945,8 @@
       :hook
       (typescript-mode-hook . my/tide-start)
       (before-save-hook . tide-format-before-save)
+      :custom
+      (tide-node-executable . "~/.asdf/installs/nodejs/19.0.0/bin/node")
       :config
       (defun my/tide-start ()
 	(interactive)
