@@ -815,6 +815,16 @@
 	  (quickrun :start start :end end)
 	(quickrun))))
 
+  (leaf rust-mode
+    :doc "A major-mode for editing Rust source code"
+    :req "emacs-25.1"
+    :tag "languages" "emacs>=25.1"
+    :url "https://github.com/rust-lang/rust-mode"
+    :added "2023-04-19"
+    :emacs>= 25.1
+    :ensure t
+    :hook (rust-mode . lsp))
+  
   (leaf vterm
     :doc "Fully-featured terminal emulator"
     :req "emacs-25.1"
