@@ -374,7 +374,7 @@
       :ensure t :require t
       :require t
       :after company pos-tip
-      :custom (company-quickhelp-delay . 0.1)
+      :custom (company-quickhelp-delay . 0.1))
 
       (leaf company-shell
 	:doc "Company mode backend for shell functions"
