@@ -374,7 +374,18 @@
       :ensure t :require t
       :require t
       :after company pos-tip
-      :custom (company-quickhelp-delay . 0.1))
+      :custom (company-quickhelp-delay . 0.1)
+
+      (leaf company-shell
+	:doc "Company mode backend for shell functions"
+	:req "emacs-24.4" "company-0.8.12" "dash-2.12.0" "cl-lib-0.5"
+	:tag "auto-completion" "shell" "company" "emacs>=24.4"
+	:url "https://github.com/Alexander-Miller/company-shell"
+	:added "2023-04-20"
+	:emacs>= 24.4
+	:ensure t
+	:after company
+	:config (add-to-list 'company-backends 'company-shell))
     )
 
   (leaf delete-selection :doc "delete から overwrite に改名したほうがいい" :tag "builtin" :global-minor-mode delete-selection-mode)
@@ -1037,7 +1048,19 @@
 
   (leaf *shellscript
     :config
-    (leaf shell-script-mode :require t)
+    (leaf shell-script-mode :require nil)
+
+    (leaf modern-sh
+      :doc "Minor mode for editing shell script"
+      :req "emacs-25.1" "hydra-0.15.0" "eval-in-repl-0.9.7"
+      :tag "programming" "languages" "emacs>=25.1"
+      :url "https://github.com/damon-kwok/modern-sh"
+      :added "2023-04-20"
+      :emacs>= 25.1
+      :ensure t
+      :require t
+      :after hydra eval-in-repl
+      :config (add-hook 'sh-mode-hook #'modern-sh-mode))
     
     (leaf flymake-shellcheck
       :doc "A bash/sh Flymake backend powered by ShellCheck"
