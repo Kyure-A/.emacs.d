@@ -386,7 +386,7 @@
 	:ensure t
 	:after company
 	:config (add-to-list 'company-backends 'company-shell))
-    )
+      )
 
   (leaf delete-selection :doc "delete から overwrite に改名したほうがいい" :tag "builtin" :global-minor-mode delete-selection-mode)
 
