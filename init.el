@@ -725,7 +725,7 @@
     :after editorconfig jsonrpc
     :require t
     :hook (prog-mode . copilot-mode)
-    :custom (copilot-node-executable . "~/.asdf/installs/nodejs/17.9.1/bin/node")
+    ;;:custom (copilot-node-executable . "~/.asdf/installs/nodejs/17.9.1/bin/node")
     :config
     
     (delq 'company-preview-if-just-one-frontend company-frontends)
@@ -740,6 +740,8 @@
 	(or (copilot-accept-completion)
 	    (company-indent-or-complete-common nil)))))
 
+  
+  
   (leaf editorconfig
     :doc "EditorConfig Emacs Plugin"
     :req "cl-lib-0.5" "nadvice-0.3" "emacs-24"
