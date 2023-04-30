@@ -955,7 +955,7 @@
       :url "http://github.com/ananthakumaran/typescript.el"
       :emacs>= 24.3
       :ensure t :require t
-      :mode "\\.ts\\'" "\\.tsx\\'")
+      :mode "\\.ts\\'" "\\.tsx\\'" "\\.mts\\'")
     
     (leaf tide
       :doc "Typescript Interactive Development Environment"

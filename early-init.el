@@ -52,7 +52,7 @@
     :custom
     (el-get-package-directory . "~/.emacs_packages/el-get")
     (el-get-dir . "~/.emacs_packages/el-get")
-    :load-path "~/.emacs.d/el-get")
+    :load-path "~/.emacs_packages/el-get")
   (leaf package-utils :ensure t)
   (leaf use-package :ensure t))
 
