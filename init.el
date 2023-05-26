@@ -182,8 +182,8 @@
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
-(leaf *inbox
-  :doc "分類が面倒なパッケージを入れる"
+(leaf *library
+  :doc "Emacs Lisp library"
   :config
   
   (leaf dash
@@ -193,6 +193,42 @@
     :url "https://github.com/magnars/dash.el"
     :emacs>= 24
     :ensure t :require t)
+  
+  (leaf promise
+    :doc "Promises/A+"
+    :req "emacs-25.1"
+    :tag "convenience" "promise" "async" "emacs>=25.1"
+    :url "https://github.com/chuntaro/emacs-promise"
+    :emacs>= 25.1
+    :ensure t :require t)
+
+  (leaf queue
+    :doc "Queue data structure"
+    :tag "queue" "data structures" "extensions"
+    :url "http://www.dr-qubit.org/emacs.php"
+    :ensure t :require t)
+
+  (leaf f
+    :doc "Modern API for working with files and directories"
+    :req "emacs-24.1" "s-1.7.0" "dash-2.2.0"
+    :tag "directories" "files" "emacs>=24.1"
+    :url "http://github.com/rejeep/f.el"
+    :added "2023-05-26"
+    :emacs>= 24.1
+    :ensure t)
+  
+  (leaf s
+    :doc "The long lost Emacs string manipulation library."
+    :tag "strings"
+    :ensure t :require t)
+  
+  )
+
+;; ---------------------------------------------------------------------------------------------- ;;
+
+(leaf *inbox
+  :doc "分類が面倒なパッケージを入れる"
+  :config
 
   (leaf fast-scroll
     :doc "Some utilities for faster scrolling over large buffers."
@@ -232,25 +268,6 @@
     :require t)
   
   (leaf goto-address :tag "builtin" :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
-  
-  (leaf promise
-    :doc "Promises/A+"
-    :req "emacs-25.1"
-    :tag "convenience" "promise" "async" "emacs>=25.1"
-    :url "https://github.com/chuntaro/emacs-promise"
-    :emacs>= 25.1
-    :ensure t :require t)
-
-  (leaf queue
-    :doc "Queue data structure"
-    :tag "queue" "data structures" "extensions"
-    :url "http://www.dr-qubit.org/emacs.php"
-    :ensure t :require t)
-  
-  (leaf s
-    :doc "The long lost Emacs string manipulation library."
-    :tag "strings"
-    :ensure t :require t)
 
   (leaf smooth-scrolling
     :doc "Make emacs scroll smoothly"

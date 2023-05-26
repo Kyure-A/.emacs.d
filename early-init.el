@@ -46,13 +46,15 @@
   (leaf leaf-convert :ensure t)
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))
   (leaf blackout :ensure t)
-  (leaf el-get
+  (leaf quelpa
     :ensure t
     :require t
-    :custom
-    (el-get-package-directory . "~/.emacs_packages/el-get")
-    (el-get-dir . "~/.emacs_packages/el-get")
-    :load-path "~/.emacs_packages/el-get")
+    :config
+    (quelpa
+     '(quelpa-leaf
+       :fetcher git
+       :url "https://github.com/quelpa/quelpa-leaf.git"))
+    (quelpa-leaf-init))
   (leaf package-utils :ensure t)
   (leaf use-package :ensure t))
 
