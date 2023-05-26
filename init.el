@@ -325,8 +325,6 @@
     (company-require-match . 'never)
     (company-transformers . '(company-sort-by-statistics company-sort-by-backend-importance))
     :config
-
-    (leaf company-anywhere :tag "company" :el-get zk-phi/company-anywhere :require t :after company)
     
     (leaf company-box
       :doc "Company front-end with icons"
@@ -376,17 +374,17 @@
       :after company pos-tip
       :custom (company-quickhelp-delay . 0.1))
 
-      (leaf company-shell
-	:doc "Company mode backend for shell functions"
-	:req "emacs-24.4" "company-0.8.12" "dash-2.12.0" "cl-lib-0.5"
-	:tag "auto-completion" "shell" "company" "emacs>=24.4"
-	:url "https://github.com/Alexander-Miller/company-shell"
-	:added "2023-04-20"
-	:emacs>= 24.4
-	:ensure t
-	:after company
-	:config (add-to-list 'company-backends 'company-shell))
-      )
+    (leaf company-shell
+      :doc "Company mode backend for shell functions"
+      :req "emacs-24.4" "company-0.8.12" "dash-2.12.0" "cl-lib-0.5"
+      :tag "auto-completion" "shell" "company" "emacs>=24.4"
+      :url "https://github.com/Alexander-Miller/company-shell"
+      :added "2023-04-20"
+      :emacs>= 24.4
+      :ensure t
+      :after company
+      :config (add-to-list 'company-backends 'company-shell))
+    )
 
   (leaf delete-selection :doc "delete から overwrite に改名したほうがいい" :tag "builtin" :global-minor-mode delete-selection-mode)
 
@@ -477,18 +475,7 @@
     :tag "bindings"
     :url "https://github.com/abo-abo/hydra"
     :ensure t :require t
-    :after lv
-    :config
-    
-    (leaf hydra-posframe
-      :doc "Display hydra diagnostics at point"
-      :req "emacs-26.1" "hydra-0.14.0" "posframe-1.1.4"
-      :tag "out-of-MELPA" "tools" "languages" "convenience" "emacs>=26.1"
-      :url "https://github.com/Ladicle/hydra-posframe"
-      :emacs>= 26.1
-      :el-get Ladicle/hydra-posframe
-      :after hydra posframe
-      :require t))
+    :after lv)
 
   (leaf *ivy
     :config
@@ -715,32 +702,32 @@
 
 (leaf *programming
   :config
-
-  (leaf copilot
-    :doc "An unofficial Copilot plugin for Emacs"
-    :req "emacs-27.2" "s-1.12.0" "dash-2.19.1" "editorconfig-0.8.2" "jsonrpc-1.0.14"
-    :tag "out-of-MELPA" "emacs>=27.2"
-    :emacs>= 27.2
-    :el-get "zerolfx/copilot.el"
-    :after editorconfig jsonrpc
-    :require t
-    :hook (prog-mode . copilot-mode)
-    ;;:custom (copilot-node-executable . "~/.asdf/installs/nodejs/17.9.1/bin/node")
-    :config
-    
-    (delq 'company-preview-if-just-one-frontend company-frontends)
-    
-    (leaf company-copilot-tab
-      :url "https://github.com/zerolfx/copilot.el/blob/9b13478720581580a045ac76ad68be075466a963/readme.md?plain=1#L152"
-      :after company
-      :bind ;; (:company-active-map ( "<tab>" . company-copilot-tab))
-      :preface
-      (defun company-copilot-tab ()
-	(interactive)
-	(or (copilot-accept-completion)
-	    (company-indent-or-complete-common nil)))))
-
   
+  ;; GitHub Education License was expired
+  
+  ;; (leaf copilot
+  ;;   :doc "An unofficial Copilot plugin for Emacs"
+  ;;   :req "emacs-27.2" "s-1.12.0" "dash-2.19.1" "editorconfig-0.8.2" "jsonrpc-1.0.14"
+  ;;   :tag "out-of-MELPA" "emacs>=27.2"
+  ;;   :emacs>= 27.2
+  ;;   :el-get "zerolfx/copilot.el"
+  ;;   :after editorconfig jsonrpc
+  ;;   :require t
+  ;;   :hook (prog-mode . copilot-mode)
+  ;;   ;;:custom (copilot-node-executable . "~/.asdf/installs/nodejs/17.9.1/bin/node")
+  ;;   :config
+  
+  ;;   (delq 'company-preview-if-just-one-frontend company-frontends)
+  
+  ;;   (leaf company-copilot-tab
+  ;;     :url "https://github.com/zerolfx/copilot.el/blob/9b13478720581580a045ac76ad68be075466a963/readme.md?plain=1#L152"
+  ;;     :after company
+  ;;     :bind ;; (:company-active-map ( "<tab>" . company-copilot-tab))
+  ;;     :preface
+  ;;     (defun company-copilot-tab ()
+  ;; 	(interactive)
+  ;; 	(or (copilot-accept-completion)
+  ;; 	    (company-indent-or-complete-common nil)))))
   
   (leaf editorconfig
     :doc "EditorConfig Emacs Plugin"
@@ -862,7 +849,7 @@
 		(lambda (path)
 		  (if-let* ((buf (find-file-noselect path))
                             (window (display-buffer-below-selected buf nil)))
-                      (select-window window)
+		      (select-window window)
                     (message "Failed to open file: %s" path))))
 	  vterm-eval-cmds))
 
@@ -982,6 +969,9 @@
 
   (leaf *lisp
     :config
+
+    (leaf elisp-mode
+      :mode "\\Keg\\'")
     
     (leaf lisp-interaction
       :bind
