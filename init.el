@@ -221,6 +221,12 @@
     :doc "The long lost Emacs string manipulation library."
     :tag "strings"
     :ensure t :require t)
+
+  (leaf dotenv
+    :quelpa
+    (dotenv :repo "pkulev/dotenv.el"
+	    :fetcher github
+	    :upgrade t))
   
   )
 
@@ -722,29 +728,31 @@
   
   ;; GitHub Education License was expired
   
-  ;; (leaf copilot
-  ;;   :doc "An unofficial Copilot plugin for Emacs"
-  ;;   :req "emacs-27.2" "s-1.12.0" "dash-2.19.1" "editorconfig-0.8.2" "jsonrpc-1.0.14"
-  ;;   :tag "out-of-MELPA" "emacs>=27.2"
-  ;;   :emacs>= 27.2
-  ;;   :el-get "zerolfx/copilot.el"
-  ;;   :after editorconfig jsonrpc
-  ;;   :require t
-  ;;   :hook (prog-mode . copilot-mode)
-  ;;   ;;:custom (copilot-node-executable . "~/.asdf/installs/nodejs/17.9.1/bin/node")
-  ;;   :config
-  
-  ;;   (delq 'company-preview-if-just-one-frontend company-frontends)
-  
-  ;;   (leaf company-copilot-tab
-  ;;     :url "https://github.com/zerolfx/copilot.el/blob/9b13478720581580a045ac76ad68be075466a963/readme.md?plain=1#L152"
-  ;;     :after company
-  ;;     :bind ;; (:company-active-map ( "<tab>" . company-copilot-tab))
-  ;;     :preface
-  ;;     (defun company-copilot-tab ()
-  ;; 	(interactive)
-  ;; 	(or (copilot-accept-completion)
-  ;; 	    (company-indent-or-complete-common nil)))))
+  (leaf copilot
+    :doc "An unofficial Copilot plugin for Emacs"
+    :req "emacs-27.2" "s-1.12.0" "dash-2.19.1" "editorconfig-0.8.2" "jsonrpc-1.0.14"
+    :tag "out-of-MELPA" "emacs>=27.2"
+    :emacs>= 27.2
+    :quelpa (copilot :repo "zerolfx/copilot.el"
+		     :fetcher github
+		     :upgrade t)
+    :after editorconfig jsonrpc
+    :require t
+    :hook (prog-mode . copilot-mode)
+    ;;:custom (copilot-node-executable . "~/.asdf/installs/nodejs/17.9.1/bin/node")
+    :config
+    
+    (delq 'company-preview-if-just-one-frontend company-frontends)
+    
+    (leaf company-copilot-tab
+      :url "https://github.com/zerolfx/copilot.el/blob/9b13478720581580a045ac76ad68be075466a963/readme.md?plain=1#L152"
+      :after company
+      :bind ;; (:company-active-map ( "<tab>" . company-copilot-tab))
+      :preface
+      (defun company-copilot-tab ()
+	(interactive)
+	(or (copilot-accept-completion)
+	    (company-indent-or-complete-common nil)))))
   
   (leaf editorconfig
     :doc "EditorConfig Emacs Plugin"
@@ -855,20 +863,21 @@
     (vterm-keymap-exceptions
      . '("<f1>" "<f2>" "<f10>" "C-<return>" "C-<prior>" "C-<next>" "C-c" "C-g" "C-l" "C-s" "C-u" "C-v" "C-w" "C-x" "C-y" "M-v" "M-w" "M-x" "M-y"))
     (vterm-max-scrollback . 5000)
-    (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
+    ;; (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
     :config
     (leaf vterm-toggle :ensure t :require t)
     (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
     :preface
-    (defun my/term-mode-p(&optional args)
-      (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode))
-    (push (list "find-file-below"
-		(lambda (path)
-		  (if-let* ((buf (find-file-noselect path))
-                            (window (display-buffer-below-selected buf nil)))
-		      (select-window window)
-                    (message "Failed to open file: %s" path))))
-	  vterm-eval-cmds))
+    ;; (defun my/term-mode-p(&optional args)
+    ;;   (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode))
+    ;; (push (list "find-file-below"
+    ;; 		(lambda (path)
+    ;; 		  (if-let* ((buf (find-file-noselect path))
+    ;;                         (window (display-buffer-below-selected buf nil)))
+    ;; 		      (select-window window)
+    ;;                 (message "Failed to open file: %s" path))))
+    ;; 	  vterm-eval-cmds)
+    )
 
   (leaf *C++
     :config

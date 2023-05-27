@@ -49,7 +49,10 @@
   (leaf quelpa
     :ensure t
     :require t
+    :custom
+    (quelpa-checkout-melpa-p . nil)
     :config
+    (add-to-list 'quelpa-melpa-recipe-stores "~/.emacs_packages")
     (quelpa
      '(quelpa-leaf
        :fetcher git
