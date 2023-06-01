@@ -306,7 +306,15 @@
      ("RET" . tetris-move-bottom)))
   
   ;; (leaf zone :doc "screen-saver" :tag "builtin" :require t :config (zone-when-idle 1200))
-  
+
+  ;; (leaf onlyonce
+  ;;   :quelpa (onlyonce :repo "Kyure-A/onlyonce.el"
+  ;; 		      :fetcher github
+  ;; 		      :upgrade t)
+  ;;   :config
+  ;;   (onlyonce-add '(fira-code-mode-install-fonts))
+  ;;   (onlyonce-add '(all-the-icons-install-fonts))
+  ;;   (onlyonce-startup))
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -840,15 +848,35 @@
 	  (quickrun :start start :end end)
 	(quickrun))))
 
-  (leaf rust-mode
-    :doc "A major-mode for editing Rust source code"
-    :req "emacs-25.1"
-    :tag "languages" "emacs>=25.1"
-    :url "https://github.com/rust-lang/rust-mode"
-    :added "2023-04-19"
-    :emacs>= 25.1
-    :ensure t
-    :hook (rust-mode . lsp))
+  (leaf *rust
+    :config
+    
+    (leaf rust-mode
+      :doc "A major-mode for editing Rust source code"
+      :req "emacs-25.1"
+      :tag "languages" "emacs>=25.1"
+      :url "https://github.com/rust-lang/rust-mode"
+      :added "2023-04-19"
+      :emacs>= 25.1
+      :ensure t
+      :hook (rust-mode . lsp)
+      :config (add-to-list 'exec-path (expand-file-name "~/rust-analyzer")))
+
+    (leaf cargo
+      :doc "Emacs Minor Mode for Cargo, Rust's Package Manager."
+      :req "emacs-24.3" "markdown-mode-2.4"
+      :tag "tools" "emacs>=24.3"
+      :added "2023-06-01"
+      :emacs>= 24.3
+      :ensure t
+      :after markdown-mode
+      :hook (rust-mode . cargo-minor-mode)
+      :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
+
+    (leaf *lsp-rust
+      :hook (rust-mode . lsp)
+      :custom (lsp-rust-server . 'rust-analyzer))
+    )
   
   (leaf vterm
     :doc "Fully-featured terminal emulator"
