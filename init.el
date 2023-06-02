@@ -193,6 +193,21 @@
     :url "https://github.com/magnars/dash.el"
     :emacs>= 24
     :ensure t :require t)
+
+  (leaf dotenv
+    :quelpa
+    (dotenv :repo "pkulev/dotenv.el"
+	    :fetcher github
+	    :upgrade t))
+
+  (leaf f
+    :doc "Modern API for working with files and directories"
+    :req "emacs-24.1" "s-1.7.0" "dash-2.2.0"
+    :tag "directories" "files" "emacs>=24.1"
+    :url "http://github.com/rejeep/f.el"
+    :added "2023-05-26"
+    :emacs>= 24.1
+    :ensure t)
   
   (leaf promise
     :doc "Promises/A+"
@@ -208,26 +223,18 @@
     :url "http://www.dr-qubit.org/emacs.php"
     :ensure t :require t)
 
-  (leaf f
-    :doc "Modern API for working with files and directories"
-    :req "emacs-24.1" "s-1.7.0" "dash-2.2.0"
-    :tag "directories" "files" "emacs>=24.1"
-    :url "http://github.com/rejeep/f.el"
-    :added "2023-05-26"
-    :emacs>= 24.1
-    :ensure t)
+  (leaf request
+    :doc "Compatible layer for URL request"
+    :req "emacs-24.4"
+    :tag "emacs>=24.4"
+    :url "https://github.com/tkf/emacs-request"
+    :emacs>= 24.4
+    :ensure t :require t)
   
   (leaf s
     :doc "The long lost Emacs string manipulation library."
     :tag "strings"
     :ensure t :require t)
-
-  (leaf dotenv
-    :quelpa
-    (dotenv :repo "pkulev/dotenv.el"
-	    :fetcher github
-	    :upgrade t))
-  
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -487,6 +494,21 @@
 	"Return a string which is a concatenation of all elements of the list separated by spaces"
 	(mapconcat '(lambda (obj) (format "%s" obj)) list " "))))
 
+  (leaf exec-path-from-shell
+    :doc "Get environment variables such as $PATH from the shell"
+    :req "emacs-24.1" "cl-lib-0.6"
+    :tag "environment" "unix" "emacs>=24.1"
+    :url "https://github.com/purcell/exec-path-from-shell"
+    :emacs>= 24.1
+    :ensure t
+    :defun (exec-path-from-shell-initialize)
+    :custom
+    (exec-path-from-shell-check-startup-files . nil)
+    (exec-path-from-shell-arguments . nil)
+    (exec-path-from-shell-variables . '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
+					"GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))
+    :config (exec-path-from-shell-initialize))
+  
   (leaf flycheck
     :doc "On-the-fly syntax checking"
     :req "dash-2.12.1" "pkg-info-0.4" "let-alist-1.0.4" "seq-1.11" "emacs-24.3"
@@ -618,6 +640,15 @@
     (display-buffer-function . 'popwin:display-buffer)
     (popwin:special-display-config  . t)
     (popwin:popup-window-position . 'bottom))
+
+  (leaf skewer-mode
+    :doc "live browser JavaScript, CSS, and HTML interaction"
+    :req "simple-httpd-1.4.0" "js2-mode-20090723" "emacs-24"
+    :tag "emacs>=24"
+    :url "https://github.com/skeeto/skewer-mode"
+    :emacs>= 24
+    :ensure t :require t
+    :after js2-mode)
   
   (leaf smart-hungry-delete
     :doc "smart hungry deletion of whitespace"
@@ -731,7 +762,7 @@
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
-(leaf *programming
+(leaf *general
   :config
   
   ;; GitHub Education License was expired
@@ -771,21 +802,6 @@
     :ensure t :require t
     :after nadvice
     :global-minor-mode t)
-
-  (leaf exec-path-from-shell
-    :doc "Get environment variables such as $PATH from the shell"
-    :req "emacs-24.1" "cl-lib-0.6"
-    :tag "environment" "unix" "emacs>=24.1"
-    :url "https://github.com/purcell/exec-path-from-shell"
-    :emacs>= 24.1
-    :ensure t
-    :defun (exec-path-from-shell-initialize)
-    :custom
-    (exec-path-from-shell-check-startup-files . nil)
-    (exec-path-from-shell-arguments . nil)
-    (exec-path-from-shell-variables . '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
-					"GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))
-    :config (exec-path-from-shell-initialize))
 
   (leaf lsp-mode
     :doc "LSP mode"
@@ -831,53 +847,7 @@
     (oj-default-online-judge . 'atcoder)
     (oj-compiler-c . "gcc")
     (oj-compiler-python . "cpython"))
-  
-  (leaf quickrun
-    :doc "Run commands quickly"
-    :req "emacs-24.3"
-    :tag "emacs>=24.3"
-    :url "https://github.com/syohex/emacs-quickrun"
-    :emacs>= 24.3
-    :ensure t :require t
-    :config
-    (push '("*quickrun*") popwin:special-display-config)
-    :preface
-    (defun my/quickrun-sc (start end)
-      (interactive "r")
-      (if mark-active
-	  (quickrun :start start :end end)
-	(quickrun))))
 
-  (leaf *rust
-    :config
-    
-    (leaf rust-mode
-      :doc "A major-mode for editing Rust source code"
-      :req "emacs-25.1"
-      :tag "languages" "emacs>=25.1"
-      :url "https://github.com/rust-lang/rust-mode"
-      :added "2023-04-19"
-      :emacs>= 25.1
-      :ensure t
-      :hook (rust-mode . lsp)
-      :config (add-to-list 'exec-path (expand-file-name "~/rust-analyzer")))
-
-    (leaf cargo
-      :doc "Emacs Minor Mode for Cargo, Rust's Package Manager."
-      :req "emacs-24.3" "markdown-mode-2.4"
-      :tag "tools" "emacs>=24.3"
-      :added "2023-06-01"
-      :emacs>= 24.3
-      :ensure t
-      :after markdown-mode
-      :hook (rust-mode . cargo-minor-mode)
-      :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
-
-    (leaf *lsp-rust
-      :hook (rust-mode . lsp)
-      :custom (lsp-rust-server . 'rust-analyzer))
-    )
-  
   (leaf vterm
     :doc "Fully-featured terminal emulator"
     :req "emacs-25.1"
@@ -906,8 +876,30 @@
     ;;                 (message "Failed to open file: %s" path))))
     ;; 	  vterm-eval-cmds)
     )
+  
+  (leaf quickrun
+    :doc "Run commands quickly"
+    :req "emacs-24.3"
+    :tag "emacs>=24.3"
+    :url "https://github.com/syohex/emacs-quickrun"
+    :emacs>= 24.3
+    :ensure t :require t
+    :config
+    (push '("*quickrun*") popwin:special-display-config)
+    :preface
+    (defun my/quickrun-sc (start end)
+      (interactive "r")
+      (if mark-active
+	  (quickrun :start start :end end)
+	(quickrun))))
+  )
 
-  (leaf *C++
+;; ---------------------------------------------------------------------------------------------- ;;
+
+(leaf *languages
+  :config
+
+  (leaf *c++
     :config
     
     (leaf cc-mode
@@ -970,57 +962,6 @@
     
     )
 
-  (leaf *javascript
-    :config
-    
-    (leaf nodejs-repl
-      :doc "Run Node.js REPL"
-      :ensure t
-      :require t)
-    
-    (leaf vue-mode
-      :doc "Major mode for vue component based on mmm-mode"
-      :req "mmm-mode-0.5.5" "vue-html-mode-0.2" "ssass-mode-0.2" "edit-indirect-0.1.4"
-      :tag "languages"
-      :added "2023-02-26"
-      :ensure t
-      :after mmm-mode vue-html-mode ssass-mode edit-indirect))
-
-  (leaf *typescript
-    :config
-    
-    (leaf typescript-mode
-      :doc "Major mode for editing typescript"
-      :req "emacs-24.3"
-      :tag "languages" "typescript" "emacs>=24.3"
-      :url "http://github.com/ananthakumaran/typescript.el"
-      :emacs>= 24.3
-      :ensure t :require t
-      :mode "\\.ts\\'" "\\.tsx\\'" "\\.mts\\'")
-    
-    (leaf tide
-      :doc "Typescript Interactive Development Environment"
-      :req "emacs-25.1" "dash-2.10.0" "s-1.11.0" "flycheck-27" "typescript-mode-0.1" "cl-lib-0.5"
-      :tag "typescript" "emacs>=25.1"
-      :url "http://github.com/ananthakumaran/tide"
-      :emacs>= 25.1
-      :ensure t :require t
-      :after flycheck typescript-mode
-      :hook
-      (typescript-mode-hook . my/tide-start)
-      (before-save-hook . tide-format-before-save)
-      :custom
-      (tide-node-executable . "~/.asdf/installs/nodejs/19.0.0/bin/node")
-      :config
-      (defun my/tide-start ()
-	(interactive)
-	(tide-setup)
-	(flycheck-mode t)
-	(setq flycheck-check-syntax-automatically '(save mode-enabled))
-	(eldoc-mode t)
-	(tide-hl-identifier-mode t)
-	(company-mode t))))
-
   (leaf *lisp
     :config
 
@@ -1029,7 +970,23 @@
     
     (leaf lisp-interaction
       :bind
-      (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp))))
+      (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
+
+    (leaf sly
+      :doc "Sylvester the Cat's Common Lisp IDE"
+      :req "emacs-24.3"
+      :tag "sly" "lisp" "languages" "emacs>=24.3"
+      :url "https://github.com/joaotavora/sly"
+      :emacs>= 24.3
+      :ensure t :require t
+      :custom (inferior-lisp-program . "/usr/bin/sbcl")
+      :config
+      ;; (load "~/.roswell/helper.el")
+      (defun my/sly-start ()
+	"sly の挙動を slime に似せる"
+	(interactive)
+	(split-window-right)
+	(sly))))
 
   (leaf *mark-up
     :config
@@ -1076,68 +1033,8 @@
 	:ensure t :require t
 	:hook
 	(org-mode-hook . org-modern-mode)
-	(org-agenda-finalize-hook . org-modern-agenda)
-	)
-      )
-    
-    (leaf yatex
-      :doc "Yet Another tex-mode for emacs //野鳥//"
-      :doc "jis=2, UTF-8=4"
-      :ensure t :require t
-      :mode "\\.tex$"
-      :custom
-      (YaTeX-nervous . nil)
-      (latex-message-kanji-code . 4)
-      (YaTeX-kanji-code . 4)
-      (YaTeX-coding-system . 4))
-    )
+	(org-agenda-finalize-hook . org-modern-agenda)))
 
-  (leaf *shellscript
-    :config
-    (leaf shell-script-mode :require nil)
-
-    (leaf modern-sh
-      :doc "Minor mode for editing shell script"
-      :req "emacs-25.1" "hydra-0.15.0" "eval-in-repl-0.9.7"
-      :tag "programming" "languages" "emacs>=25.1"
-      :url "https://github.com/damon-kwok/modern-sh"
-      :added "2023-04-20"
-      :emacs>= 25.1
-      :ensure t
-      :require t
-      :after hydra eval-in-repl
-      :config (add-hook 'sh-mode-hook #'modern-sh-mode))
-    
-    (leaf flymake-shellcheck
-      :doc "A bash/sh Flymake backend powered by ShellCheck"
-      :req "emacs-26"
-      :tag "emacs>=26"
-      :url "https://github.com/federicotdn/flymake-shellcheck"
-      :added "2023-02-13"
-      :emacs>= 26
-      :ensure t)
-    )
-  
-  (leaf *web
-    :config
-
-    (leaf request
-      :doc "Compatible layer for URL request"
-      :req "emacs-24.4"
-      :tag "emacs>=24.4"
-      :url "https://github.com/tkf/emacs-request"
-      :emacs>= 24.4
-      :ensure t :require t)
-
-    (leaf skewer-mode
-      :doc "live browser JavaScript, CSS, and HTML interaction"
-      :req "simple-httpd-1.4.0" "js2-mode-20090723" "emacs-24"
-      :tag "emacs>=24"
-      :url "https://github.com/skeeto/skewer-mode"
-      :emacs>= 24
-      :ensure t :require t
-      :after js2-mode)
-    
     (leaf web-mode
       :doc "major mode for editing web templates"
       :req "emacs-23.1"
@@ -1170,23 +1067,155 @@
       :config
       (with-eval-after-load 'web-mode (sp-local-pair '(web-mode) "<" ">" :actions :rem))
       (put 'web-mode-markup-indent-offset 'safe-local-variable 'integerp))
+    
+    (leaf yaml-mode
+      :doc "Major mode for editing YAML files"
+      :req "emacs-24.1"
+      :tag "yaml" "data" "emacs>=24.1"
+      :url "https://github.com/yoshiki/yaml-mode"
+      :emacs>= 24.1
+      :ensure t
+      :mode
+      "\\.yml$"
+      "\\.yaml$")
+    
+    (leaf yatex
+      :doc "Yet Another tex-mode for emacs //野鳥//"
+      :doc "jis=2, UTF-8=4"
+      :ensure t :require t
+      :mode "\\.tex$"
+      :custom
+      (YaTeX-nervous . nil)
+      (latex-message-kanji-code . 4)
+      (YaTeX-kanji-code . 4)
+      (YaTeX-coding-system . 4))
     )
 
-  (leaf sly
-    :doc "Sylvester the Cat's Common Lisp IDE"
-    :req "emacs-24.3"
-    :tag "sly" "lisp" "languages" "emacs>=24.3"
-    :url "https://github.com/joaotavora/sly"
-    :emacs>= 24.3
-    :ensure t :require t
-    :custom (inferior-lisp-program . "/usr/bin/sbcl")
+  (leaf *pwsh
     :config
-    ;; (load "~/.roswell/helper.el")
-    (defun my/sly-start ()
-      "sly の挙動を slime に似せる"
-      (interactive)
-      (split-window-right)
-      (sly)))
+    
+    (leaf powershell
+      :doc "Mode for editing PowerShell scripts"
+      :req "emacs-24"
+      :tag "languages" "powershell" "emacs>=24"
+      :url "http://github.com/jschaf/powershell.el"
+      :added "2023-06-02"
+      :emacs>= 24
+      :ensure t)
+    
+    (leaf lsp-pwsh
+      :doc "client for PowerShellEditorServices"
+      :tag "out-of-MELPA" "lsp"
+      :added "2023-06-02"
+      :require t)
+    )
+  
+  (leaf *rust
+    :config
+    
+    (leaf rust-mode
+      :doc "A major-mode for editing Rust source code"
+      :req "emacs-25.1"
+      :tag "languages" "emacs>=25.1"
+      :url "https://github.com/rust-lang/rust-mode"
+      :added "2023-04-19"
+      :emacs>= 25.1
+      :ensure t
+      :hook (rust-mode . lsp)
+      :config (add-to-list 'exec-path (expand-file-name "~/rust-analyzer")))
+
+    (leaf cargo
+      :doc "Emacs Minor Mode for Cargo, Rust's Package Manager."
+      :req "emacs-24.3" "markdown-mode-2.4"
+      :tag "tools" "emacs>=24.3"
+      :added "2023-06-01"
+      :emacs>= 24.3
+      :ensure t
+      :after markdown-mode
+      :hook (rust-mode . cargo-minor-mode)
+      :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
+
+    (leaf *lsp-rust
+      :hook (rust-mode . lsp)
+      :custom (lsp-rust-server . 'rust-analyzer))
+    )
+  
+  (leaf *shellscript
+    :config
+    (leaf sh-mode :require nil)
+
+    (leaf modern-sh
+      :doc "Minor mode for editing shell script"
+      :req "emacs-25.1" "hydra-0.15.0" "eval-in-repl-0.9.7"
+      :tag "programming" "languages" "emacs>=25.1"
+      :url "https://github.com/damon-kwok/modern-sh"
+      :added "2023-04-20"
+      :emacs>= 25.1
+      :ensure t
+      :require t
+      :after hydra eval-in-repl
+      :mode
+      "\\.sh\\'"
+      "\\.zsh\\'"
+      :hook (sh-mode-hook . modern-sh-mode))
+    
+    (leaf flymake-shellcheck
+      :doc "A bash/sh Flymake backend powered by ShellCheck"
+      :req "emacs-26"
+      :tag "emacs>=26"
+      :url "https://github.com/federicotdn/flymake-shellcheck"
+      :added "2023-02-13"
+      :emacs>= 26
+      :ensure t)
+    )
+
+  (leaf *typescript
+    :config
+
+    (leaf nodejs-repl
+      :doc "Run Node.js REPL"
+      :ensure t
+      :require t)
+    
+    (leaf typescript-mode
+      :doc "Major mode for editing typescript"
+      :req "emacs-24.3"
+      :tag "languages" "typescript" "emacs>=24.3"
+      :url "http://github.com/ananthakumaran/typescript.el"
+      :emacs>= 24.3
+      :ensure t :require t
+      :mode "\\.ts\\'" "\\.tsx\\'" "\\.mts\\'")
+    
+    (leaf tide
+      :doc "Typescript Interactive Development Environment"
+      :req "emacs-25.1" "dash-2.10.0" "s-1.11.0" "flycheck-27" "typescript-mode-0.1" "cl-lib-0.5"
+      :tag "typescript" "emacs>=25.1"
+      :url "http://github.com/ananthakumaran/tide"
+      :emacs>= 25.1
+      :ensure t :require t
+      :after flycheck typescript-mode
+      :hook
+      (typescript-mode-hook . my/tide-start)
+      (before-save-hook . tide-format-before-save)
+      :custom
+      (tide-node-executable . "~/.asdf/installs/nodejs/19.0.0/bin/node")
+      :config
+      (defun my/tide-start ()
+	(interactive)
+	(tide-setup)
+	(flycheck-mode t)
+	(setq flycheck-check-syntax-automatically '(save mode-enabled))
+	(eldoc-mode t)
+	(tide-hl-identifier-mode t)
+	(company-mode t)))
+
+    (leaf vue-mode
+      :doc "Major mode for vue component based on mmm-mode"
+      :req "mmm-mode-0.5.5" "vue-html-mode-0.2" "ssass-mode-0.2" "edit-indirect-0.1.4"
+      :tag "languages"
+      :added "2023-02-26"
+      :ensure t
+      :after mmm-mode vue-html-mode ssass-mode edit-indirect))
 
   (leaf vhdl-mode
     :doc "major mode for editing VHDL code"
@@ -1194,17 +1223,6 @@
     :added "2022-08-28"
     :require t
     :mode "\\.hdl$")
-
-  (leaf yaml-mode
-    :doc "Major mode for editing YAML files"
-    :req "emacs-24.1"
-    :tag "yaml" "data" "emacs>=24.1"
-    :url "https://github.com/yoshiki/yaml-mode"
-    :emacs>= 24.1
-    :ensure t
-    :mode
-    "\\.yml$"
-    "\\.yaml$")
 
   )
 
