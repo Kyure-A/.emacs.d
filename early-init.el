@@ -5,10 +5,6 @@
 
 ;;; Commentary:
 
-;; Coding rule:
-
-;; eval-and-compile をなんとなくひとまとめにするために使っている
-
 ;;; Code:
 
 (eval-and-compile
@@ -23,7 +19,6 @@
 ;; ---------------------------------------------------------------------------------------------- ;;
 
 (require 'package)
-(require 'cl-lib)
 
 (eval-and-compile
   (customize-set-variable 'package-archives
@@ -42,6 +37,7 @@
 
 (leaf *leaf
   :config
+  (leaf leaf-manager :ensure t)
   (leaf leaf-keywords :ensure t :init (leaf-keywords-init))
   (leaf leaf-convert :ensure t)
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))

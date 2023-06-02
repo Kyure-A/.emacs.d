@@ -919,19 +919,19 @@
       :custom
       (c-tab-always-indent . t))
     
-    (leaf ccls
-      :doc "ccls client for lsp-mode"
-      :req "emacs-25.1" "lsp-mode-6.3.1" "dash-2.14.1"
-      :tag "c++" "lsp" "languages" "emacs>=25.1"
-      :url "https://github.com/MaskRay/emacs-ccls"
-      :emacs>= 25.1
-      :ensure t :require t
-      :after lsp-mode
-      :hook ((c-mode c++-mode objc-mode) . (lambda () (require 'ccls) (lsp)))
-      :config
-      (ccls-executable "/usr/bin/ccls")
-      (ccls-sem-highlight-method 'font-lock)
-      (ccls-use-default-rainbow-sem-highlight))
+    ;; (leaf ccls
+    ;;   :doc "ccls client for lsp-mode"
+    ;;   :req "emacs-25.1" "lsp-mode-6.3.1" "dash-2.14.1"
+    ;;   :tag "c++" "lsp" "languages" "emacs>=25.1"
+    ;;   :url "https://github.com/MaskRay/emacs-ccls"
+    ;;   :emacs>= 25.1
+    ;;   :ensure t :require t
+    ;;   :after lsp-mode
+    ;;   :hook ((c-mode c++-mode objc-mode) . (lambda () (require 'ccls) (lsp)))
+    ;;   :config
+    ;;   (ccls-executable "/usr/bin/ccls")
+    ;;   (ccls-sem-highlight-method 'font-lock)
+    ;;   (ccls-use-default-rainbow-sem-highlight))
     
     (leaf google-c-style
       :doc "Google's C/C++ style for c-mode"
