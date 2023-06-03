@@ -911,20 +911,6 @@
       :custom
       (c-tab-always-indent . t))
     
-    ;; (leaf ccls
-    ;;   :doc "ccls client for lsp-mode"
-    ;;   :req "emacs-25.1" "lsp-mode-6.3.1" "dash-2.14.1"
-    ;;   :tag "c++" "lsp" "languages" "emacs>=25.1"
-    ;;   :url "https://github.com/MaskRay/emacs-ccls"
-    ;;   :emacs>= 25.1
-    ;;   :ensure t :require t
-    ;;   :after lsp-mode
-    ;;   :hook ((c-mode c++-mode objc-mode) . (lambda () (require 'ccls) (lsp)))
-    ;;   :config
-    ;;   (ccls-executable "/usr/bin/ccls")
-    ;;   (ccls-sem-highlight-method 'font-lock)
-    ;;   (ccls-use-default-rainbow-sem-highlight))
-    
     (leaf google-c-style
       :doc "Google's C/C++ style for c-mode"
       :tag "tools" "c"
@@ -963,6 +949,7 @@
     )
 
   (leaf *lisp
+    :doc "Emacs Lisp, Common Lisp"
     :config
 
     (leaf elisp-mode
@@ -1122,7 +1109,7 @@
       :emacs>= 25.1
       :ensure t
       :hook (rust-mode . lsp)
-      :config (add-to-list 'exec-path (expand-file-name "~/rust-analyzer")))
+      )
 
     (leaf cargo
       :doc "Emacs Minor Mode for Cargo, Rust's Package Manager."
@@ -1348,7 +1335,7 @@
     :init (dashboard-setup-startup-hook)
     :custom
     (dashboard-items . '((bookmarks . 10)
-			 (recents  . 5)))
+			 (recents  . 10)))
     (initial-buffer-choice . (lambda () (get-buffer "*dashboard*")))
     (dashboard-center-content . t)
     (dashboard-set-heading-icons . t)
@@ -1356,6 +1343,12 @@
     (dashboard-startup-banner . "~/.emacs.d/banner.png")
     (dashboard-banner-logo-title . "Kyure_A's Emacs")
     :config
+
+    (setq dashboard-footer-messages-list (list '("example")
+					       '("example")
+					       '("example")))
+    
+    (setq dashboard-footer-messages (nth (random (length dashboard-footer-messages-list)) dashboard-footer-messages-list))
     
     (leaf projectile
       :doc "Manage and navigate projects in Emacs easily"
@@ -1364,7 +1357,9 @@
       :url "https://github.com/bbatsov/projectile"
       :emacs>= 25.1
       :ensure t :require t
-      :global-minor-mode t))
+      :global-minor-mode t)
+    
+    (dashboard-setup-startup-hook))
   
   (leaf display-line-numbers
     :doc "interface for display-line-numbers"
