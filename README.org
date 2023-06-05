@@ -2,8 +2,10 @@
 #+AUTHOR: Kyure_A
 #+OPTIONS: toc:nil
 
-[[file:./banner.png]]
+* Screenshot
+[[file:../assets/emacs_screenshot.png]]
 
+* About
 
 The installed packages are listed below (In preparation).
 
