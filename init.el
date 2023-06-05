@@ -63,6 +63,7 @@
   ("M-%" . vr/query-replace)
   ;; Modifier key
   ("<f2>" . vterm-toggle)
+  ("<f3>". dashboard-open)
   ("<f5>" . my/quickrun-sc)
   ("RET" . smart-newline)
   ("C-<return>" . newline)
@@ -848,6 +849,15 @@
     (oj-compiler-c . "gcc")
     (oj-compiler-python . "cpython"))
 
+  (leaf projectile
+    :doc "Manage and navigate projects in Emacs easily"
+    :req "emacs-25.1"
+    :tag "convenience" "project" "emacs>=25.1"
+    :url "https://github.com/bbatsov/projectile"
+    :emacs>= 25.1
+    :ensure t :require t
+    :global-minor-mode t)
+
   (leaf vterm
     :doc "Fully-featured terminal emulator"
     :req "emacs-25.1"
@@ -1332,7 +1342,10 @@
     :url "https://github.com/emacs-dashboard/emacs-dashboard"
     :emacs>= 26.1
     :ensure t :require t
-    :init (dashboard-setup-startup-hook)
+    :hook (after-init-hook . dashboard-setup-startup-hook)
+    :bind
+    (("<f3>" . open-dashboard)
+     (:dashboard-mode-map ("<f3>" . quit-dashboard)))
     :custom
     (dashboard-items . '((bookmarks . 10)
 			 (recents  . 10)))
@@ -1344,23 +1357,47 @@
     (dashboard-banner-logo-title . "Kyure_A's Emacs")
     :config
 
-    (setq dashboard-footer-messages-list (list '("example")
-					       '("example")
+    (setq dashboard-footer-messages-list (list '("「今日も一日がんばるぞい！」 - 涼風青葉")
+					       '("「なんだかホントに入社した気分です！」 - 涼風青葉")
 					       '("example")))
     
     (setq dashboard-footer-messages (nth (random (length dashboard-footer-messages-list)) dashboard-footer-messages-list))
     
-    (leaf projectile
-      :doc "Manage and navigate projects in Emacs easily"
-      :req "emacs-25.1"
-      :tag "convenience" "project" "emacs>=25.1"
-      :url "https://github.com/bbatsov/projectile"
-      :emacs>= 25.1
-      :ensure t :require t
-      :global-minor-mode t)
-    
-    (dashboard-setup-startup-hook))
-  
+    :preface
+
+    (leaf open-dashboard
+      :url "https://github.com/seagle0128/.emacs.d/blob/8cbec0c132cd6de06a8c293598a720d377f3f5b9/lisp/init-dashboard.el#L198"
+      :preface
+      (defun open-dashboard ()
+	"Open the *dashboard* buffer and jump to the first widget."
+	(interactive)
+	;; Check if need to recover layout
+	(if (length> (window-list-1)
+                     ;; exclude `treemacs' window
+                     (if (and (fboundp 'treemacs-current-visibility)
+                              (eq (treemacs-current-visibility) 'visible))
+			 2
+                       1))
+            (setq dashboard-recover-layout-p t))
+	;; Display dashboard in maximized window
+	(delete-other-windows)
+	;; Refresh dashboard buffer
+	(dashboard-refresh-buffer)
+	;; Jump to the first section
+	(dashboard-goto-recent-files)))
+
+    (leaf quit-dashboard
+      :url "https://github.com/seagle0128/.emacs.d/blob/8cbec0c132cd6de06a8c293598a720d377f3f5b9/lisp/init-dashboard.el#L219"
+      :preface
+      (defun quit-dashboard ()
+	"Quit dashboard window."
+	(interactive)
+	(quit-window t)
+	(and dashboard-recover-layout-p
+             (and (bound-and-true-p winner-mode) (winner-undo))
+             (setq dashboard-recover-layout-p nil))))
+    )
+
   (leaf display-line-numbers
     :doc "interface for display-line-numbers"
     :tag "builtin"
@@ -1373,7 +1410,7 @@
     (display-time-interval . 1)
     (display-time-string-forms . '((format "%s:%s:%s" 24-hours minutes seconds)))
     (display-time-day-and-date . t))
-  
+
   (leaf emojify
     :doc "Display emojis in Emacs"
     :req "seq-1.11" "ht-2.0" "emacs-24.3"
@@ -1382,7 +1419,7 @@
     :emacs>= 24.3
     :ensure t :require t
     :hook (after-init . global-emojify-mode))
-  
+
   (leaf fira-code-mode
     :doc "Minor mode for Fira Code ligatures using prettify-symbols"
     :req "emacs-24.4"
@@ -1392,7 +1429,7 @@
     :ensure t :require t
     :hook ;; (prog-mode-hook . fira-code-mode) ;; wsl2 だとバグる
     :custom (fira-code-mode-disabled-ligatures '("<>" "[]" "#{" "#(" "#_" "#_(" "x")))
-  
+
   (leaf highlight-indent-guides
     :doc "Minor mode to highlight indentation"
     :req "emacs-24.1"
@@ -1406,7 +1443,7 @@
     (highlight-indent-guides-auto-enabled . t)
     (highlight-indent-guides-responsive . t)
     (highlight-indent-guides-method . 'character))
-  
+
   (leaf highlight-symbol
     :doc "automatic and manual symbol highlighting"
     :tag "matching" "faces"
@@ -1425,7 +1462,7 @@
     (neo-smart-open . t)
     (neo-create-file-auto-open . t)
     (neo-theme . (if (display-graphic-p) 'icons 'arrow)))
-  
+
   (leaf page-break-lines
     :doc "Display ^L page breaks as tidy horizontal lines"
     :req "emacs-24.4"
@@ -1465,7 +1502,7 @@
     :emacs>= 25.1
     :ensure t :require t
     :global-minor-mode solaire-global-mode)
-  
+
   (leaf yascroll
     :doc "Yet Another Scroll Bar Mode"
     :req "emacs-26.1"
