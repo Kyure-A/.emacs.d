@@ -5,10 +5,10 @@
 
 // 1-indexed
 
-vector<int> distance(n + 1, -1); // -1 の場合は未訪問
+vector<bool> seen(n + 1, false); // -1 の場合は未訪問
 stack<int> stk; // last in first out
 
-distance[1] = 0; stk.emplace(1); // 初期化
+seen[1] = true; stk.emplace(1); // 初期化
 
 // Start
 while (!stk.empty())
@@ -18,9 +18,9 @@ while (!stk.empty())
     // v に隣接している頂点をすべて調べる
     for (auto near_v : ${1:graph[v]})
     {
-        if (distance[near_v] != -1) continue; 
+        if (seen[near_v]) continue; 
         
-        distance[near_v] = distance[v] + 1;
+	seen[near_v] = true;
         stk.emplace(near_v); // 次に訪れるために追加する
     }
 }

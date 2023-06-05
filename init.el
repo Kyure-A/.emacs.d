@@ -1154,7 +1154,7 @@
       :mode
       "\\.sh\\'"
       "\\.zsh\\'"
-      :hook (sh-mode-hook . modern-sh-mode))
+      :hook (sh-mode . modern-sh-mode))
     
     (leaf flymake-shellcheck
       :doc "A bash/sh Flymake backend powered by ShellCheck"
@@ -1356,13 +1356,10 @@
     (dashboard-startup-banner . "~/.emacs.d/banner.png")
     (dashboard-banner-logo-title . "Kyure_A's Emacs")
     :config
-
     (setq dashboard-footer-messages-list (list '("「今日も一日がんばるぞい！」 - 涼風青葉")
 					       '("「なんだかホントに入社した気分です！」 - 涼風青葉")
 					       '("example")))
-    
     (setq dashboard-footer-messages (nth (random (length dashboard-footer-messages-list)) dashboard-footer-messages-list))
-    
     :preface
 
     (leaf open-dashboard
