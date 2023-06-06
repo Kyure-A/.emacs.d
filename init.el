@@ -1356,10 +1356,10 @@
     (dashboard-startup-banner . "~/.emacs.d/banner.png")
     (dashboard-banner-logo-title . "Kyure_A's Emacs")
     :config
-    (setq dashboard-footer-messages-list (list '("「今日も一日がんばるぞい！」 - 涼風青葉")
-					       '("「なんだかホントに入社した気分です！」 - 涼風青葉")
-					       '("「そしてそのバグの程度で実力も知れるわけです」- 阿波根うみこ")))
-    (setq dashboard-footer-messages (nth (random (length dashboard-footer-messages-list)) dashboard-footer-messages-list))
+    (setq dashboard-footer-messages '("「今日も一日がんばるぞい！」 - 涼風青葉"
+				      "「なんだかホントに入社した気分です！」 - 涼風青葉"
+				      "「そしてそのバグの程度で実力も知れるわけです」- 阿波根うみこ"))
+    
     :preface
 
     (leaf open-dashboard
