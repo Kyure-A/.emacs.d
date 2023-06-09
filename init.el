@@ -495,6 +495,19 @@
 	"Return a string which is a concatenation of all elements of the list separated by spaces"
 	(mapconcat '(lambda (obj) (format "%s" obj)) list " "))))
 
+  (leaf dirvish
+    :doc "A modern file manager based on dired mode"
+    :req "emacs-27.1" "transient-0.3.7"
+    :tag "convenience" "files" "emacs>=27.1"
+    :url "https://github.com/alexluigit/dirvish"
+    :added "2023-06-07"
+    :emacs>= 27.1
+    :ensure t
+    :init (dirvish-override-dired-mode)
+    :custom
+    (dirvish-attributes . '(vc-state subtree-state all-the-icons collapse git-msg file-time file-size))
+    (dirvish-preview-dispatchers . (cl-substitute 'pdf-preface 'pdf dirvish-preview-dispatchers)))
+  
   (leaf exec-path-from-shell
     :doc "Get environment variables such as $PATH from the shell"
     :req "emacs-24.1" "cl-lib-0.6"
@@ -1075,17 +1088,6 @@
       :mode
       "\\.yml$"
       "\\.yaml$")
-    
-    (leaf yatex
-      :doc "Yet Another tex-mode for emacs //野鳥//"
-      :doc "jis=2, UTF-8=4"
-      :ensure t :require t
-      :mode "\\.tex$"
-      :custom
-      (YaTeX-nervous . nil)
-      (latex-message-kanji-code . 4)
-      (YaTeX-kanji-code . 4)
-      (YaTeX-coding-system . 4))
     )
 
   (leaf *pwsh
