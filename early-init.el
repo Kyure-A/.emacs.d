@@ -7,6 +7,8 @@
 
 ;;; Code:
 
+;; Setup-tracker
+
 (defvar setup-tracker--level 0)
 (defvar setup-tracker--parents nil)
 (defvar setup-tracker--times nil)
@@ -38,6 +40,10 @@
           (push v setup-tracker--parents)
           (push (current-time) setup-tracker--times)
           (setq setup-tracker--level (1+ setup-tracker--level))))))
+
+;; ---------------------------------------------------------------------------------------------- ;;
+
+;; Garbage Collector
 
 (eval-and-compile
   (defconst init/saved-file-name-handler-alist file-name-handler-alist)
