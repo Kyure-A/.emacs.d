@@ -64,7 +64,7 @@
   ;; Modifier key
   ("<f2>" . vterm-toggle)
   ("<f3>". dashboard-open)
-  ("<f5>" . my/quickrun-sc)
+  ;; ("<f5>" . my/quickrun-sc)
   ("RET" . smart-newline)
   ("C-<return>" . newline)
   ("C-<space>" . nil)
@@ -281,7 +281,7 @@
     :ensure t
     :require t)
   
-  (leaf goto-address :tag "builtin" :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
+  ;; (leaf goto-address :tag "builtin" :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
 
   (leaf smooth-scrolling
     :doc "Make emacs scroll smoothly"
@@ -848,19 +848,19 @@
     :after compat git-commit magit-section with-editor
     :hook (magit-status-mode . my/toggle-centaur-tabs-local-mode))
   
-  (leaf oj
-    :doc "Competitive programming tools client for AtCoder, Codeforces"
-    :req "emacs-26.1" "quickrun-2.2"
-    :tag "convenience" "emacs>=26.1"
-    :url "https://github.com/conao3/oj.el"
-    :emacs>= 26.1
-    :ensure t :require t
-    :custom
-    (oj-shell-program . "zsh")
-    (oj-open-home-dir . "~/oj-files/")
-    (oj-default-online-judge . 'atcoder)
-    (oj-compiler-c . "gcc")
-    (oj-compiler-python . "cpython"))
+  ;; (leaf oj
+  ;;   :doc "Competitive programming tools client for AtCoder, Codeforces"
+  ;;   :req "emacs-26.1" "quickrun-2.2"
+  ;;   :tag "convenience" "emacs>=26.1"
+  ;;   :url "https://github.com/conao3/oj.el"
+  ;;   :emacs>= 26.1
+  ;;   :ensure t :require t
+  ;;   :custom
+  ;;   (oj-shell-program . "zsh")
+  ;;   (oj-open-home-dir . "~/oj-files/")
+  ;;   (oj-default-online-judge . 'atcoder)
+  ;;   (oj-compiler-c . "gcc")
+  ;;   (oj-compiler-python . "cpython"))
 
   (leaf projectile
     :doc "Manage and navigate projects in Emacs easily"
@@ -900,21 +900,22 @@
     ;; 	  vterm-eval-cmds)
     )
   
-  (leaf quickrun
-    :doc "Run commands quickly"
-    :req "emacs-24.3"
-    :tag "emacs>=24.3"
-    :url "https://github.com/syohex/emacs-quickrun"
-    :emacs>= 24.3
-    :ensure t :require t
-    :config
-    (push '("*quickrun*") popwin:special-display-config)
-    :preface
-    (defun my/quickrun-sc (start end)
-      (interactive "r")
-      (if mark-active
-	  (quickrun :start start :end end)
-	(quickrun))))
+  ;; (leaf quickrun
+  ;;   :doc "Run commands quickly"
+  ;;   :req "emacs-24.3"
+  ;;   :tag "emacs>=24.3"
+  ;;   :url "https://github.com/syohex/emacs-quickrun"
+  ;;   :emacs>= 24.3
+  ;;   :ensure t :require t
+  ;;   :config
+  ;;   (push '("*quickrun*") popwin:special-display-config)
+  ;;   :preface
+  ;;   (defun my/quickrun-sc (start end)
+  ;;     (interactive "r")
+  ;;     (if mark-active
+  ;; 	  (quickrun :start start :end end)
+  ;; 	(quickrun)))
+  ;;   )
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -1043,7 +1044,9 @@
 	:ensure t :require t
 	:hook
 	(org-mode-hook . org-modern-mode)
-	(org-agenda-finalize-hook . org-modern-agenda)))
+	(org-agenda-finalize-hook . org-modern-agenda)
+	)
+      )
 
     (leaf web-mode
       :doc "major mode for editing web templates"
@@ -1102,11 +1105,11 @@
       :emacs>= 24
       :ensure t)
     
-    (leaf lsp-pwsh
-      :doc "client for PowerShellEditorServices"
-      :tag "out-of-MELPA" "lsp"
-      :added "2023-06-02"
-      :require t)
+    ;; (leaf lsp-pwsh
+    ;;   :doc "client for PowerShellEditorServices"
+    ;;   :tag "out-of-MELPA" "lsp"
+    ;;   :added "2023-06-02"
+    ;;   :require t)
     )
   
   (leaf *rust
