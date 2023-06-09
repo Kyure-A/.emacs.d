@@ -848,19 +848,20 @@
     :after compat git-commit magit-section with-editor
     :hook (magit-status-mode . my/toggle-centaur-tabs-local-mode))
   
-  ;; (leaf oj
-  ;;   :doc "Competitive programming tools client for AtCoder, Codeforces"
-  ;;   :req "emacs-26.1" "quickrun-2.2"
-  ;;   :tag "convenience" "emacs>=26.1"
-  ;;   :url "https://github.com/conao3/oj.el"
-  ;;   :emacs>= 26.1
-  ;;   :ensure t :require t
-  ;;   :custom
-  ;;   (oj-shell-program . "zsh")
-  ;;   (oj-open-home-dir . "~/oj-files/")
-  ;;   (oj-default-online-judge . 'atcoder)
-  ;;   (oj-compiler-c . "gcc")
-  ;;   (oj-compiler-python . "cpython"))
+  (leaf oj
+    :doc "Competitive programming tools client for AtCoder, Codeforces"
+    :req "emacs-26.1" "quickrun-2.2"
+    :tag "convenience" "emacs>=26.1"
+    :url "https://github.com/conao3/oj.el"
+    :emacs>= 26.1
+    :after prog
+    :ensure t :require t
+    :custom
+    (oj-shell-program . "zsh")
+    (oj-open-home-dir . "~/oj-files/")
+    (oj-default-online-judge . 'atcoder)
+    (oj-compiler-c . "gcc")
+    (oj-compiler-python . "cpython"))
 
   (leaf projectile
     :doc "Manage and navigate projects in Emacs easily"
@@ -887,35 +888,24 @@
     ;; (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
     :config
     (leaf vterm-toggle :ensure t :require t)
-    (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
-    :preface
-    ;; (defun my/term-mode-p(&optional args)
-    ;;   (derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode))
-    ;; (push (list "find-file-below"
-    ;; 		(lambda (path)
-    ;; 		  (if-let* ((buf (find-file-noselect path))
-    ;;                         (window (display-buffer-below-selected buf nil)))
-    ;; 		      (select-window window)
-    ;;                 (message "Failed to open file: %s" path))))
-    ;; 	  vterm-eval-cmds)
-    )
+    (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
   
-  ;; (leaf quickrun
-  ;;   :doc "Run commands quickly"
-  ;;   :req "emacs-24.3"
-  ;;   :tag "emacs>=24.3"
-  ;;   :url "https://github.com/syohex/emacs-quickrun"
-  ;;   :emacs>= 24.3
-  ;;   :ensure t :require t
-  ;;   :config
-  ;;   (push '("*quickrun*") popwin:special-display-config)
-  ;;   :preface
-  ;;   (defun my/quickrun-sc (start end)
-  ;;     (interactive "r")
-  ;;     (if mark-active
-  ;; 	  (quickrun :start start :end end)
-  ;; 	(quickrun)))
-  ;;   )
+  (leaf quickrun
+    :doc "Run commands quickly"
+    :req "emacs-24.3"
+    :tag "emacs>=24.3"
+    :url "https://github.com/syohex/emacs-quickrun"
+    :emacs>= 24.3
+    :ensure t :require t
+    :after prog
+    :config
+    (push '("*quickrun*") popwin:special-display-config)
+    :preface
+    (defun my/quickrun-sc (start end)
+      (interactive "r")
+      (if mark-active
+	  (quickrun :start start :end end)
+	(quickrun))))
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -989,6 +979,7 @@
       :tag "sly" "lisp" "languages" "emacs>=24.3"
       :url "https://github.com/joaotavora/sly"
       :emacs>= 24.3
+      :after prog
       :ensure t :require t
       :custom (inferior-lisp-program . "/usr/bin/sbcl")
       :config
@@ -1042,11 +1033,10 @@
 	:url "https://github.com/minad/org-modern"
 	:emacs>= 27.1
 	:ensure t :require t
+	:after org
 	:hook
 	(org-mode-hook . org-modern-mode)
-	(org-agenda-finalize-hook . org-modern-agenda)
-	)
-      )
+	(org-agenda-finalize-hook . org-modern-agenda)))
 
     (leaf web-mode
       :doc "major mode for editing web templates"
@@ -1105,11 +1095,12 @@
       :emacs>= 24
       :ensure t)
     
-    ;; (leaf lsp-pwsh
-    ;;   :doc "client for PowerShellEditorServices"
-    ;;   :tag "out-of-MELPA" "lsp"
-    ;;   :added "2023-06-02"
-    ;;   :require t)
+    (leaf lsp-pwsh
+      :doc "client for PowerShellEditorServices"
+      :tag "out-of-MELPA" "lsp"
+      :added "2023-06-02"
+      :require t
+      :after lsp)
     )
   
   (leaf *rust
@@ -1138,6 +1129,7 @@
       :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
 
     (leaf *lsp-rust
+      :after lsp
       :hook (rust-mode . lsp)
       :custom (lsp-rust-server . 'rust-analyzer))
     )
