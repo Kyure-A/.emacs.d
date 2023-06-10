@@ -124,6 +124,7 @@
 (leaf *visual
   :doc "起動時の見た目と起動後の見た目が大きく異なるのが気になるので early-init.el で呼び出したい見た目関連のものをまとめた"
   :config
+  (leaf monokai-theme :ensure t :config (load-theme 'monokai t))
   (leaf doom-modeline :ensure t :global-minor-mode t :custom (doom-modeline-icon . t))
   (scroll-bar-mode -1)
   (setq frame-inhibit-implied-resize t)
@@ -140,14 +141,6 @@
 		 '(fullscreen . maximized)
 		 '(tool-bar-lines . 0)
 		 '(menu-bar-lines . 0)))))
-
-(leaf *theme
-  :doc "テーマ類をまとめた"
-  :config
-  (leaf monokai-theme :ensure t :config (load-theme 'monokai t))
-  ;;(leaf atom-one-dark-theme :ensure t :config (load-theme 'atom-one-dark t))
-  ;;(leaf vscode-dark-plus-theme :ensure t :config (load-theme 'vscode-dark-plus t))
-  )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
