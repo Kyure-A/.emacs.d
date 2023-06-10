@@ -378,6 +378,12 @@
       :custom
       (company-box-icons-alist . 'company-box-icons-all-the-icons)
       (company-box-doc-enable . nil))
+
+    (leaf company-clang :doc "company-mode completion backend for Clang" :after company)
+    
+    (leaf company-etags :doc "company-mode completion backend for etags" :after company)
+
+    (leaf company-gtags :doc "company-mode completion backend for GNU Global" :after company)
     
     (leaf company-statistics
       :doc "Sort candidates using completion history"
@@ -919,6 +925,7 @@
     (leaf cc-mode
       :doc "user customization variables for CC Mode"
       :tag "builtin"
+      :after prog
       :hook
       (c-mode . (lambda () (setq c-basic-offset 8) (indent-tabs-mode . nil)))
       (c++-mode . (lambda () (setq c-basic-offset 8) (indent-tabs-mode . nil)))
@@ -928,6 +935,7 @@
     (leaf google-c-style
       :doc "Google's C/C++ style for c-mode"
       :tag "tools" "c"
+      :after prog
       :ensure t :require t
       :hook ((c-mode c++-mode) . (lambda () (google-set-c-style)))))
 
@@ -940,6 +948,7 @@
       :tag "languages" "emacs>=24.3"
       :url "https://github.com/bradyt/dart-mode"
       :emacs>= 24.3
+      :after prog
       :ensure t :require t
       :hook (dart-mode-hook . flycheck-mode)
       :custom
@@ -967,7 +976,8 @@
     :config
 
     (leaf elisp-mode
-      :mode "\\Keg\\'")
+      :mode "\\Keg\\'"
+      )
     
     (leaf lisp-interaction
       :bind
@@ -999,6 +1009,7 @@
       :tag "convenience" "emacs>=27.1"
       :url "https://elpa.gnu.org/packages/csv-mode.html"
       :emacs>= 27.1
+      :after prog
       :ensure t :require t
       :mode "\\.csv\\'")
 
@@ -1010,6 +1021,7 @@
       :tag "itex" "github flavored markdown" "markdown" "emacs>=26.1"
       :url "https://jblevins.org/projects/markdown-mode/"
       :emacs>= 26.1
+      :after prog
       :ensure t :require t
       :commands markdown-mode
       :mode (("\\.md\\'" . gfm-mode)
@@ -1044,6 +1056,7 @@
       :tag "languages" "emacs>=23.1"
       :url "https://web-mode.org"
       :emacs>= 23.1
+      :after prog
       :ensure t :require t
       :mode
       "\\.[agj]sp\\'"
@@ -1077,6 +1090,7 @@
       :tag "yaml" "data" "emacs>=24.1"
       :url "https://github.com/yoshiki/yaml-mode"
       :emacs>= 24.1
+      :after prog
       :ensure t
       :mode
       "\\.yml$"
@@ -1093,6 +1107,7 @@
       :url "http://github.com/jschaf/powershell.el"
       :added "2023-06-02"
       :emacs>= 24
+      :after prog
       :ensure t)
     
     (leaf lsp-pwsh
@@ -1100,7 +1115,7 @@
       :tag "out-of-MELPA" "lsp"
       :added "2023-06-02"
       :require t
-      :after lsp)
+      :after lsp powershell)
     )
   
   (leaf *rust
@@ -1113,6 +1128,7 @@
       :url "https://github.com/rust-lang/rust-mode"
       :added "2023-04-19"
       :emacs>= 25.1
+      :after prog
       :ensure t
       :hook (rust-mode . lsp)
       )
@@ -1169,7 +1185,8 @@
     (leaf nodejs-repl
       :doc "Run Node.js REPL"
       :ensure t
-      :require t)
+      :require t
+      :after prog)
     
     (leaf typescript-mode
       :doc "Major mode for editing typescript"
@@ -1177,6 +1194,7 @@
       :tag "languages" "typescript" "emacs>=24.3"
       :url "http://github.com/ananthakumaran/typescript.el"
       :emacs>= 24.3
+      :after prog
       :ensure t :require t
       :mode "\\.ts\\'" "\\.tsx\\'" "\\.mts\\'")
     
@@ -1208,6 +1226,7 @@
       :req "mmm-mode-0.5.5" "vue-html-mode-0.2" "ssass-mode-0.2" "edit-indirect-0.1.4"
       :tag "languages"
       :added "2023-02-26"
+      :after prog
       :ensure t
       :after mmm-mode vue-html-mode ssass-mode edit-indirect))
 
@@ -1216,6 +1235,7 @@
     :tag "builtin" "nand2tetris"
     :added "2022-08-28"
     :require t
+    :after prog
     :mode "\\.hdl$")
 
   )
@@ -1415,6 +1435,7 @@
     :url "https://github.com/iqbalansari/emacs-emojify"
     :emacs>= 24.3
     :ensure t :require t
+    :after after-init
     :hook (after-init . global-emojify-mode))
 
   (leaf fira-code-mode

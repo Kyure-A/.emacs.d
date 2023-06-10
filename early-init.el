@@ -58,16 +58,17 @@
 
 (require 'package)
 
+(setq package-enable-at-startup nil) ;; (package-initialize) を抑制
+(setq package-user-dir "~/.emacs_packages/elpa")
+(add-to-list 'load-path "./elpa")
+(add-to-list 'load-path "./elisp")
+
 (eval-and-compile
   (customize-set-variable 'package-archives
 			  '(("melpa" . "https://melpa.org/packages/")
 			    ("org"   . "https://orgmode.org/elpa/")
 			    ("gnu"   . "https://elpa.gnu.org/packages/")))
-  (setq package-user-dir "~/.emacs_packages/elpa")
-  (add-to-list 'load-path "./elpa")
-  (add-to-list 'load-path "./elisp")
   (package-initialize)
-  (setq package-enable-at-startup nil) ;; (package-initialize) を抑制
   ;; leaf が入っていないときに leaf を入れる
   (when (not (package-installed-p 'leaf))
     (package-refresh-contents)
@@ -91,7 +92,8 @@
      '(quelpa-leaf
        :fetcher git
        :url "https://github.com/quelpa/quelpa-leaf.git"))
-    (quelpa-leaf-init)))
+    (leaf quelpa-leaf :after quelpa :require t :init (quelpa-leaf-init)))
+  )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
