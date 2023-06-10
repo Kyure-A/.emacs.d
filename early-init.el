@@ -91,9 +91,7 @@
      '(quelpa-leaf
        :fetcher git
        :url "https://github.com/quelpa/quelpa-leaf.git"))
-    (quelpa-leaf-init))
-  (leaf package-utils :ensure t)
-  (leaf use-package :ensure t))
+    (quelpa-leaf-init)))
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
