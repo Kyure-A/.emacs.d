@@ -59,7 +59,7 @@
 (require 'package)
 
 (setq package-enable-at-startup nil) ;; (package-initialize) を抑制
-(setq package-user-dir "~/.emacs_packages/elpa")
+(setq package-user-dir "~/.elpkg/elpa")
 (add-to-list 'load-path "./elpa")
 (add-to-list 'load-path "./elisp")
 
@@ -87,7 +87,7 @@
     :custom
     (quelpa-checkout-melpa-p . nil)
     :config
-    (add-to-list 'quelpa-melpa-recipe-stores "~/.emacs_packages")
+    (add-to-list 'quelpa-melpa-recipe-stores "~/.elpkg")
     (quelpa
      '(quelpa-leaf
        :fetcher git
