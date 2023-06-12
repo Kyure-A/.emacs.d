@@ -21,16 +21,28 @@
 
 (leaf *global-set-key
   :bind
-  ;; C-c
-  ("C-c e b" . my/reload-init-el)
-  ("C-c e e" . my/open-scratch)
-  ("C-c e m" . menu-bar-mode)
-  ("C-c l c" . leaf-convert-region-replace)
-  ("C-c l t" . leaf-tree-mode)
-  ("C-c m" . macrostep-mode)
-  ("C-c o" . org-capture)
-  ("C-c s" . my/sly-start)
-  ("C-c t" . centaur-tabs-counsel-switch-group)
+
+  ;; Modifier key
+  ("<f2>" . vterm-toggle)
+  ("<f3>". dashboard-open)
+  ;; ("<f5>" . my/quickrun-sc)
+  ("RET" . smart-newline)
+  ("<backspace>" . smart-hungry-delete-backward-char)
+  ("<mouse-8>" . centaur-tabs-backward)
+  ("<double-mouse-8>" . centaur-tabs-backward)
+  ("<triple-mouse-8>" . centaur-tabs-backward)
+  ("<drag-mouse-8>" . centaur-tabs-backward)
+  ("<mouse-9>" . centaur-tabs-forward)
+  ("<double-mouse-9>" . centaur-tabs-forward)
+  ("<triple-mouse-9>" . centaur-tabs-forward)
+  ("<drag-mouse-9>" . centaur-tabs-forward)
+
+  ;; C-<Modifer key>
+  ("C-<prior>" . centaur-tabs-backward)
+  ("C-<next>" . centaur-tabs-forward)
+  ("C-RET" . newline)
+  ("C-<space>" . nil)
+
   ;; C-x
   ("C-x g" . magit-status)
   ("C-x M-g" . magit-dispatch-popup)
@@ -38,6 +50,18 @@
   ("C-x i i" . ivy-yasnippet)
   ("C-x i n" . ivy-yasnippet-new-snippet)
   ("C-x u" . undo-tree-visualize)
+  
+  ;; C-c
+  ("C-c C-f" . leaf-convert-insert-template)
+  ("C-c e b" . eval-buffer)
+  ("C-c e e" . my/open-scratch)
+  ("C-c e m" . menu-bar-mode)
+  ("C-c l c" . leaf-convert-region-replace)
+  ("C-c l t" . leaf-tree-mode)
+  ("C-c o" . org-capture)
+  ("C-c s" . my/sly-start)
+  ("C-c t" . centaur-tabs-counsel-switch-group)
+  
   ;; C-l
   ("C-l" . nil)
   ("C-l C-l" . lsp)
@@ -49,37 +73,27 @@
   ("C-l s" . lsp-ui-sideline-mode)
   ("C-l C-d" . lsp-ui-peek-find-definitions)
   ("C-l C-r" . lsp-ui-peek-find-references)
+  
   ;; C-<any>
   ("C-a" . mwim-beginning-of-code-or-line)
+  ("C-b". backward-char)
+  ("C-d" . smart-hungry-delete-backward-char)
   ("C-e" . mwim-end-of-code-or-line)
+  ("C-f" . forward-char)
+  ("C-n" . next-line)
+  ("C-p" . previous-line)
   ("C-u" . undo-tree-undo)
   ("C-r" . undo-tree-redo)
   ("C-s" . swiper)
   ("C-/" . other-window)
-  ("C-c C-f" . leaf-convert-insert-template)
+  
   ;; M-<any>
   ("M-k" . backward-kill-line)
+  ("M-q" . vr/replace)
   ("M-x" . counsel-M-x)
-  ("M-%" . vr/query-replace)
-  ;; Modifier key
-  ("<f2>" . vterm-toggle)
-  ("<f3>". dashboard-open)
-  ;; ("<f5>" . my/quickrun-sc)
-  ("RET" . smart-newline)
-  ("C-<return>" . newline)
-  ("C-<space>" . nil)
-  ("<backspace>" . smart-hungry-delete-backward-char)
-  ("C-<prior>" . centaur-tabs-backward)
-  ("C-<next>" . centaur-tabs-forward)
-  ("<mouse-8>" . centaur-tabs-backward)
-  ("<double-mouse-8>" . centaur-tabs-backward)
-  ("<triple-mouse-8>" . centaur-tabs-backward)
-  ("<drag-mouse-8>" . centaur-tabs-backward)
-  ("<mouse-9>" . centaur-tabs-forward)
-  ("<double-mouse-9>" . centaur-tabs-forward)
-  ("<triple-mouse-9>" . centaur-tabs-forward)
-  ("<drag-mouse-9>" . centaur-tabs-forward)
+
   :config
+  (fset 'yes-or-no-p 'y-or-n-p)
   (defalias 'yes-or-no-p 'y-or-n-p))
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -87,12 +101,6 @@
 (leaf *common-defun
   :preface
   ;; 適当
-  (defun my/reload-init-el ()
-    "C-c e b"
-    (interactive)
-    (eval-buffer)
-    (my/remove-warnings-buffer)
-    (my/remove-messages-buffer))
   (defun my/toggle-centaur-tabs-local-mode()
     (interactive)
     (call-interactively 'centaur-tabs-local-mode)
@@ -975,13 +983,9 @@
     :doc "Emacs Lisp, Common Lisp"
     :config
 
-    (leaf elisp-mode
-      :mode "\\Keg\\'"
-      )
+    (leaf elisp-mode :mode "\\Keg\\'")
     
-    (leaf lisp-interaction
-      :bind
-      (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
+    (leaf lisp-interaction :bind (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
 
     (leaf sly
       :doc "Sylvester the Cat's Common Lisp IDE"
@@ -1322,19 +1326,19 @@
     (defun my/centaur-tabs-buffer-groups ()
       (list
        (cond
-	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode 'magit-mode)
-	 "Terminal")
-	((derived-mode-p 'emacs-lisp-mode)
-	 "Emacs")
+	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode 'magit-mode) "Terminal")
+	((derived-mode-p 'emacs-lisp-mode) "Emacs")
 	((string-match-p (rx (or
 			      "\*dashboard\*"
+			      "\*scratch\*"
+			      "\*sdcv\*"
+			      "\*setup-tracker\*"
                               "\*tramp"
                               "\*Completions\*"
-                              "\*sdcv\*"
-                              "\*Messages\*"
-                              "\*Ido Completions\*"
-			      "\*scratch\*"
 			      "\*Flycheck errors\*"
+			      "\*Ido Completions\*"
+                              "\*Messages\*"
+			      "\*Warnings\*"
                               ))
 			 (buffer-name))
 	 "Emacs")
@@ -1344,6 +1348,12 @@
                               ))
 			 (buffer-name))
 	 "Copilot")
+	((string-match-p (rx (or
+			      "\*rust-analyzer::stderr\*"
+			      "\*rust-analyzer\*"
+			      ))
+			 (buffer-name))
+	 "rust-analyzer")
 	((string-match-p (rx (or
 			      "\*clang-error\*"
 			      "\*clang-output\*"

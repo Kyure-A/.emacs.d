@@ -100,16 +100,15 @@
 (leaf startup
   :hook
   (window-setup-hook . delete-other-windows)
-  (after-change-major-mode-hook . my/remove-messages-buffer)
-  (after-change-major-mode-hook . my/remove-warnings-buffer)
-  (minibuffer-exit-hook . my/remove-completions-buffer)
+  ;; (after-change-major-mode-hook . my/remove-messages-buffer)
+  ;; (after-change-major-mode-hook . my/remove-warnings-buffer)
+  ;; (minibuffer-exit-hook . my/remove-completions-buffer)
   :custom
   (inhibit-startup-screen . t)
   (initial-scratch-message . nil)
   (inhibit-startup-buffer-menu . t)
   (message-log-max . nil)
   (ring-bell-function . 'ignore)
-  :preface
   (defun my/remove-scratch-buffer ()
     (if (get-buffer "*scratch*")
 	(kill-buffer "*scratch*")))
