@@ -81,6 +81,7 @@
   (leaf leaf-convert :ensure t)
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))
   (leaf blackout :ensure t)
+  (leaf package :defer 5)
   (leaf quelpa
     :ensure t
     :require t
