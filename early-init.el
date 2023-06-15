@@ -80,7 +80,6 @@
   (leaf leaf-keywords :ensure t :init (leaf-keywords-init))
   (leaf leaf-convert :ensure t)
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))
-  (leaf blackout :ensure t)
   (leaf package :defer 5)
   (leaf quelpa
     :ensure t
@@ -93,8 +92,7 @@
      '(quelpa-leaf
        :fetcher git
        :url "https://github.com/quelpa/quelpa-leaf.git"))
-    (leaf quelpa-leaf :after quelpa :require t :init (quelpa-leaf-init)))
-  )
+    (leaf quelpa-leaf :after quelpa :require t :init (quelpa-leaf-init))))
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
