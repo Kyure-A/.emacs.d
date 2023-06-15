@@ -524,6 +524,7 @@
     :url "https://github.com/alexluigit/dirvish"
     :added "2023-06-07"
     :emacs>= 27.1
+    :after dired
     :ensure t
     :init (dirvish-override-dired-mode)
     :custom

@@ -80,7 +80,7 @@
   (leaf leaf-keywords :ensure t :init (leaf-keywords-init))
   (leaf leaf-convert :ensure t)
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))
-  (leaf package :defer 5)
+  (leaf package :defer 10)
   (leaf quelpa
     :ensure t
     :require t
@@ -108,6 +108,7 @@
   (inhibit-startup-buffer-menu . t)
   (message-log-max . nil)
   (ring-bell-function . 'ignore)
+  :preface
   (defun my/remove-scratch-buffer ()
     (if (get-buffer "*scratch*")
 	(kill-buffer "*scratch*")))
