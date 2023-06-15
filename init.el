@@ -163,7 +163,6 @@
     :url "https://github.com/tumashu/posframe"
     :emacs>= 26.1
     :ensure t :require t
-    :require t
     :config
     (leaf pos-tip
       :doc "Show tooltip at point"
@@ -420,7 +419,6 @@
       :url "https://github.com/tumashu/company-posframe"
       :emacs>= 26.0
       :ensure t :require t
-      :require t
       :after company posframe
       :global-minor-mode t)
     
@@ -431,7 +429,6 @@
       :url "https://www.github.com/expez/company-quickhelp"
       :emacs>= 24.3
       :ensure t :require t
-      :require t
       :after company pos-tip
       :custom (company-quickhelp-delay . 0.1))
 
@@ -699,8 +696,7 @@
   (leaf smart-newline
     :doc "Provide smart newline for one keybind."
     :url "https://ainame.hateblo.jp/entry/2013/12/08/162032"
-    :ensure t :require t
-    :require t)
+    :ensure t :require t)
 
   (leaf smartparens
     :doc "Automatic insertion, wrapping and paredit-like navigation with user defined pairs."
@@ -708,7 +704,6 @@
     :tag "editing" "convenience" "abbrev"
     :url "https://github.com/Fuco1/smartparens"
     :ensure t :require t
-    :require t
     :global-minor-mode smartparens-global-mode show-smartparens-global-mode
     :config
     (leaf smartparens-config :require t :after smartparens :hook (web-mode-hook . (lambda () (sp-pair "<#" "#>")))))
@@ -718,7 +713,6 @@
     :req "cl-lib-1.0"
     :tag "convenience"
     :ensure t :require t
-    :require t
     :custom
     (undohist-directory . "~/.emacs.d/.tmp/")
     (undohist-ignored-files . '("/.tmp/" "COMMIT_EDITMSG" "/elpa"))
@@ -1506,7 +1500,6 @@
     :emacs>= 24.4
     :ensure t :require t
     :global-minor-mode global-page-break-lines-mode
-    :require t
     :config
     (leaf-handler-package page-break-lines page-break-lines nil)
     (with-eval-after-load 'page-break-lines
