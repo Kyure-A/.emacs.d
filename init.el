@@ -732,8 +732,6 @@
     :url "https://www.dr-qubit.org/undo-tree.html"
     :emacs>= 24.3
     :ensure t :require t
-    :require t
-    :after queue
     :global-minor-mode global-undo-tree-mode
     :custom
     (undo-tree-auto-save-history . t)
