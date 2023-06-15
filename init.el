@@ -291,6 +291,13 @@
   
   ;; (leaf goto-address :tag "builtin" :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
 
+  (leaf restart-emacs
+    :doc "Restart emacs from within emacs"
+    :tag "convenience"
+    :url "https://github.com/iqbalansari/restart-emacs"
+    :added "2023-06-14"
+    :ensure t)
+  
   (leaf smooth-scrolling
     :doc "Make emacs scroll smoothly"
     :tag "convenience"
@@ -323,14 +330,15 @@
   
   ;; (leaf zone :doc "screen-saver" :tag "builtin" :require t :config (zone-when-idle 1200))
 
-  ;; (leaf onlyonce
-  ;;   :quelpa (onlyonce :repo "Kyure-A/onlyonce.el"
-  ;; 		      :fetcher github
-  ;; 		      :upgrade t)
-  ;;   :config
-  ;;   (onlyonce-add '(fira-code-mode-install-fonts))
-  ;;   (onlyonce-add '(all-the-icons-install-fonts))
-  ;;   (onlyonce-startup))
+  (leaf onlyonce
+    :require t
+    :quelpa (onlyonce :repo "Kyure-A/onlyonce.el"
+		      :fetcher github
+		      :upgrade t)
+    :config
+    ;; (onlyonce-add 'fira-code-mode-install-fonts)
+    ;; (onlyonce-add 'all-the-icons-install-fonts)
+    (onlyonce-startup))
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -795,31 +803,31 @@
   
   ;; GitHub Education License was expired
   
-  (leaf copilot
-    :doc "An unofficial Copilot plugin for Emacs"
-    :req "emacs-27.2" "s-1.12.0" "dash-2.19.1" "editorconfig-0.8.2" "jsonrpc-1.0.14"
-    :tag "out-of-MELPA" "emacs>=27.2"
-    :emacs>= 27.2
-    :quelpa (copilot :repo "zerolfx/copilot.el"
-		     :fetcher github
-		     :upgrade t)
-    :after editorconfig jsonrpc
-    :require t
-    :hook (prog-mode . copilot-mode)
-    ;;:custom (copilot-node-executable . "~/.asdf/installs/nodejs/17.9.1/bin/node")
-    :config
-    
-    (delq 'company-preview-if-just-one-frontend company-frontends)
-    
-    (leaf company-copilot-tab
-      :url "https://github.com/zerolfx/copilot.el/blob/9b13478720581580a045ac76ad68be075466a963/readme.md?plain=1#L152"
-      :after company
-      :bind ;; (:company-active-map ( "<tab>" . company-copilot-tab))
-      :preface
-      (defun company-copilot-tab ()
-	(interactive)
-	(or (copilot-accept-completion)
-	    (company-indent-or-complete-common nil)))))
+  ;; (leaf copilot
+  ;;   :doc "An unofficial Copilot plugin for Emacs"
+  ;;   :req "emacs-27.2" "s-1.12.0" "dash-2.19.1" "editorconfig-0.8.2" "jsonrpc-1.0.14"
+  ;;   :tag "out-of-MELPA" "emacs>=27.2"
+  ;;   :emacs>= 27.2
+  ;;   :quelpa (copilot :repo "zerolfx/copilot.el"
+  ;; 		     :fetcher github
+  ;; 		     :upgrade t)
+  ;;   :after editorconfig jsonrpc
+  ;;   :require t
+  ;;   :hook (prog-mode . copilot-mode)
+  ;;   ;;:custom (copilot-node-executable . "~/.asdf/installs/nodejs/17.9.1/bin/node")
+  ;;   :config
+  
+  ;;   (delq 'company-preview-if-just-one-frontend company-frontends)
+  
+  ;;   (leaf company-copilot-tab
+  ;;     :url "https://github.com/zerolfx/copilot.el/blob/9b13478720581580a045ac76ad68be075466a963/readme.md?plain=1#L152"
+  ;;     :after company
+  ;;     :bind ;; (:company-active-map ( "<tab>" . company-copilot-tab))
+  ;;     :preface
+  ;;     (defun company-copilot-tab ()
+  ;; 	(interactive)
+  ;; 	(or (copilot-accept-completion)
+  ;; 	    (company-indent-or-complete-common nil)))))
   
   (leaf editorconfig
     :doc "EditorConfig Emacs Plugin"
