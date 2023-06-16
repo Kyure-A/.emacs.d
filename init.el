@@ -190,63 +190,6 @@
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
-(leaf *library
-  :doc "Emacs Lisp library"
-  :config
-  
-  (leaf dash
-    :doc "A modern list library for Emacs"
-    :req "emacs-24"
-    :tag "lisp" "extensions" "emacs>=24"
-    :url "https://github.com/magnars/dash.el"
-    :emacs>= 24
-    :ensure t :require t)
-
-  (leaf dotenv
-    :quelpa
-    (dotenv :repo "pkulev/dotenv.el"
-	    :fetcher github
-	    :upgrade t))
-
-  (leaf f
-    :doc "Modern API for working with files and directories"
-    :req "emacs-24.1" "s-1.7.0" "dash-2.2.0"
-    :tag "directories" "files" "emacs>=24.1"
-    :url "http://github.com/rejeep/f.el"
-    :added "2023-05-26"
-    :emacs>= 24.1
-    :ensure t)
-  
-  (leaf promise
-    :doc "Promises/A+"
-    :req "emacs-25.1"
-    :tag "convenience" "promise" "async" "emacs>=25.1"
-    :url "https://github.com/chuntaro/emacs-promise"
-    :emacs>= 25.1
-    :ensure t :require t)
-
-  (leaf queue
-    :doc "Queue data structure"
-    :tag "queue" "data structures" "extensions"
-    :url "http://www.dr-qubit.org/emacs.php"
-    :ensure t :require t)
-
-  (leaf request
-    :doc "Compatible layer for URL request"
-    :req "emacs-24.4"
-    :tag "emacs>=24.4"
-    :url "https://github.com/tkf/emacs-request"
-    :emacs>= 24.4
-    :ensure t :require t)
-  
-  (leaf s
-    :doc "The long lost Emacs string manipulation library."
-    :tag "strings"
-    :ensure t :require t)
-  )
-
-;; ---------------------------------------------------------------------------------------------- ;;
-
 (leaf *inbox
   :doc "分類が面倒なパッケージを入れる"
   :config
@@ -335,8 +278,8 @@
 		      :fetcher github
 		      :upgrade t)
     :config
-    ;; (onlyonce-add 'fira-code-mode-install-fonts)
-    ;; (onlyonce-add 'all-the-icons-install-fonts)
+    (onlyonce-add "fira-code-mode-install-fonts")
+    (onlyonce-add "all-the-icons-install-fonts")
     (onlyonce-startup))
   )
 
@@ -980,30 +923,99 @@
     
     )
 
-  (leaf *lisp
-    :doc "Emacs Lisp, Common Lisp"
+  (leaf *emacs-lisp
+    :doc "Emacs Lisp"
     :config
-
-    (leaf elisp-mode :mode "\\Keg\\'")
     
     (leaf lisp-interaction :bind (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
+    
+    (leaf dash
+      :doc "A modern list library for Emacs"
+      :req "emacs-24"
+      :tag "lisp" "extensions" "emacs>=24"
+      :url "https://github.com/magnars/dash.el"
+      :emacs>= 24
+      :ensure t :require t)
 
-    (leaf sly
-      :doc "Sylvester the Cat's Common Lisp IDE"
-      :req "emacs-24.3"
-      :tag "sly" "lisp" "languages" "emacs>=24.3"
-      :url "https://github.com/joaotavora/sly"
-      :emacs>= 24.3
-      :after prog
-      :ensure t :require t
-      :custom (inferior-lisp-program . "/usr/bin/sbcl")
+    (leaf dotenv
+      :quelpa
+      (dotenv :repo "pkulev/dotenv.el"
+	      :fetcher github
+	      :upgrade t))
+    
+    (leaf f
+      :doc "Modern API for working with files and directories"
+      :req "emacs-24.1" "s-1.7.0" "dash-2.2.0"
+      :tag "directories" "files" "emacs>=24.1"
+      :url "http://github.com/rejeep/f.el"
+      :added "2023-05-26"
+      :emacs>= 24.1
+      :ensure t)
+
+    (leaf keg
+      :doc "Modern Elisp package development system"
+      :req "emacs-24.1"
+      :tag "convenience" "emacs>=24.1"
+      :url "https://github.com/conao3/keg.el"
+      :added "2023-06-16"
+      :emacs>= 24.1
+      :ensure t
       :config
-      ;; (load "~/.roswell/helper.el")
-      (defun my/sly-start ()
-	"sly の挙動を slime に似せる"
-	(interactive)
-	(split-window-right)
-	(sly))))
+      (leaf keg-mode
+	:doc "Major mode for editing Keg files"
+	:req "emacs-24.4"
+	:tag "convenience" "emacs>=24.4"
+	:url "https://github.com/conao3/keg.el"
+	:added "2023-06-16"
+	:emacs>= 24.4
+	:ensure t)
+      (leaf flycheck-keg
+	:doc "Flycheck for Keg projects"
+	:req "emacs-24.3" "keg-0.1" "flycheck-0.1"
+	:tag "convenience" "emacs>=24.3"
+	:url "https://github.com/conao3/keg.el"
+	:added "2023-06-16"
+	:emacs>= 24.3
+	:ensure t
+	:after keg flycheck))
+    
+    (leaf promise
+      :doc "Promises/A+"
+      :req "emacs-25.1"
+      :tag "convenience" "promise" "async" "emacs>=25.1"
+      :url "https://github.com/chuntaro/emacs-promise"
+      :emacs>= 25.1
+      :ensure t :require t)
+
+    (leaf queue
+      :doc "Queue data structure"
+      :tag "queue" "data structures" "extensions"
+      :url "http://www.dr-qubit.org/emacs.php"
+      :ensure t :require t)
+
+    (leaf request
+      :doc "Compatible layer for URL request"
+      :req "emacs-24.4"
+      :tag "emacs>=24.4"
+      :url "https://github.com/tkf/emacs-request"
+      :emacs>= 24.4
+      :ensure t :require t)
+    
+    (leaf s
+      :doc "The long lost Emacs string manipulation library."
+      :tag "strings"
+      :ensure t :require t)
+
+    (leaf undercover
+      :doc "Test coverage library for Emacs Lisp"
+      :req "emacs-24" "dash-2.0.0" "shut-up-0.3.2"
+      :tag "tools" "coverage" "tests" "lisp" "emacs>=24"
+      :url "https://github.com/sviridov/undercover.el"
+      :added "2023-06-16"
+      :emacs>= 24
+      :ensure t
+      :after shut-up)
+    )
 
   (leaf *mark-up
     :config
@@ -1235,6 +1247,23 @@
       :ensure t
       :after mmm-mode vue-html-mode ssass-mode edit-indirect))
 
+  (leaf sly
+    :doc "Sylvester the Cat's Common Lisp IDE"
+    :req "emacs-24.3"
+    :tag "sly" "lisp" "languages" "emacs>=24.3"
+    :url "https://github.com/joaotavora/sly"
+    :emacs>= 24.3
+    :after prog
+    :ensure t :require t
+    :custom (inferior-lisp-program . "/usr/bin/sbcl")
+    :config
+    ;; (load "~/.roswell/helper.el")
+    (defun my/sly-start ()
+      "sly の挙動を slime に似せる"
+      (interactive)
+      (split-window-right)
+      (sly)))
+  
   (leaf vhdl-mode
     :doc "major mode for editing VHDL code"
     :tag "builtin" "nand2tetris"
