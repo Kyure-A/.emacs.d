@@ -278,8 +278,8 @@
 		      :fetcher github
 		      :upgrade t)
     :config
-    (onlyonce-add "fira-code-mode-install-fonts")
-    (onlyonce-add "all-the-icons-install-fonts")
+    (onlyonce-add 'fira-code-mode-install-fonts)
+    (onlyonce-add 'all-the-icons-install-fonts)
     (onlyonce-startup))
   )
 
@@ -960,6 +960,7 @@
       :added "2023-06-16"
       :emacs>= 24.1
       :ensure t
+      :require t
       :config
       (leaf keg-mode
 	:doc "Major mode for editing Keg files"
@@ -968,7 +969,7 @@
 	:url "https://github.com/conao3/keg.el"
 	:added "2023-06-16"
 	:emacs>= 24.4
-	:ensure t)
+	:ensure t :require t)
       (leaf flycheck-keg
 	:doc "Flycheck for Keg projects"
 	:req "emacs-24.3" "keg-0.1" "flycheck-0.1"
@@ -977,6 +978,7 @@
 	:added "2023-06-16"
 	:emacs>= 24.3
 	:ensure t
+	:require t
 	:after keg flycheck))
     
     (leaf promise
@@ -1014,9 +1016,19 @@
       :added "2023-06-16"
       :emacs>= 24
       :ensure t
+      :require t
       :after shut-up)
     )
 
+  (leaf elixir-mode
+    :doc "Major mode for editing Elixir files"
+    :req "emacs-25"
+    :tag "elixir" "languages" "emacs>=25"
+    :url "https://github.com/elixir-editors/emacs-elixir"
+    :added "2023-06-20"
+    :emacs>= 25
+    :ensure t)
+  
   (leaf *mark-up
     :config
 
@@ -1161,10 +1173,11 @@
       :hook (rust-mode . cargo-minor-mode)
       :config (add-to-list 'exec-path (expand-file-name "~/.cargo/bin")))
 
-    (leaf *lsp-rust
+    (leaf lsp-rust
       :after lsp
       :hook (rust-mode . lsp)
-      :custom (lsp-rust-server . 'rust-analyzer))
+      :custom (lsp-rust-server . 'rust-analyzer)
+      :ensure-system-package (rust-analyzer . "rustup component add rust-analyzer"))
     )
   
   (leaf *shellscript
