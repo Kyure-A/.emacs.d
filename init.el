@@ -920,9 +920,7 @@
       (dap-register-debug-template "Flutter :: Custom debug"
 				   (list :flutterPlatform "x86_64" :program "lib/main_debug.dart" :args
 					 '("--flavor" "customer_a"))))
-    
     )
-
   (leaf *emacs-lisp
     :doc "Emacs Lisp"
     :config
@@ -1019,15 +1017,6 @@
       :require t
       :after shut-up)
     )
-
-  (leaf elixir-mode
-    :doc "Major mode for editing Elixir files"
-    :req "emacs-25"
-    :tag "elixir" "languages" "emacs>=25"
-    :url "https://github.com/elixir-editors/emacs-elixir"
-    :added "2023-06-20"
-    :emacs>= 25
-    :ensure t)
   
   (leaf *mark-up
     :config
