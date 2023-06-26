@@ -54,7 +54,9 @@
   ;; C-c
   ("C-c C-f" . leaf-convert-insert-template)
   ("C-c e b" . eval-buffer)
-  ("C-c e e" . my/open-scratch)
+  ("C-c e l" . open-packages-directory)
+  ("C-c e d" . open-emacs-directory)
+  ("C-c e ." . open-dotfiles)
   ("C-c e m" . menu-bar-mode)
   ("C-c l c" . leaf-convert-region-replace)
   ("C-c l t" . leaf-tree-mode)
@@ -108,7 +110,16 @@
   (defun backward-kill-line (arg)
     "Kill ARG lines backward."
     (interactive "p")
-    (kill-line (- 1 arg))))
+    (kill-line (- 1 arg)))
+  (defun open-packages-directory ()
+    (interactive)
+    (find-file package-user-dir))
+  (defun open-emacs-directory ()
+    (interactive)
+    (find-file "~/.emacs.d"))
+  (defun open-dotfiles ()
+    (interactive)
+    (find-file "~/dotfiles")))
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
