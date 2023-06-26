@@ -150,9 +150,11 @@
     (backup-directory-alist . '((".*" . "~/.tmp")))
     (create-lockfiles . nil)
     :config
-    (let ((default-directory (locate-user-emacs-file "./elisp")))
-      (add-to-list 'load-path default-directory)
-      (normal-top-level-add-subdirs-to-load-path)))
+    (when (file-exists-p "./elisp")
+      (let ((default-directory (locate-user-emacs-file "./elisp")))
+	(add-to-list 'load-path default-directory)
+	(normal-top-level-add-subdirs-to-load-path)))
+    )
 
   (leaf frame :config (set-frame-parameter nil 'unsplittable t))
   
@@ -1585,11 +1587,6 @@
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
-
-(unless (file-exists-p "~/.emacs.d/.tmp/first-startup-over")
-  (make-empty-file "~/.emacs.d/.tmp/first-startup-over")
-  (fira-code-mode-install-fonts t)
-  (all-the-icons-install-fonts t))
 
 (provide 'init)
 
