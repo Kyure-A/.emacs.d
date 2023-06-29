@@ -207,6 +207,11 @@
   :doc "分類が面倒なパッケージを入れる"
   :config
 
+  (leaf dedis
+    :quelpa (dedis :repo "Kyure-A/dedis.el"
+		   :fetcher github
+		   :upgrade t))
+
   (leaf fast-scroll
     :doc "Some utilities for faster scrolling over large buffers."
     :req "emacs-25.1" "cl-lib-0.6.1"
