@@ -80,7 +80,8 @@
   (leaf leaf-keywords :ensure t :init (leaf-keywords-init))
   (leaf leaf-convert :ensure t)
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))
-  (leaf package)
+  (leaf package :require t)
+  (leaf use-package :ensure t)
   (leaf quelpa
     :ensure t
     :require t
