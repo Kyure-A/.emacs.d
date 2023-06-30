@@ -944,6 +944,16 @@
     :config
     
     (leaf lisp-interaction :bind (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
+
+    (leaf async-await
+      :doc "Async/Await"
+      :req "emacs-25.1" "promise-1.1" "iter2-0.9.10"
+      :tag "convenience" "await" "async" "emacs>=25.1"
+      :url "https://github.com/chuntaro/emacs-async-await"
+      :added "2023-06-30"
+      :emacs>= 25.1
+      :ensure t
+      :after iter2)
     
     (leaf dash
       :doc "A modern list library for Emacs"
@@ -958,6 +968,18 @@
       (dotenv :repo "pkulev/dotenv.el"
 	      :fetcher github
 	      :upgrade t))
+
+    (leaf elsa
+      :doc "Emacs Lisp Static Analyser"
+      :req "emacs-26.1" "trinary-0" "f-0" "dash-2.14" "cl-lib-0.3" "lsp-mode-0" "ansi-0" "async-1.9.7" "lgr-0.1.0"
+      :tag "lisp" "languages" "emacs>=26.1"
+      :url "https://github.com/emacs-elsa/Elsa"
+      :added "2023-06-29"
+      :emacs>= 26.1
+      :ensure t
+      :require t
+      :after trinary lsp-mode ansi lgr
+      :config (elsa-lsp-register))
     
     (leaf f
       :doc "Modern API for working with files and directories"
