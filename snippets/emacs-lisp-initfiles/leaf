@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: leaf
-# key: leaf
-# condition: (string-match-p (regexp-quote ".emacs.d") (buffer-file-name (window-buffer (minibuffer-selected-window))))
-# --
-(leaf ${1:name} :ensure t)

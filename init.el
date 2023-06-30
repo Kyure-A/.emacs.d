@@ -537,7 +537,6 @@
       :ensure t :require t
       :after ivy swiper
       :global-minor-mode t
-      :require t
       :bind
       (:counsel-mode-map ([remap find-file] . nil))
       :custom
@@ -846,7 +845,7 @@
     :url "https://github.com/bbatsov/projectile"
     :emacs>= 25.1
     :ensure t :require t
-    :global-minor-mode t)
+    :after dashboard)
 
   (leaf vterm
     :doc "Fully-featured terminal emulator"
@@ -1000,6 +999,7 @@
       :ensure t
       :require t
       :config
+      
       (leaf keg-mode
 	:doc "Major mode for editing Keg files"
 	:req "emacs-24.4"
@@ -1008,6 +1008,7 @@
 	:added "2023-06-16"
 	:emacs>= 24.4
 	:ensure t :require t)
+      
       (leaf flycheck-keg
 	:doc "Flycheck for Keg projects"
 	:req "emacs-24.3" "keg-0.1" "flycheck-0.1"
@@ -1446,8 +1447,9 @@
     (("<f3>" . open-dashboard)
      (:dashboard-mode-map ("<f3>" . quit-dashboard)))
     :custom
-    (dashboard-items . '((bookmarks . 10)
-			 (recents  . 10)))
+    (dashboard-items . '((bookmarks . 5)
+			 (recents  . 5)
+			 (projects . 5)))
     (initial-buffer-choice . (lambda () (get-buffer "*dashboard*")))
     (dashboard-center-content . t)
     (dashboard-set-heading-icons . t)
@@ -1461,7 +1463,6 @@
 				      "「えーー！なるっちの担当箇所がバグだらけ！？」 - 桜ねね"
 				      "「C++ を完全に理解してしまったかもしれない」 - 桜ねね"
 				      "「これでもデバッグはプロ級だし 今はプログラムの知識だってあるんだからまかせてよね！」 - 桜ねね"))
-    
     :preface
 
     (leaf open-dashboard
