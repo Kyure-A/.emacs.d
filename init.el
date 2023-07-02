@@ -1368,8 +1368,9 @@
     (centaur-tabs-show-navigation-buttons . t)
     (centaur-tabs-adjust-buffer-order . t)
     (centaur-tabs-cycle-scope . 'groups)
-    (centaur-tabs-buffer-groups-function . 'my/centaur-tabs-buffer-groups)
+    (centaur-tabs-buffer-groups-function . 'my/centaur-tabs-buffer-groups) ;; centaur-tabs-group-by-projcetile-project しているため、my/centaur-tabs-buffer-groups は意味ない
     :config
+    (centaur-tabs-group-by-projectile-project)
     (centaur-tabs-headline-match)
     (centaur-tabs-enable-buffer-reordering)
     (centaur-tabs-change-fonts "arial" 90)
@@ -1410,7 +1411,8 @@
 			      "\*clang-output\*"
                               ))
 			 (buffer-name))
-	 "Clang")
+	 "C++")
+	((derived-mode-p 'c++-mode) "C++")
 	(t "Common")))))
 
   (leaf dashboard

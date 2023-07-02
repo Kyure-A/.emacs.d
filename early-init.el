@@ -126,7 +126,6 @@
 (leaf *visual
   :doc "起動時の見た目と起動後の見た目が大きく異なるのが気になるので early-init.el で呼び出したい見た目関連のものをまとめた"
   :config
-  ;; (leaf monokai-theme :ensure t :config (load-theme 'monokai t))
   (leaf monokai-theme
     :quelpa (monokai-theme :repo "Kyure-A/monokai-emacs"
 			   :fetcher github
