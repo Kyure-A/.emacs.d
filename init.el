@@ -941,8 +941,6 @@
   (leaf *emacs-lisp
     :doc "Emacs Lisp"
     :config
-    
-    (leaf lisp-interaction :bind (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
 
     (leaf async-await
       :doc "Async/Await"
@@ -968,6 +966,9 @@
 	      :fetcher github
 	      :upgrade t))
 
+    (leaf eask
+      :ensure-system-package (eask . "curl -fsSL https://raw.githubusercontent.com/emacs-eask/cli/master/webinstall/install.sh | sh"))
+    
     (leaf elsa
       :doc "Emacs Lisp Static Analyser"
       :req "emacs-26.1" "trinary-0" "f-0" "dash-2.14" "cl-lib-0.3" "lsp-mode-0" "ansi-0" "async-1.9.7" "lgr-0.1.0"
@@ -1019,6 +1020,8 @@
 	:ensure t
 	:require t
 	:after keg flycheck))
+
+    (leaf lisp-interaction :bind (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
     
     (leaf promise
       :doc "Promises/A+"
