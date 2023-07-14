@@ -1,7 +1,7 @@
 ;;; init.el ---  -*- lexical-binding: t -*-
 
-;; Author: Kyure_A <twitter.com/Kyure_A>
-;; Maintainer: Kyure_A <twitter.com/Kyure_A>
+;; Author: Kyure_A <twitter.com/@kyureq>
+;; Maintainer: Kyure_A <twitter.com/@kyureq>
 
 ;;; Commentary:
 
