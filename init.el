@@ -862,7 +862,24 @@
     (vterm-max-scrollback . 5000)
     ;; (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
     :config
-    (leaf vterm-toggle :ensure t :require t)
+    (leaf multi-vterm
+      :doc "Like multi-term.el but for vterm"
+      :req "emacs-26.3" "vterm-0.0" "project-0.3.0"
+      :tag "processes" "terminals" "emacs>=26.3"
+      :url "https://github.com/suonlight/multi-libvterm"
+      :added "2023-07-10"
+      :emacs>= 26.3
+      :ensure t
+      :after vterm project)
+    (leaf vterm-toggle
+      :doc "Toggles between the vterm buffer and other buffers."
+      :req "emacs-25.1" "vterm-0.0.1"
+      :tag "terminals" "vterm" "emacs>=25.1"
+      :url "https://github.com/jixiuf/vterm-toggle"
+      :emacs>= 25.1
+      :ensure t
+      :require t
+      :after vterm)
     (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
   
   (leaf quickrun
