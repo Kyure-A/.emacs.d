@@ -41,7 +41,7 @@
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward)
   ("C-RET" . newline)
-  ("C-<space>" . nil)
+  ("C-SPC" . toggle-input-method)
 
   ;; C-x
   ("C-x g" . magit-status)
@@ -251,6 +251,14 @@
   
   ;; (leaf goto-address :tag "builtin" :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
 
+  (leaf mozc
+    :doc "minor mode to input Japanese with Mozc"
+    :tag "input method" "multilingual" "mule"
+    :added "2023-07-20"
+    :ensure t
+    :require t
+    :config (setq mozc-candidate-style 'echo-area))
+  
   (leaf restart-emacs
     :doc "Restart emacs from within emacs"
     :tag "convenience"
@@ -407,74 +415,6 @@
 
   (leaf delete-selection :doc "delete から overwrite に改名したほうがいい" :tag "builtin" :global-minor-mode delete-selection-mode)
 
-  (leaf dired
-    :tag "builtin"
-    :bind
-    (:dired-mode-map
-     ("RET" . dired-open-in-accordance-with-situation)
-     ("<right>" . dired-open-in-accordance-with-situation)
-     ("<left>" . dired-up-directory)
-     ("a" . dired-find-file)
-     ("e" . wdired-change-to-wdired-mode))
-    :config
-    
-    (leaf dired-toggle
-      :doc "Show dired as sidebar and will not create new buffers when changing dir"
-      :tag "sidebar" "dired"
-      :url "https://github.com/fasheng/dired-toggle"
-      :ensure t :require t)
-    
-    (leaf dired-k
-      :doc "Highlight dired by size, date, git status"
-      :req "emacs-24.3"
-      :tag "emacs>=24.3"
-      :url "https://github.com/emacsorphanage/dired-k"
-      :emacs>= 24.3
-      :ensure t :require t
-      :hook (dired-initial-position-hook . dired-k))
-    
-    (leaf wdired
-      :doc "Rename files editing their names in dired buffers"
-      :tag "builtin"
-      :require t)
-    
-    (put 'dired-find-alternate-file 'disabled nil)
-    
-    :preface
-
-    (leaf dired-open-in-accordance-with-situation
-      :url "https://nishikawasasaki.hatenablog.com/entry/20120222/1329932699"
-      :preface
-      (defun dired-open-in-accordance-with-situation ()
-	(interactive)
-	(let ((file (dired-get-filename)))
-	  (if (file-directory-p file)
-	      (dired-find-alternate-file)
-	    (dired-find-file)))))
-
-    (leaf dired-zip-files
-      :url "https://stackoverflow.com/questions/1431351/how-do-i-uncompress-unzip-within-emacs"
-      :preface
-      (defun dired-zip-files (zip-file)
-	"Create an archive containing the marked files."
-	(interactive "sEnter name of zip file: ")
-	;; create the zip file
-	(let ((zip-file (if (string-match ".zip$" zip-file) zip-file (concat zip-file ".zip"))))
-	  (shell-command
-	   (concat "zip "
-		   zip-file
-		   " "
-		   (my/concat-string-list
-		    (mapcar
-		     '(lambda (filename)
-			(file-name-nondirectory filename))
-		     (dired-get-marked-files))))))
-	(revert-buffer))
-      
-      (defun my/concat-string-list (list)
-	"Return a string which is a concatenation of all elements of the list separated by spaces"
-	(mapconcat '(lambda (obj) (format "%s" obj)) list " "))))
-
   (leaf dirvish
     :doc "A modern file manager based on dired mode"
     :req "emacs-27.1" "transient-0.3.7"
@@ -487,7 +427,59 @@
     :init (dirvish-override-dired-mode)
     :custom
     (dirvish-attributes . '(vc-state subtree-state all-the-icons collapse git-msg file-time file-size))
-    (dirvish-preview-dispatchers . (cl-substitute 'pdf-preface 'pdf dirvish-preview-dispatchers)))
+    (dirvish-preview-dispatchers . (cl-substitute 'pdf-preface 'pdf dirvish-preview-dispatchers))    
+    :config
+    
+    (leaf dired
+      :tag "builtin"
+      :bind
+      (:dired-mode-map
+       ("RET" . dired-open-in-accordance-with-situation)
+       ("<right>" . dired-open-in-accordance-with-situation)
+       ("<left>" . dired-up-directory)
+       ("a" . dired-find-file)
+       ("e" . wdired-change-to-wdired-mode))
+      :config
+      
+      (leaf dired-toggle
+	:doc "Show dired as sidebar and will not create new buffers when changing dir"
+	:tag "sidebar" "dired"
+	:url "https://github.com/fasheng/dired-toggle"
+	:ensure t :require t)
+      
+      (leaf dired-k
+	:doc "Highlight dired by size, date, git status"
+	:req "emacs-24.3"
+	:tag "emacs>=24.3"
+	:url "https://github.com/emacsorphanage/dired-k"
+	:emacs>= 24.3
+	:ensure t :require t
+	:hook (dired-initial-position-hook . dired-k))
+      
+      (leaf wdired
+	:doc "Rename files editing their names in dired buffers"
+	:tag "builtin"
+	:require t)
+
+      (leaf dired-toggle-sudo
+	:doc "Browse directory with sudo privileges."
+	:tag "dired" "emacs"
+	:added "2023-07-21"
+	:ensure t)
+      
+      (put 'dired-find-alternate-file 'disabled nil))
+    
+    :preface
+
+    (leaf dired-open-in-accordance-with-situation
+      :url "https://nishikawasasaki.hatenablog.com/entry/20120222/1329932699"
+      :preface
+      (defun dired-open-in-accordance-with-situation ()
+	(interactive)
+	(let ((file (dired-get-filename)))
+	  (if (file-directory-p file)
+	      (dired-find-alternate-file)
+	    (dired-find-file))))))
   
   (leaf exec-path-from-shell
     :doc "Get environment variables such as $PATH from the shell"
@@ -858,7 +850,7 @@
     (vterm-buffer-name-string . t)
     (vterm-clear-scrollback-when-clearing . t)
     (vterm-keymap-exceptions
-     . '("<f1>" "<f2>" "<f10>" "C-<return>" "C-<prior>" "C-<next>" "C-c" "C-g" "C-l" "C-s" "C-u" "C-v" "C-w" "C-x" "C-y" "M-v" "M-w" "M-x" "M-y"))
+     . '("<f1>" "<f2>" "<f10>" "C-<return>" "C-<prior>" "C-<next>" "C-c" "C-g" "C-l" "C-s" "C-u" "C-v" "C-w" "C-x" "C-y" "M-v" "M-w" "M-x" "M-y" "C-SPC"))
     (vterm-max-scrollback . 5000)
     ;; (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
     :config
