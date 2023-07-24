@@ -258,6 +258,28 @@
     :ensure t
     :require t
     :config (setq mozc-candidate-style 'echo-area))
+
+  (leaf nu-fun
+    :quelpa (nu-fun :repo "ayanyan/nihongo-util"
+		    :fetcher github
+		    :upgrade t)
+    :require t
+    :custom
+    (nu-my-toten . "，")
+    (nu-my-kuten . "．"))
+
+  (leaf pdf-tools
+    :doc "Support library for PDF documents"
+    :req "emacs-26.3" "tablist-1.0" "let-alist-1.0.4"
+    :tag "multimedia" "files" "emacs>=26.3"
+    :url "http://github.com/vedang/pdf-tools/"
+    :added "2023-07-23"
+    :emacs>= 26.3
+    :ensure t
+    :require t
+    :after tablist
+    :config (pdf-tools-install)
+    (pdf-loader-install))
   
   (leaf restart-emacs
     :doc "Restart emacs from within emacs"
@@ -1166,6 +1188,14 @@
       :mode
       "\\.yml$"
       "\\.yaml$")
+
+    (leaf yatex
+      :doc "Yet Another tex-mode for emacs //野鳥//"
+      :added "2023-07-23"
+      :require t
+      :ensure t
+      :hook ((yatex-mode . (lambda ()
+			     (add-hook 'before-save-hook 'nu-kutoten-buffer nil 'make-it-local)))))
     )
 
   (leaf *pwsh
