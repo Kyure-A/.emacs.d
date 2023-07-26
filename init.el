@@ -248,8 +248,6 @@
     :emacs>= 27.1
     :ensure t
     :require t)
-  
-  ;; (leaf goto-address :tag "builtin" :global-minor-mode t :hook (prog-mode-hook . goto-address-prog-mode))
 
   (leaf mozc
     :doc "minor mode to input Japanese with Mozc"
@@ -939,6 +937,16 @@
       :ensure t :require t
       :hook ((c-mode c++-mode) . (lambda () (google-set-c-style)))))
 
+  (leaf csv-mode
+    :doc "Major mode for editing comma/char separated values"
+    :req "emacs-27.1" "cl-lib-0.5"
+    :tag "convenience" "emacs>=27.1"
+    :url "https://elpa.gnu.org/packages/csv-mode.html"
+    :emacs>= 27.1
+    :after prog
+    :ensure t :require t
+    :mode "\\.csv\\'")
+  
   (leaf *dart
     :config
 
@@ -998,7 +1006,8 @@
 	      :upgrade t))
 
     (leaf eask
-      :ensure-system-package (eask . "curl -fsSL https://raw.githubusercontent.com/emacs-eask/cli/master/webinstall/install.sh | sh"))
+      ;; :ensure-system-package (eask . "npm install -g @emacs-eask/cli")
+      )
     
     (leaf elsa
       :doc "Emacs Lisp Static Analyser"
@@ -1093,110 +1102,40 @@
       :after shut-up)
     )
   
-  (leaf *mark-up
+  (leaf markdown-mode
+    :doc "Major mode for Markdown-formatted text"
+    :req "emacs-26.1"
+    :tag "itex" "github flavored markdown" "markdown" "emacs>=26.1"
+    :url "https://jblevins.org/projects/markdown-mode/"
+    :emacs>= 26.1
+    :after prog
+    :ensure t :require t
+    :commands markdown-mode
+    :mode (("\\.md\\'" . gfm-mode)
+	   ("\\.markdown\\'" . gfm-mode))
+    :custom
+    (markdown-command . "github-markup")
+    (markdown-command-needs-filename . t))
+
+  (leaf org-mode
+    :tag "builtin"
+    :custom
+    (org-directory . "~/document/org")
+    (org-startup-truncated . nil)
+    (org-enforce-todo-dependencies . t)
     :config
-
-    (leaf csv-mode
-      :doc "Major mode for editing comma/char separated values"
-      :req "emacs-27.1" "cl-lib-0.5"
-      :tag "convenience" "emacs>=27.1"
-      :url "https://elpa.gnu.org/packages/csv-mode.html"
+    
+    (leaf org-modern
+      :doc "Modern looks for Org"
+      :req "emacs-27.1"
+      :tag "emacs>=27.1"
+      :url "https://github.com/minad/org-modern"
       :emacs>= 27.1
-      :after prog
       :ensure t :require t
-      :mode "\\.csv\\'")
-
-    (leaf html+-mode :require nil)
-    
-    (leaf markdown-mode
-      :doc "Major mode for Markdown-formatted text"
-      :req "emacs-26.1"
-      :tag "itex" "github flavored markdown" "markdown" "emacs>=26.1"
-      :url "https://jblevins.org/projects/markdown-mode/"
-      :emacs>= 26.1
-      :after prog
-      :ensure t :require t
-      :commands markdown-mode
-      :mode (("\\.md\\'" . gfm-mode)
-	     ("\\.markdown\\'" . gfm-mode))
-      :custom
-      (markdown-command . "github-markup")
-      (markdown-command-needs-filename . t))
-    
-    (leaf org-mode
-      :tag "builtin"
-      :custom
-      (org-directory . "~/document/org")
-      (org-startup-truncated . nil)
-      (org-enforce-todo-dependencies . t)
-      :config
-      
-      (leaf org-modern
-	:doc "Modern looks for Org"
-	:req "emacs-27.1"
-	:tag "emacs>=27.1"
-	:url "https://github.com/minad/org-modern"
-	:emacs>= 27.1
-	:ensure t :require t
-	:after org
-	:hook
-	(org-mode-hook . org-modern-mode)
-	(org-agenda-finalize-hook . org-modern-agenda)))
-
-    (leaf web-mode
-      :doc "major mode for editing web templates"
-      :req "emacs-23.1"
-      :tag "languages" "emacs>=23.1"
-      :url "https://web-mode.org"
-      :emacs>= 23.1
-      :after prog
-      :ensure t :require t
-      :mode
-      "\\.[agj]sp\\'"
-      "\\.as[cp]x\\'"
-      "\\.djhtml\\'"
-      "\\.ejs\\'"
-      "\\.erb\\'"
-      "\\.html\\'"
-      "\\.js\\'"
-      "\\.jsx\\'"
-      "\\.mustache\\'"
-      "\\.php\\'"
-      "\\.phtml\\'"
-      "\\.tpl\\'"
-      "\\.vue\\'"
-      :custom
-      (web-mode-markup-indent-offset . 2)
-      (web-mode-enable-auto-pairing . t)
-      (web-mode-enable-auto-closing . t)
-      (web-mode-tag-auto-close-style . 2)
-      (web-mode-enable-auto-quoting . nil)
-      (web-mode-enable-current-column-highlight . t)
-      (web-mode-enable-current-element-highlight . t)
-      :config
-      (with-eval-after-load 'web-mode (sp-local-pair '(web-mode) "<" ">" :actions :rem))
-      (put 'web-mode-markup-indent-offset 'safe-local-variable 'integerp))
-    
-    (leaf yaml-mode
-      :doc "Major mode for editing YAML files"
-      :req "emacs-24.1"
-      :tag "yaml" "data" "emacs>=24.1"
-      :url "https://github.com/yoshiki/yaml-mode"
-      :emacs>= 24.1
-      :after prog
-      :ensure t
-      :mode
-      "\\.yml$"
-      "\\.yaml$")
-
-    (leaf yatex
-      :doc "Yet Another tex-mode for emacs //野鳥//"
-      :added "2023-07-23"
-      :require t
-      :ensure t
-      :hook ((yatex-mode . (lambda ()
-			     (add-hook 'before-save-hook 'nu-kutoten-buffer nil 'make-it-local)))))
-    )
+      :after org
+      :hook
+      (org-mode-hook . org-modern-mode)
+      (org-agenda-finalize-hook . org-modern-agenda)))
 
   (leaf *pwsh
     :config
@@ -1249,8 +1188,8 @@
       :after lsp
       :hook (rust-mode . lsp)
       :custom (lsp-rust-server . 'rust-analyzer)
-      :ensure-system-package (rust-analyzer . "rustup component add rust-analyzer"))
-    )
+      ;; :ensure-system-package (rust-analyzer . "rustup component add rust-analyzer")
+      ))
   
   (leaf *shellscript
     :config
@@ -1279,6 +1218,27 @@
       :added "2023-02-13"
       :emacs>= 26
       :ensure t)
+    )
+
+  (leaf *svelte
+    :config
+    
+    (leaf svelte-mode
+      :doc "Emacs major mode for Svelte"
+      :req "emacs-26.1"
+      :tag "languages" "wp" "emacs>=26.1"
+      :url "https://github.com/leafOfTree/svelte-mode"
+      :added "2023-07-24"
+      :emacs>= 26.1
+      :ensure t)
+
+    (leaf lsp-svelte
+      :doc "LSP Svelte integration"
+      :tag "out-of-MELPA" "svelte" "lsp"
+      :added "2023-07-26"
+      :require t
+      ;; :ensure-system-package ( . "npm install global svelte-language-server")
+      )
     )
 
   (leaf *typescript
@@ -1357,6 +1317,61 @@
     :after prog
     :mode "\\.hdl$")
 
+  (leaf web-mode
+    :doc "major mode for editing web templates"
+    :req "emacs-23.1"
+    :tag "languages" "emacs>=23.1"
+    :url "https://web-mode.org"
+    :emacs>= 23.1
+    :after prog
+    :ensure t :require t
+    :mode
+    "\\.[agj]sp\\'"
+    "\\.as[cp]x\\'"
+    "\\.djhtml\\'"
+    "\\.ejs\\'"
+    "\\.erb\\'"
+    "\\.html\\'"
+    "\\.js\\'"
+    "\\.jsx\\'"
+    "\\.mustache\\'"
+    "\\.php\\'"
+    "\\.phtml\\'"
+    "\\.tpl\\'"
+    "\\.vue\\'"
+    :custom
+    (web-mode-markup-indent-offset . 2)
+    (web-mode-enable-auto-pairing . t)
+    (web-mode-enable-auto-closing . t)
+    (web-mode-tag-auto-close-style . 2)
+    (web-mode-enable-auto-quoting . nil)
+    (web-mode-enable-current-column-highlight . t)
+    (web-mode-enable-current-element-highlight . t)
+    :config
+    (leaf html+-mode :require nil)
+    (with-eval-after-load 'web-mode (sp-local-pair '(web-mode) "<" ">" :actions :rem))
+    (put 'web-mode-markup-indent-offset 'safe-local-variable 'integerp))
+  
+  (leaf yaml-mode
+    :doc "Major mode for editing YAML files"
+    :req "emacs-24.1"
+    :tag "yaml" "data" "emacs>=24.1"
+    :url "https://github.com/yoshiki/yaml-mode"
+    :emacs>= 24.1
+    :after prog
+    :ensure t
+    :mode
+    "\\.yml$"
+    "\\.yaml$")
+
+  (leaf yatex
+    :doc "Yet Another tex-mode for emacs //野鳥//"
+    :added "2023-07-23"
+    :require t
+    :ensure t
+    :hook ((yatex-mode . (lambda ()
+			   (add-hook 'before-save-hook 'nu-kutoten-buffer nil 'make-it-local)))))
+  
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
