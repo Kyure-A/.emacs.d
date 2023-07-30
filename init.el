@@ -486,6 +486,15 @@
 	:tag "dired" "emacs"
 	:added "2023-07-21"
 	:ensure t)
+
+      (leaf dired-preview
+	:doc "Automatically preview file at point in Dired"
+	:req "emacs-27.1"
+	:tag "convenience" "files" "emacs>=27.1"
+	:url "https://git.sr.ht/~protesilaos/dired-preview"
+	:added "2023-07-30"
+	:emacs>= 27.1
+	:ensure t)
       
       (put 'dired-find-alternate-file 'disabled nil))
     
