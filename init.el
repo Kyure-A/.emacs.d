@@ -38,6 +38,7 @@
   ("<drag-mouse-9>" . centaur-tabs-forward)
 
   ;; C-<Modifer key>
+  ("C-<backspace>" . backward-delete-word)
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward)
   ("C-RET" . newline)
@@ -93,30 +94,46 @@
   ("M-k" . backward-kill-line)
   ("M-q" . vr/replace)
   ("M-x" . counsel-M-x)
-
+  
   :config
   (fset 'yes-or-no-p 'y-or-n-p)
   (defalias 'yes-or-no-p 'y-or-n-p))
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
-(leaf *common-defun
+(leaf *defun
   :preface
   ;; 適当
   (defun my/toggle-centaur-tabs-local-mode()
     (interactive)
     (call-interactively 'centaur-tabs-local-mode)
     (call-interactively 'centaur-tabs-local-mode))
+  
   (defun backward-kill-line (arg)
     "Kill ARG lines backward."
     (interactive "p")
     (kill-line (- 1 arg)))
+  
+  (defun delete-word (arg)
+    "Delete characters forward until encountering the end of a word.
+With argument ARG, do this that many times."
+    (interactive "p")
+    (delete-region (point) (progn (forward-word arg) (point))))
+  
+  (defun backward-delete-word (arg)
+    "Delete characters backward until encountering the beginning of a word.
+With argument ARG, do this that many times."
+    (interactive "p")
+    (delete-word (- arg)))
+  
   (defun open-packages-directory ()
     (interactive)
     (find-file package-user-dir))
+  
   (defun open-emacs-directory ()
     (interactive)
     (find-file "~/.emacs.d"))
+  
   (defun open-dotfiles ()
     (interactive)
     (find-file "~/dotfiles")))
@@ -1039,6 +1056,13 @@
       :emacs>= 24.1
       :ensure t)
 
+    (leaf ht
+      :doc "The missing hash table library for Emacs"
+      :req "dash-2.12.0"
+      :tag "hash" "hash map" "hash table"
+      :added "2023-08-02"
+      :ensure t)
+    
     (leaf keg
       :doc "Modern Elisp package development system"
       :req "emacs-24.1"
@@ -1086,6 +1110,15 @@
       :url "http://www.dr-qubit.org/emacs.php"
       :ensure t :require t)
 
+    (leaf recur
+      :doc "Tail call optimization"
+      :req "emacs-24.3"
+      :tag "lisp" "emacs>=24.3"
+      :url "https://github.com/ROCKTAKEY/recur"
+      :added "2023-08-02"
+      :emacs>= 24.3
+      :ensure t)
+    
     (leaf request
       :doc "Compatible layer for URL request"
       :req "emacs-24.4"
@@ -1688,3 +1721,4 @@
 
 ;; End:
 ;;; init.el ends here
+
