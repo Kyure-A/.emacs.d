@@ -943,6 +943,26 @@ With argument ARG, do this that many times."
 (leaf *languages
   :config
 
+  (leaf *common-lisp
+    :config
+    
+    (leaf sly
+      :doc "Sylvester the Cat's Common Lisp IDE"
+      :req "emacs-24.3"
+      :tag "sly" "lisp" "languages" "emacs>=24.3"
+      :url "https://github.com/joaotavora/sly"
+      :emacs>= 24.3
+      :after prog
+      :ensure t :require t
+      :custom (inferior-lisp-program . "/usr/bin/sbcl")
+      :config
+      ;; (load "~/.roswell/helper.el")
+      (defun my/sly-start ()
+	"sly の挙動を slime に似せる"
+	(interactive)
+	(split-window-right)
+	(sly))))
+  
   (leaf *c++
     :config
     
@@ -1003,6 +1023,7 @@ With argument ARG, do this that many times."
 				   (list :flutterPlatform "x86_64" :program "lib/main_debug.dart" :args
 					 '("--flavor" "customer_a"))))
     )
+  
   (leaf *emacs-lisp
     :doc "Emacs Lisp"
     :config
@@ -1026,14 +1047,11 @@ With argument ARG, do this that many times."
       :ensure t :require t)
 
     (leaf dotenv
+      :require t
       :quelpa
       (dotenv :repo "pkulev/dotenv.el"
 	      :fetcher github
 	      :upgrade t))
-
-    (leaf eask
-      ;; :ensure-system-package (eask . "npm install -g @emacs-eask/cli")
-      )
     
     (leaf elsa
       :doc "Emacs Lisp Static Analyser"
@@ -1054,6 +1072,7 @@ With argument ARG, do this that many times."
       :url "http://github.com/rejeep/f.el"
       :added "2023-05-26"
       :emacs>= 24.1
+      :require t
       :ensure t)
 
     (leaf ht
@@ -1141,8 +1160,16 @@ With argument ARG, do this that many times."
       :emacs>= 24
       :ensure t
       :require t
-      :after shut-up)
-    )
+      :after shut-up))
+
+  (leaf hy-mode
+    :doc "Major mode for Hylang"
+    :req "dash-2.18.0" "s-1.11.0" "emacs-24"
+    :tag "python" "lisp" "languages" "emacs>=24"
+    :url "http://github.com/hylang/hy-mode"
+    :added "2023-08-03"
+    :emacs>= 24
+    :ensure t)
   
   (leaf markdown-mode
     :doc "Major mode for Markdown-formatted text"
@@ -1197,8 +1224,7 @@ With argument ARG, do this that many times."
       :tag "out-of-MELPA" "lsp"
       :added "2023-06-02"
       :require t
-      :after lsp powershell)
-    )
+      :after lsp powershell))
   
   (leaf *rust
     :config
@@ -1212,8 +1238,7 @@ With argument ARG, do this that many times."
       :emacs>= 25.1
       :after prog
       :ensure t
-      :hook (rust-mode . lsp)
-      )
+      :hook (rust-mode . lsp))
 
     (leaf cargo
       :doc "Emacs Minor Mode for Cargo, Rust's Package Manager."
@@ -1229,9 +1254,7 @@ With argument ARG, do this that many times."
     (leaf lsp-rust
       :after lsp
       :hook (rust-mode . lsp)
-      :custom (lsp-rust-server . 'rust-analyzer)
-      ;; :ensure-system-package (rust-analyzer . "rustup component add rust-analyzer")
-      ))
+      :custom (lsp-rust-server . 'rust-analyzer)))
   
   (leaf *shellscript
     :config
@@ -1259,8 +1282,7 @@ With argument ARG, do this that many times."
       :url "https://github.com/federicotdn/flymake-shellcheck"
       :added "2023-02-13"
       :emacs>= 26
-      :ensure t)
-    )
+      :ensure t))
 
   (leaf *svelte
     :config
@@ -1278,10 +1300,7 @@ With argument ARG, do this that many times."
       :doc "LSP Svelte integration"
       :tag "out-of-MELPA" "svelte" "lsp"
       :added "2023-07-26"
-      :require t
-      ;; :ensure-system-package ( . "npm install global svelte-language-server")
-      )
-    )
+      :require t))
 
   (leaf *typescript
     :config
@@ -1333,23 +1352,6 @@ With argument ARG, do this that many times."
       :after prog
       :ensure t
       :after mmm-mode vue-html-mode ssass-mode edit-indirect))
-
-  (leaf sly
-    :doc "Sylvester the Cat's Common Lisp IDE"
-    :req "emacs-24.3"
-    :tag "sly" "lisp" "languages" "emacs>=24.3"
-    :url "https://github.com/joaotavora/sly"
-    :emacs>= 24.3
-    :after prog
-    :ensure t :require t
-    :custom (inferior-lisp-program . "/usr/bin/sbcl")
-    :config
-    ;; (load "~/.roswell/helper.el")
-    (defun my/sly-start ()
-      "sly の挙動を slime に似せる"
-      (interactive)
-      (split-window-right)
-      (sly)))
   
   (leaf vhdl-mode
     :doc "major mode for editing VHDL code"
