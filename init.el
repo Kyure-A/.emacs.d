@@ -1194,16 +1194,25 @@ With argument ARG, do this that many times."
 		       (concat "--repl-output-fn=hy.contrib.hy-repr.hy-repr "
 			       hy-shell-interpreter-args))))
     :preface
-    (defun hy-repl ()
+    (async-defun hy-repl ()
       "Start hylang repl as if we were using slime."
-      ;; todo: error sequences when rye doesn't exist
       (interactive)
       (split-window-right)
-      (vterm)
+      (multi-vterm)
       (vterm-send-string "source .venv/bin/activate")
       (vterm-send-return)
       (vterm-send-string "hy")
-      (vterm-send-return)))
+      (vterm-send-return)
+      (let* ((vterm-buffer (buffer-name (current-buffer)))
+	     (result (with-current-buffer vterm-buffer
+		       (buffer-string))))
+	(message vterm-buffer)
+	;; うまいこと遅延して欲しいが、うごかず
+	(when (or (s-contains-p "zsh: correct \'hy\'" result) (s-contains-p "command not found" result))
+	  (message "[hy-repl] hy could not be found. venv environment may not be activated or hy may not be installed.")
+	  (kill-buffer (buffer-name (current-buffer)))
+	  (delete-window))))
+    )
   
   (leaf markdown-mode
     :doc "Major mode for Markdown-formatted text"
