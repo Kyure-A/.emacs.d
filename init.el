@@ -49,7 +49,7 @@
   ("C-x M-g" . magit-dispatch-popup)
   ("C-x i" . nil)
   ("C-x i i" . ivy-yasnippet)
-  ("C-x i n" . ivy-yasnippet-new-snippet)
+  ("C-x i n" . yas-new-snippet)
   ("C-x u" . undo-tree-visualize)
   
   ;; C-c
@@ -62,7 +62,7 @@
   ("C-c l c" . leaf-convert-region-replace)
   ("C-c l t" . leaf-tree-mode)
   ("C-c o" . org-capture)
-  ("C-c s" . my/sly-start)
+  ("C-c s" . sly-start)
   ("C-c t" . centaur-tabs-counsel-switch-group)
   
   ;; C-l
@@ -104,7 +104,7 @@
 (leaf *defun
   :preface
   ;; 適当
-  (defun my/toggle-centaur-tabs-local-mode()
+  (defun toggle-centaur-tabs-local-mode()
     (interactive)
     (call-interactively 'centaur-tabs-local-mode)
     (call-interactively 'centaur-tabs-local-mode))
@@ -126,17 +126,22 @@ With argument ARG, do this that many times."
     (interactive "p")
     (delete-word (- arg)))
   
-  (defun open-packages-directory ()
+  (defun open ()
     (interactive)
-    (find-file package-user-dir))
+    (let ((choices '(("dashboard" . (open-dashboard))
+		     ("dotfiles" . (find-file "~/dotfiles"))
+		     (".emacs.d" . (find-file ".emacs.d"))
+		     ("elpa" . (find-file package-user-dir))))
+	  chosen)
+      (setq chosen (completing-read "Choose an option: " choices))
+      (cl-loop for i
+	       below (length choices)
+	       do (when (equal (car (nth i choices)) chosen)
+		    (eval (eval (cdr (nth i choices)))) ;; quote を外すのが雑
+		    (cl-return))
+	       finally (message "invalid option"))))
   
-  (defun open-emacs-directory ()
-    (interactive)
-    (find-file "~/.emacs.d"))
-  
-  (defun open-dotfiles ()
-    (interactive)
-    (find-file "~/dotfiles")))
+  )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
@@ -228,7 +233,17 @@ With argument ARG, do this that many times."
     :quelpa (dedis :repo "Kyure-A/dedis.el"
 		   :fetcher github
 		   :upgrade t))
-
+  
+  (leaf elcord
+    :doc "Allows you to integrate Rich Presence from Discord"
+    :req "emacs-25.1"
+    :tag "games" "emacs>=25.1"
+    :url "https://github.com/Mstrodl/elcord"
+    :added "2023-08-13"
+    :emacs>= 25.1
+    :ensure t
+    :require t)
+  
   (leaf fast-scroll
     :doc "Some utilities for faster scrolling over large buffers."
     :req "emacs-25.1" "cl-lib-0.6.1"
@@ -931,7 +946,7 @@ With argument ARG, do this that many times."
     :config
     (push '("*quickrun*") popwin:special-display-config)
     :preface
-    (defun my/quickrun-sc (start end)
+    (defun quickrun-sc (start end)
       (interactive "r")
       (if mark-active
 	  (quickrun :start start :end end)
@@ -945,6 +960,8 @@ With argument ARG, do this that many times."
 
   (leaf *common-lisp
     :config
+
+    (leaf lisp-mode :require t)
     
     (leaf sly
       :doc "Sylvester the Cat's Common Lisp IDE"
@@ -957,7 +974,7 @@ With argument ARG, do this that many times."
       :custom (inferior-lisp-program . "/usr/bin/sbcl")
       :config
       ;; (load "~/.roswell/helper.el")
-      (defun my/sly-start ()
+      (defun sly-start ()
 	"sly の挙動を slime に似せる"
 	(interactive)
 	(split-window-right)
@@ -1169,7 +1186,24 @@ With argument ARG, do this that many times."
     :url "http://github.com/hylang/hy-mode"
     :added "2023-08-03"
     :emacs>= 24
-    :ensure t)
+    :ensure t
+    :require t
+    :hook
+    (hy-mode . (lambda ()
+		 (setf hy-shell-interpreter-args
+		       (concat "--repl-output-fn=hy.contrib.hy-repr.hy-repr "
+			       hy-shell-interpreter-args))))
+    :preface
+    (defun hy-repl ()
+      "Start hylang repl as if we were using slime."
+      ;; todo: error sequences when rye doesn't exist
+      (interactive)
+      (split-window-right)
+      (vterm)
+      (vterm-send-string "source .venv/bin/activate")
+      (vterm-send-return)
+      (vterm-send-string "hy")
+      (vterm-send-return)))
   
   (leaf markdown-mode
     :doc "Major mode for Markdown-formatted text"
@@ -1330,12 +1364,12 @@ With argument ARG, do this that many times."
       :ensure t :require t
       :after flycheck typescript-mode
       :hook
-      (typescript-mode-hook . my/tide-start)
+      (typescript-mode-hook . tide-start)
       (before-save-hook . tide-format-before-save)
       :custom
       (tide-node-executable . "~/.asdf/installs/nodejs/19.0.0/bin/node")
       :config
-      (defun my/tide-start ()
+      (defun tide-start ()
 	(interactive)
 	(tide-setup)
 	(flycheck-mode t)
@@ -1491,14 +1525,14 @@ With argument ARG, do this that many times."
     (centaur-tabs-show-navigation-buttons . t)
     (centaur-tabs-adjust-buffer-order . t)
     (centaur-tabs-cycle-scope . 'groups)
-    (centaur-tabs-buffer-groups-function . 'my/centaur-tabs-buffer-groups) ;; centaur-tabs-group-by-projcetile-project しているため、my/centaur-tabs-buffer-groups は意味ない
+    (centaur-tabs-buffer-groups-function . 'centaur-tabs-buffer-groups) ;; centaur-tabs-group-by-projcetile-project しているため、my/centaur-tabs-buffer-groups は意味ない
     :config
     (centaur-tabs-group-by-projectile-project)
     (centaur-tabs-headline-match)
     (centaur-tabs-enable-buffer-reordering)
     (centaur-tabs-change-fonts "arial" 90)
     :preface
-    (defun my/centaur-tabs-buffer-groups ()
+    (defun centaur-tabs-buffer-groups ()
       (list
        (cond
 	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode 'magit-mode) "Terminal")
