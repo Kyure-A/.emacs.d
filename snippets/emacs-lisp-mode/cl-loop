@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: cl-loop
+# key: cl-loop
+# --
+
+(cl-loop for i
+	 below $0
+	 do $1)
