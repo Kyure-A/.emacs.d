@@ -62,7 +62,7 @@
   ("C-c l c" . leaf-convert-region-replace)
   ("C-c l t" . leaf-tree-mode)
   ("C-c o" . org-capture)
-  ("C-c s" . sly-start)
+  ("C-c s" . start-repl)
   ("C-c t" . centaur-tabs-counsel-switch-group)
   
   ;; C-l
@@ -125,22 +125,48 @@ With argument ARG, do this that many times."
 With argument ARG, do this that many times."
     (interactive "p")
     (delete-word (- arg)))
+
+  (defun echo-choices (list message-str)
+    "Displays choices in the echo area and evaluates the choice"
+    (setq chosen (completing-read "Choose an option: " list))
+    (cl-loop for i
+	     below (length list)
+	     do (when (equal (car (nth i list)) chosen)
+		  (eval (eval (cdr (nth i list)))) ;; quote を外すのが雑
+		  (cl-return))
+	     finally (message message-str)))
+
+  (defun open-recentf ()
+    "Outputs a list of 10 most recently opened files to the echo area"
+    (interactive)
+    (let* ((recent-opened-files '()))
+      (cl-loop for i below 10
+               do (push (cons (nth i recentf-list) `(find-file ,(nth i recentf-list))) recent-opened-files))
+      (setq recent-opened-files (reverse recent-opened-files))
+      (echo-choices recent-opened-files "not found")))
   
   (defun open ()
     (interactive)
-    (let ((choices '(("dashboard" . (open-dashboard))
-		     ("dotfiles" . (find-file "~/dotfiles"))
-		     (".emacs.d" . (find-file ".emacs.d"))
-		     ("elpa" . (find-file package-user-dir))))
-	  chosen)
-      (setq chosen (completing-read "Choose an option: " choices))
+    (let* ((choices '(("dashboard" . (open-dashboard))
+		      ("documents" . (if (file-exists-p "~/documents")
+					 (find-file "~/documents")
+				       (find-file "~/Documents")))
+		      ("dotfiles" . (find-file "~/dotfiles"))
+		      (".emacs.d" . (find-file "~/.emacs.d"))
+		      ("elpa" . (find-file package-user-dir))
+		      ("recent" . (open-recentf)))))
+      (echo-choices choices "invalid options")))
+
+  (defun start-repl ()
+    (interactive)
+    (let* ((mode-repl-pair '(("lisp-mode" . (start-sly))
+			     ("hy-mode" . (hy-repl)))))
       (cl-loop for i
-	       below (length choices)
-	       do (when (equal (car (nth i choices)) chosen)
-		    (eval (eval (cdr (nth i choices)))) ;; quote を外すのが雑
+	       below (length mode-repl-pair)
+	       do (when (equal (car (nth i mode-repl-pair)) (format "%s" major-mode))
+		    (eval (eval (cdr (nth i mode-repl-pair))))
 		    (cl-return))
-	       finally (message "invalid option"))))
-  
+	       finally (message (format "[start-repl] couldn't found repl for %s" major-mode)))))
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -961,7 +987,7 @@ With argument ARG, do this that many times."
   (leaf *common-lisp
     :config
 
-    (leaf lisp-mode :require t)
+    (leaf lisp-mode :require t :mode "\\.cl\\'")
     
     (leaf sly
       :doc "Sylvester the Cat's Common Lisp IDE"
@@ -974,7 +1000,7 @@ With argument ARG, do this that many times."
       :custom (inferior-lisp-program . "/usr/bin/sbcl")
       :config
       ;; (load "~/.roswell/helper.el")
-      (defun sly-start ()
+      (defun start-sly ()
 	"sly の挙動を slime に似せる"
 	(interactive)
 	(split-window-right)
@@ -1194,7 +1220,7 @@ With argument ARG, do this that many times."
 		       (concat "--repl-output-fn=hy.contrib.hy-repr.hy-repr "
 			       hy-shell-interpreter-args))))
     :preface
-    (async-defun hy-repl ()
+    (defun hy-repl ()
       "Start hylang repl as if we were using slime."
       (interactive)
       (split-window-right)
@@ -1203,14 +1229,16 @@ With argument ARG, do this that many times."
       (vterm-send-return)
       (vterm-send-string "hy")
       (vterm-send-return)
+      (sit-for 3)
       (let* ((vterm-buffer (buffer-name (current-buffer)))
 	     (result (with-current-buffer vterm-buffer
 		       (buffer-string))))
 	(message vterm-buffer)
-	;; うまいこと遅延して欲しいが、うごかず
 	(when (or (s-contains-p "zsh: correct \'hy\'" result) (s-contains-p "command not found" result))
 	  (message "[hy-repl] hy could not be found. venv environment may not be activated or hy may not be installed.")
-	  (kill-buffer (buffer-name (current-buffer)))
+	  (with-current-buffer vterm-buffer
+	    (let (kill-buffer-hook kill-buffer-query-functions)
+	      (kill-buffer)))
 	  (delete-window))))
     )
   
