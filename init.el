@@ -86,6 +86,7 @@
   ("C-n" . next-line)
   ("C-p" . previous-line)
   ("C-u" . undo-tree-undo)
+  ("C-z" . undo-tree-undo) ;; よく間違ってとまってかす
   ("C-r" . undo-tree-redo)
   ("C-s" . swiper)
   ("C-/" . other-window)
@@ -154,7 +155,8 @@ With argument ARG, do this that many times."
 		      ("dotfiles" . (find-file "~/dotfiles"))
 		      (".emacs.d" . (find-file "~/.emacs.d"))
 		      ("elpa" . (find-file package-user-dir))
-		      ("recent" . (open-recentf)))))
+		      ("recent" . (open-recentf))
+		      ("wsl" . (find-file "/mnt/c/Users/kyre/")))))
       (echo-choices choices "invalid options")))
 
   (defun start-repl ()
@@ -1065,6 +1067,18 @@ With argument ARG, do this that many times."
       (dap-register-debug-template "Flutter :: Custom debug"
 				   (list :flutterPlatform "x86_64" :program "lib/main_debug.dart" :args
 					 '("--flavor" "customer_a"))))
+    
+    (leaf flutter
+      :doc "Tools for working with Flutter SDK"
+      :req "emacs-25.1"
+      :tag "languages" "emacs>=25.1"
+      :url "https://github.com/amake/flutter.el"
+      :added "2023-08-22"
+      :emacs>= 25.1
+      :after dart-mode
+      :ensure t
+      :hook (dart-mode . (lambda ()
+                           (add-hook 'after-save-hook #'flutter-run-or-hot-reload nil t))))
     )
   
   (leaf *emacs-lisp
@@ -1261,6 +1275,8 @@ With argument ARG, do this that many times."
     :tag "builtin"
     :custom
     (org-directory . "~/document/org")
+    (org-latex-pdf-process .  '("lualatex --draftmode %f"
+				"lualatex %f"))
     (org-startup-truncated . nil)
     (org-enforce-todo-dependencies . t)
     :config
@@ -1275,7 +1291,48 @@ With argument ARG, do this that many times."
       :after org
       :hook
       (org-mode-hook . org-modern-mode)
-      (org-agenda-finalize-hook . org-modern-agenda)))
+      (org-agenda-finalize-hook . org-modern-agenda))
+
+    (leaf ox-beamer
+      :require t
+      :custom
+      (org-latex-pdf-process . '("lualatex --draftmode %f"
+				 "lualatex %f"))
+      
+      (org-latex-default-class . "ltjsarticle")
+      :config
+      (add-to-list 'org-latex-classes
+		   '("beamer"
+		     "\\documentclass[presentation]{beamer}
+[NO-DEFAULT-PACKAGES]
+\\usepackage{luatexja}
+\\usepackage{textcomp}
+\\usepackage{graphicx}
+% \\usepackage{booktabs}
+\\usepackage{longtable}
+\\usepackage{wrapfig}
+\\usepackage{ulem}
+\\usepackage{hyperref}
+\\hypersetup{pdfencoding=auto, linkbordercolor={0 1 0}}
+%% Fonts
+% mathematical font
+\\usepackage{fontspec}
+\\usepackage{amsmath, amssymb}
+% Japanese
+\\usepackage{luacode}
+\\usepackage{luatexja-otf}
+\\usepackage[ipaex]{luatexja-preset}
+\\renewcommand{\\kanjifamilydefault}{\\gtdefault}
+%%
+\\setbeamercovered{transparent}
+\\setbeamertemplate{navigation symbols}{}"
+		     ("\\section{%s}" . "\\section*{%s}")
+		     ("\\subsection{%s}" . "\\subsection*{%s}")
+		     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+		     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+		     ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+    
+    )
 
   (leaf *pwsh
     :config
