@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: dfs-lambda
+# key: 
+# --
+
+auto dfs = [&](auto&& self, int from, int parent) -> void
+  {
+    for (int to : graph[from])
+      {
+	if (to == parent) continue;
+	self(self, to, from);
+      }
+  };
