@@ -1691,7 +1691,6 @@ With argument ARG, do this that many times."
     (dashboard-center-content . t)
     (dashboard-set-heading-icons . t)
     (dashboard-set-file-icons . t)
-    (dashboard-startup-banner . "~/.emacs.d/banner.png")
     (dashboard-banner-logo-title . "Kyure_A's Emacs")
     :config
     (setq dashboard-footer-messages '("「今日も一日がんばるぞい！」 - 涼風青葉"
@@ -1733,7 +1732,8 @@ With argument ARG, do this that many times."
 	(and dashboard-recover-layout-p
              (and (bound-and-true-p winner-mode) (winner-undo))
              (setq dashboard-recover-layout-p nil))))
-    )
+    :config
+    (setf dashboard-startup-banner (if (or (eq window-system 'x) (eq window-system 'ns) (eq window-system 'w32)) "~/.emacs.d/static/banner.png" "~/.emacs.d/static/banner.txt")))
 
   (leaf display-line-numbers
     :doc "interface for display-line-numbers"
