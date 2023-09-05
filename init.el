@@ -1778,7 +1778,8 @@ With argument ARG, do this that many times."
     :ensure t
     :require t
     :hook
-    ((dashboard-mode vterm-mode neotree-mode) . hide-mode-line-mode))
+    (vterm-mode . hide-mode-line-mode)
+    (dashboard-mode . hide-mode-line-mode))
   
   (leaf highlight-indent-guides
     :doc "Minor mode to highlight indentation"
@@ -1803,6 +1804,12 @@ With argument ARG, do this that many times."
     :hook (prog-mode-hook . highlight-symbol-mode)
     :custom (highlight-symbol-idle-delay . 0.1))
 
+  (leaf minimap
+    :doc "Sidebar showing a \"mini-map\" of a buffer"
+    :url "http://elpa.gnu.org/packages/minimap.html"
+    :added "2023-09-05"
+    :ensure t)
+  
   (leaf neotree
     :doc "A tree plugin like NerdTree for Vim"
     :req "cl-lib-0.5"
