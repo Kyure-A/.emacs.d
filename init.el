@@ -1768,6 +1768,18 @@ With argument ARG, do this that many times."
     :hook ;; (prog-mode-hook . fira-code-mode) ;; wsl2 だとバグる
     :custom (fira-code-mode-disabled-ligatures '("<>" "[]" "#{" "#(" "#_" "#_(" "x")))
 
+  (leaf hide-mode-line
+    :doc "minor mode that hides/masks your modeline"
+    :req "emacs-24.4"
+    :tag "mode-line" "frames" "emacs>=24.4"
+    :url "https://github.com/hlissner/emacs-hide-mode-line"
+    :added "2023-09-05"
+    :emacs>= 24.4
+    :ensure t
+    :require t
+    :hook
+    ((dashboard-mode vterm-mode neotree-mode) . hide-mode-line-mode))
+  
   (leaf highlight-indent-guides
     :doc "Minor mode to highlight indentation"
     :req "emacs-24.1"
