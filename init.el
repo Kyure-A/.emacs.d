@@ -519,7 +519,10 @@ With argument ARG, do this that many times."
        ("<left>" . dired-up-directory)
        ("a" . dired-find-file)
        ("e" . wdired-change-to-wdired-mode))
+      :custom
+      (dired-recursive-copies . 'always)
       :config
+      ;; (ffap-bindings) ;; find-file を便利にするが、ちょっと挙動が嫌なので OFF にした
       
       (leaf dired-toggle
 	:doc "Show dired as sidebar and will not create new buffers when changing dir"
@@ -1295,6 +1298,7 @@ With argument ARG, do this that many times."
 
     (leaf ox-beamer
       :require t
+      :after org
       :custom
       (org-latex-pdf-process . '("lualatex --draftmode %f"
 				 "lualatex %f"))
@@ -1428,6 +1432,7 @@ With argument ARG, do this that many times."
       :doc "LSP Svelte integration"
       :tag "out-of-MELPA" "svelte" "lsp"
       :added "2023-07-26"
+      :after svelte-mode
       :require t))
 
   (leaf *typescript
@@ -1447,7 +1452,7 @@ With argument ARG, do this that many times."
       :emacs>= 24.3
       :after prog
       :ensure t :require t
-      :mode "\\.ts\\'" "\\.tsx\\'" "\\.mts\\'")
+      :mode "\\.ts\\'" "\\.tsx\\'" "\\.mts\\'" "\\.cts\\'")
     
     (leaf tide
       :doc "Typescript Interactive Development Environment"
@@ -1536,13 +1541,14 @@ With argument ARG, do this that many times."
     "\\.yml$"
     "\\.yaml$")
 
-  (leaf yatex
-    :doc "Yet Another tex-mode for emacs //野鳥//"
-    :added "2023-07-23"
-    :require t
-    :ensure t
-    :hook ((yatex-mode . (lambda ()
-			   (add-hook 'before-save-hook 'nu-kutoten-buffer nil 'make-it-local)))))
+  ;; (leaf yatex
+  ;;   :doc "Yet Another tex-mode for emacs //野鳥//"
+  ;;   :added "2023-07-23"
+  ;;   :require t
+  ;;   :ensure t
+  ;;   :after prog-mode
+  ;;   :hook ((yatex-mode . (lambda ()
+  ;; 			   (add-hook 'before-save-hook 'nu-kutoten-buffer nil 'make-it-local)))))
   
   )
 
