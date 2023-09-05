@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: dfs-lambda
-# key: 
+# key: dfs-lambda
 # --
 
 auto dfs = [&](auto&& self, int from, int parent) -> void
