@@ -55,14 +55,11 @@
   ;; C-c
   ("C-c C-f" . leaf-convert-insert-template)
   ("C-c e b" . eval-buffer)
-  ("C-c e l" . open-packages-directory)
-  ("C-c e d" . open-emacs-directory)
-  ("C-c e ." . open-dotfiles)
   ("C-c e m" . menu-bar-mode)
   ("C-c l c" . leaf-convert-region-replace)
   ("C-c l t" . leaf-tree-mode)
-  ("C-c o" . org-capture)
-  ("C-c s" . start-repl)
+  ("C-c o" . Kyure_A/open)
+  ("C-c s" . Kyure_A/start-repl)
   ("C-c t" . centaur-tabs-counsel-switch-group)
   
   ;; C-l
@@ -117,17 +114,19 @@
   
   (defun delete-word (arg)
     "Delete characters forward until encountering the end of a word.
-With argument ARG, do this that many times."
+With argument ARG, do this that many times.
+https://qiita.com/ballforest/items/5a76f284af254724144a"
     (interactive "p")
     (delete-region (point) (progn (forward-word arg) (point))))
   
   (defun backward-delete-word (arg)
     "Delete characters backward until encountering the beginning of a word.
-With argument ARG, do this that many times."
+With argument ARG, do this that many times.
+https://qiita.com/ballforest/items/5a76f284af254724144a"
     (interactive "p")
     (delete-word (- arg)))
 
-  (defun echo-choices (list message-str)
+  (defun Kyure_A/echo-choices (list message-str)
     "Displays choices in the echo area and evaluates the choice"
     (setq chosen (completing-read "Choose an option: " list))
     (cl-loop for i
@@ -137,16 +136,16 @@ With argument ARG, do this that many times."
 		  (cl-return))
 	     finally (message message-str)))
 
-  (defun open-recentf ()
+  (defun Kyure_A/open-recentf ()
     "Outputs a list of 10 most recently opened files to the echo area"
     (interactive)
     (let* ((recent-opened-files '()))
       (cl-loop for i below 10
                do (push (cons (nth i recentf-list) `(find-file ,(nth i recentf-list))) recent-opened-files))
       (setq recent-opened-files (reverse recent-opened-files))
-      (echo-choices recent-opened-files "not found")))
+      (Kyure_A/echo-choices recent-opened-files "not found")))
   
-  (defun open ()
+  (defun Kyure_A/open ()
     (interactive)
     (let* ((choices '(("dashboard" . (open-dashboard))
 		      ("documents" . (if (file-exists-p "~/documents")
@@ -157,9 +156,9 @@ With argument ARG, do this that many times."
 		      ("elpa" . (find-file package-user-dir))
 		      ("recent" . (open-recentf))
 		      ("wsl" . (find-file "/mnt/c/Users/kyre/")))))
-      (echo-choices choices "invalid options")))
+      (Kyure_A/echo-choices choices "invalid options")))
 
-  (defun start-repl ()
+  (defun Kyure_A/start-repl ()
     (interactive)
     (let* ((mode-repl-pair '(("lisp-mode" . (start-sly))
 			     ("hy-mode" . (hy-repl)))))
