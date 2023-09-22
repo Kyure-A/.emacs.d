@@ -83,7 +83,7 @@
   ("C-n" . next-line)
   ("C-p" . previous-line)
   ("C-u" . undo-tree-undo)
-  ("C-z" . undo-tree-undo) ;; よく間違ってとまってかす
+  ("C-z" . nil) ;; よく間違ってとまってかす
   ("C-r" . undo-tree-redo)
   ("C-s" . swiper)
   ("C-/" . other-window)
@@ -953,10 +953,27 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :custom
     (vterm-buffer-name-string . t)
     (vterm-clear-scrollback-when-clearing . t)
-    (vterm-keymap-exceptions
-     . '("<f1>" "<f2>" "<f10>" "C-<return>" "C-<prior>" "C-<next>" "C-c" "C-g" "C-l" "C-s" "C-u" "C-v" "C-w" "C-x" "C-y" "M-v" "M-w" "M-x" "M-y" "C-SPC"))
+    (vterm-keymap-exceptions . '("<f1>"
+				 "<f2>"
+				 "<f10>"
+				 "C-<prior>"
+				 "C-<next>"
+				 "C-RET"
+				 "C-SPC"
+				 "C-c"
+				 "C-g"
+				 "C-l"
+				 "C-s"
+				 "C-u"
+				 "C-v"
+				 "C-w"
+				 "C-x"
+				 "C-y"
+				 "M-v"
+				 "M-w"
+				 "M-x"
+				 "M-y"))
     (vterm-max-scrollback . 5000)
-    ;; (vterm-toggle--vterm-buffer-p-function . 'my/term-mode-p)
     :config
     (leaf multi-vterm
       :doc "Like multi-term.el but for vterm"
