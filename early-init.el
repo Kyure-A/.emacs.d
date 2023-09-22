@@ -76,15 +76,16 @@
 
 (leaf *leaf
   :config
-  (leaf leaf-manager :ensure t)
-  (leaf leaf-keywords :ensure t :init (leaf-keywords-init))
-  (leaf leaf-convert :ensure t)
-  (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left))
+  (leaf leaf-manager :ensure t :after leaf)
+  (leaf leaf-keywords :ensure t :init (leaf-keywords-init) :after leaf)
+  (leaf leaf-convert :ensure t :after leaf)
+  (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left) :after leaf)
   (leaf package :require t)
   (leaf use-package :ensure t)
   (leaf quelpa
     :ensure t
     :require t
+    :after leaf
     :custom
     (quelpa-checkout-melpa-p . nil)
     :config
@@ -93,7 +94,7 @@
      '(quelpa-leaf
        :fetcher git
        :url "https://github.com/quelpa/quelpa-leaf.git"))
-    (leaf quelpa-leaf :after quelpa :require t :init (quelpa-leaf-init))))
+    (leaf quelpa-leaf :after leaf quelpa :require t :init (quelpa-leaf-init))))
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
