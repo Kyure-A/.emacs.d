@@ -522,11 +522,20 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       (dired-recursive-copies . 'always)
       :config
       ;; (ffap-bindings) ;; find-file を便利にするが、ちょっと挙動が嫌なので OFF にした
+
+      (leaf dired-async
+	:doc "Asynchronous dired actions"
+	:tag "out-of-MELPA" "network" "async" "dired"
+	:url "https://github.com/jwiegley/emacs-async"
+	:added "2023-09-22"
+	:after dired async
+	:require t)
       
       (leaf dired-toggle
 	:doc "Show dired as sidebar and will not create new buffers when changing dir"
 	:tag "sidebar" "dired"
 	:url "https://github.com/fasheng/dired-toggle"
+	:after dired
 	:ensure t :require t)
       
       (leaf dired-k
@@ -536,17 +545,20 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
 	:url "https://github.com/emacsorphanage/dired-k"
 	:emacs>= 24.3
 	:ensure t :require t
+	:after dired
 	:hook (dired-initial-position-hook . dired-k))
       
       (leaf wdired
 	:doc "Rename files editing their names in dired buffers"
 	:tag "builtin"
+	:after dired
 	:require t)
 
       (leaf dired-toggle-sudo
 	:doc "Browse directory with sudo privileges."
 	:tag "dired" "emacs"
 	:added "2023-07-21"
+	:after dired
 	:ensure t)
 
       (leaf dired-preview
@@ -555,6 +567,7 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
 	:tag "convenience" "files" "emacs>=27.1"
 	:url "https://git.sr.ht/~protesilaos/dired-preview"
 	:added "2023-07-30"
+	:after dired
 	:emacs>= 27.1
 	:ensure t)
       
@@ -1087,6 +1100,16 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :doc "Emacs Lisp"
     :config
 
+    (leaf async
+      :doc "Asynchronous processing in Emacs"
+      :req "emacs-24.4"
+      :tag "async" "emacs>=24.4"
+      :url "https://github.com/jwiegley/emacs-async"
+      :added "2023-09-22"
+      :emacs>= 24.4
+      :ensure t
+      :require t)
+    
     (leaf async-await
       :doc "Async/Await"
       :req "emacs-25.1" "promise-1.1" "iter2-0.9.10"
