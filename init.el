@@ -5,12 +5,14 @@
 
 ;;; Commentary:
 
-;; Coding rule:
-
-;; なるべく setq/setf は custom でドット対のリストに書き換える
-;; global-map にセットするキーバインドは *global-set-key ブロックに書く
-;; 各マイナーモードの active-map にセットするキーバインドは各マイナーモードのブロックに書く
-;; 各マイナーモードを有効化するときは global-minor-mode 節に書く
+;;              .mmmmmmmmmmmmmm.                   .cccccccc!                .(.
+;;  .+eeeee.   .??:   +m<   <mm.    .aaaaaaaa.    ccC!           .+sssss{    (!!
+;; .ee:        .mm:   +mm   .mm_   .aa>   (aaA    cCC           .ss>         1!:
+;; .ee_        .mm:   +mm   .mm_   .aa{    aaA    ccC           .sss.        !!
+;; .ee_ <ee    .mm:   +mm   .mm_   .aa{ .(AaaA    cCC`           .<sssss    .!:
+;; .ee_        .mm:   +mm   .mm_   .aa{ .??aaA    cCCc......         .ss:   ..
+;; .eee....    .<<!   ?<<   .<<`   .aa{    aaA     ?CCCCCCC!    ....(s=: .!!-
+;;  .?eeeee`                       .AA!    AAA                  .ssss<s!   .!!
 
 ;;; Code:
 
@@ -36,11 +38,11 @@
   ("<double-mouse-9>" . centaur-tabs-forward)
   ("<triple-mouse-9>" . centaur-tabs-forward)
   ("<drag-mouse-9>" . centaur-tabs-forward)
-
+  
   ;; C-<Modifer key>
   ("C-<backspace>" . backward-delete-word)
-  ("C-<prior>" . centaur-tabs-backward)
-  ("C-<next>" . centaur-tabs-forward)
+  ("C-<left>" . centaur-tabs-forward)
+  ("C-<right>" . centaur-tabs-backward)
   ("C-RET" . newline)
   ("C-SPC" . toggle-input-method)
 
@@ -59,6 +61,7 @@
   ("C-c l c" . leaf-convert-region-replace)
   ("C-c l t" . leaf-tree-mode)
   ("C-c o" . Kyure_A/open)
+  ("C-c p" . smartparens-global-mode)
   ("C-c s" . Kyure_A/start-repl)
   ("C-c t" . centaur-tabs-counsel-switch-group)
   
@@ -83,9 +86,9 @@
   ("C-n" . next-line)
   ("C-p" . previous-line)
   ("C-u" . undo-tree-undo)
-  ("C-z" . nil) ;; よく間違ってとまってかす
   ("C-r" . undo-tree-redo)
   ("C-s" . swiper)
+  ("C-z" . undo-tree-undo) ;; よく間違ってとまってかす
   ("C-/" . other-window)
   
   ;; M-<any>
