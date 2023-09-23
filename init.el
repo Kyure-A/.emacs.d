@@ -374,8 +374,6 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
      ("s" . tetris-move-down)
      ("d" . tetris-move-right)
      ("RET" . tetris-move-bottom)))
-  
-  ;; (leaf zone :doc "screen-saver" :tag "builtin" :require t :config (zone-when-idle 1200))
 
   (leaf onlyonce
     :require t
