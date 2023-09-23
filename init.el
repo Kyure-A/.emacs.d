@@ -30,14 +30,6 @@
   ;; ("<f5>" . my/quickrun-sc)
   ("RET" . smart-newline)
   ("<backspace>" . smart-hungry-delete-backward-char)
-  ("<mouse-8>" . centaur-tabs-backward)
-  ("<double-mouse-8>" . centaur-tabs-backward)
-  ("<triple-mouse-8>" . centaur-tabs-backward)
-  ("<drag-mouse-8>" . centaur-tabs-backward)
-  ("<mouse-9>" . centaur-tabs-forward)
-  ("<double-mouse-9>" . centaur-tabs-forward)
-  ("<triple-mouse-9>" . centaur-tabs-forward)
-  ("<drag-mouse-9>" . centaur-tabs-forward)
   
   ;; C-<Modifer key>
   ("C-<backspace>" . backward-delete-word)
