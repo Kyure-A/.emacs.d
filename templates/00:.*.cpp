@@ -7,6 +7,7 @@ using namespace std;
 const double PI = acos(-1.0);
 constexpr long long  MOD = 1000000007;
 constexpr long long _MOD = 998244353;
+using int64 = long long;
 
 signed main ()
 {
