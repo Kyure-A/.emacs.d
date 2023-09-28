@@ -1,9 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-// #include <atcoder/modint>
-// using namespace atcoder;
-// #include <boost/multiprecision/cpp_int.hpp>
-// using namespace boost::multiprecision;
 #define all(container) (container).begin(), (container).end()
 #define ctoi(char) int(char) - 48
 #define rep(i,n) for (int i = 0; (i) < (int)(n); ++ (i))
