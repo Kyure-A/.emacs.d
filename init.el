@@ -937,6 +937,17 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :ensure t :require t
     :after dashboard)
 
+  (leaf prettier
+    :doc "Code formatting with Prettier"
+    :req "emacs-26.1" "iter2-0.9" "nvm-0.2" "editorconfig-0.8"
+    :tag "files" "languages" "convenience" "emacs>=26.1"
+    :url "https://github.com/jscheid/prettier.el"
+    :added "2023-10-20"
+    :emacs>= 26.1
+    :ensure t
+    :after iter2 nvm editorconfig
+    :hook (after-init-hook . global-prettier-mode))
+  
   (leaf vterm
     :doc "Fully-featured terminal emulator"
     :req "emacs-25.1"
