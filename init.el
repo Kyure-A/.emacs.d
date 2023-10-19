@@ -45,7 +45,8 @@
   ("C-x i i" . ivy-yasnippet)
   ("C-x i n" . yas-new-snippet)
   ("C-x u" . undo-tree-visualize)
-  
+  ("C-x C-z" . nil)
+  ("C-x C-c" . nil)
   ;; C-c
   ("C-c C-f" . leaf-convert-insert-template)
   ("C-c e b" . eval-buffer)
@@ -1908,4 +1909,3 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
 
 ;; End:
 ;;; init.el ends here
-
