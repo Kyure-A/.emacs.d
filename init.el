@@ -1266,6 +1266,15 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :require t
       :after shut-up))
 
+  (leaf fsharp-mode
+    :doc "Support for the F# programming language"
+    :req "emacs-25"
+    :tag "languages" "emacs>=25"
+    :added "2023-10-21"
+    :emacs>= 25
+    :ensure t
+    :custom (inferior-fsharp-program . ""))
+  
   (leaf hy-mode
     :doc "Major mode for Hylang"
     :req "dash-2.18.0" "s-1.11.0" "emacs-24"
