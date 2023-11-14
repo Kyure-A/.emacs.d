@@ -1335,6 +1335,7 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
 				"lualatex %f"))
     (org-startup-truncated . nil)
     (org-enforce-todo-dependencies . t)
+    (org-support-shift-select . t)
     :config
     
     (leaf org-modern
@@ -1349,6 +1350,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       (org-mode-hook . org-modern-mode)
       (org-agenda-finalize-hook . org-modern-agenda))
 
+    (leaf org-tempo :require t)
+    
     (leaf ox-beamer
       :require t
       :after org
