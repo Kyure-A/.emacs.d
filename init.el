@@ -1218,6 +1218,25 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
 	:after keg flycheck))
 
     (leaf lisp-interaction :bind (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
+
+    (leaf package-build
+      :doc "Tools for assembling a package archive"
+      :req "emacs-26.1"
+      :tag "tools" "maint" "emacs>=26.1"
+      :url "https://github.com/melpa/package-build"
+      :added "2023-11-15"
+      :emacs>= 26.1
+      :ensure t)
+
+    (leaf package-lint
+      :doc "A linting library for elisp package authors"
+      :req "cl-lib-0.5" "emacs-24.4" "let-alist-1.0.6" "compat-29.1"
+      :tag "lisp" "emacs>=24.4"
+      :url "https://github.com/purcell/package-lint"
+      :added "2023-11-15"
+      :emacs>= 24.4
+      :ensure t
+      :after compat)
     
     (leaf promise
       :doc "Promises/A+"
