@@ -72,12 +72,12 @@
   
   ;; C-<any>
   ("C-a" . mwim-beginning-of-code-or-line)
-  ("C-b". backward-char)
   ("C-d" . smart-hungry-delete-backward-char)
   ("C-e" . mwim-end-of-code-or-line)
-  ("C-f" . forward-char)
-  ("C-n" . next-line)
-  ("C-p" . previous-line)
+  ;; ("C-j" . nil)
+  ("C-j" . smart-hungry-delete-backward-char)
+  ("C-m" . smart-newline)
+  ("C-o" . nil)
   ("C-u" . undo-tree-undo)
   ("C-r" . undo-tree-redo)
   ("C-s" . swiper)
