@@ -697,6 +697,14 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :ensure t :require t
       :after ivy))
 
+  (leaf multiple-cursors
+    :doc "Multiple cursors for Emacs."
+    :req "cl-lib-0.5"
+    :tag "cursors" "editing"
+    :url "https://github.com/magnars/multiple-cursors.el"
+    :added "2023-12-04"
+    :ensure t)
+  
   (leaf mwim
     :doc "Switch between the beginning/end of line or code (enhanced C-a, C-e)"
     :tag "convenience"
