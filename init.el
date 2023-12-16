@@ -251,6 +251,16 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
   :doc "分類が面倒なパッケージを入れる"
   :config
 
+  (leaf arduino-mode
+    :doc "Major mode for editing Arduino code"
+    :req "emacs-25.1" "spinner-1.7.3"
+    :tag "arduino" "languages" "emacs>=25.1"
+    :url "https://repo.or.cz/arduino-mode.git"
+    :added "2023-11-25"
+    :emacs>= 25.1
+    :ensure t
+    :after spinner)
+  
   (leaf dedis
     :quelpa (dedis :repo "Kyure-A/dedis.el"
 		   :fetcher github
