@@ -1356,6 +1356,26 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     (org-enforce-todo-dependencies . t)
     (org-support-shift-select . t)
     :config
+
+    (leaf org-roam
+      :doc "A database abstraction layer for Org-mode"
+      :req "emacs-26.1" "dash-2.13" "org-9.4" "emacsql-20230228" "magit-section-3.0.0"
+      :tag "convenience" "roam" "org-mode" "emacs>=26.1"
+      :url "https://github.com/org-roam/org-roam"
+      :added "2023-12-02"
+      :emacs>= 26.1
+      :ensure t
+      :after org emacsql magit-section)
+
+    (leaf org-roam-ui
+      :doc "User Interface for Org-roam"
+      :req "emacs-27.1" "org-roam-2.0.0" "simple-httpd-20191103.1446" "websocket-1.13"
+      :tag "outlines" "files" "emacs>=27.1"
+      :url "https://github.com/org-roam/org-roam-ui"
+      :added "2023-12-02"
+      :emacs>= 27.1
+      :ensure t
+      :after org-roam websocket)
     
     (leaf org-modern
       :doc "Modern looks for Org"
