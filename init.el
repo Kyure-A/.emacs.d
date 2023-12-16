@@ -1559,7 +1559,6 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :after flycheck typescript-mode
       :hook
       (typescript-mode-hook . tide-start)
-      (before-save-hook . tide-format-before-save)
       :custom
       (tide-node-executable . "~/.asdf/installs/nodejs/19.0.0/bin/node")
       :config
