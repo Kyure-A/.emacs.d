@@ -35,7 +35,7 @@
   ("C-<backspace>" . backward-delete-word)
   ("C-<left>" . centaur-tabs-forward)
   ("C-<right>" . centaur-tabs-backward)
-  ("C-RET" . newline)
+  ("C-<return>" . newline)
   ("C-SPC" . toggle-input-method)
 
   ;; C-x
@@ -57,7 +57,7 @@
   ("C-c p" . smartparens-global-mode)
   ("C-c s" . Kyure_A/start-repl)
   ("C-c t" . centaur-tabs-counsel-switch-group)
-  
+  ("C-c r" . vr/replace)
   ;; C-l
   ("C-l" . nil)
   ("C-l C-l" . lsp)
@@ -74,8 +74,8 @@
   ("C-a" . mwim-beginning-of-code-or-line)
   ("C-d" . smart-hungry-delete-backward-char)
   ("C-e" . mwim-end-of-code-or-line)
+  ("C-h" . smart-hungry-delete-backward-char)
   ;; ("C-j" . nil)
-  ("C-j" . smart-hungry-delete-backward-char)
   ("C-m" . smart-newline)
   ("C-o" . nil)
   ("C-u" . undo-tree-undo)
@@ -83,10 +83,9 @@
   ("C-s" . swiper)
   ("C-z" . undo-tree-undo) ;; よく間違ってとまってかす
   ("C-/" . other-window)
-  
+  ("C-;" . smart-hungry-delete-forward-char)
   ;; M-<any>
   ("M-k" . backward-kill-line)
-  ("M-q" . vr/replace)
   ("M-x" . counsel-M-x)
   
   :config
