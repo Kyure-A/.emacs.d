@@ -928,7 +928,13 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :emacs>= 25.1
     :ensure t :require t
     :after compat git-commit magit-section with-editor
-    :hook (magit-status-mode . my/toggle-centaur-tabs-local-mode))
+    :hook (magit-status-mode . my/toggle-centaur-tabs-local-mode)
+    :config
+    (when (string< "28.1" "29")
+      ;; https://github.com/emacs-mirror/emacs/blob/281be72422f42fcc84d43f50723a3e91b7d03cbc/lisp/emacs-lisp/seq.el#L709
+      (defun seq-keep (function sequence)
+	"Apply FUNCTION to SEQUENCE and return the list of all the non-nil results."
+	(delq nil (seq-map function sequence)))))
   
   (leaf oj
     :doc "Competitive programming tools client for AtCoder, Codeforces"
