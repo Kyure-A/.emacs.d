@@ -1190,7 +1190,28 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :ensure t
       :require t
       :after trinary lsp-mode ansi lgr
-      :config (elsa-lsp-register))
+      :config
+      
+      (elsa-lsp-register)
+      
+      (leaf flycheck-elsa
+	:doc "Flycheck for Elsa"
+	:req "emacs-25" "flycheck-0.14" "seq-2.0"
+	:tag "convenience" "emacs>=25"
+	:url "https://github.com/emacs-elsa/flycheck-elsa"
+	:added "2023-12-23"
+	:emacs>= 25
+	:ensure t
+	:after flycheck))
+
+    (leaf elquery
+      :doc "The HTML library for elisp"
+      :req "emacs-25.1" "dash-2.13.0"
+      :tag "webscale" "tools" "hypermedia" "html" "emacs>=25.1"
+      :url "https://github.com/AdamNiederer/elquery"
+      :added "2023-12-23"
+      :emacs>= 25.1
+      :ensure t)
     
     (leaf f
       :doc "Modern API for working with files and directories"
