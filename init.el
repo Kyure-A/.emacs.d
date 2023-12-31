@@ -877,6 +877,16 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
   ;;    (interactive)
   ;;    (or (copilot-accept-completion)
   ;;        (company-indent-or-complete-common nil)))))
+
+  (leaf eat
+    :doc "Emulate A Terminal, in a region, in a buffer and in Eshell"
+    :req "emacs-26.1" "compat-29.1"
+    :tag "processes" "terminals" "emacs>=26.1"
+    :url "https://codeberg.org/akib/emacs-eat"
+    :added "2023-12-31"
+    :emacs>= 26.1
+    :ensure t
+    :after compat)
   
   (leaf editorconfig
     :doc "EditorConfig Emacs Plugin"
