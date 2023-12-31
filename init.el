@@ -1678,17 +1678,7 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :ensure t
     :mode
     "\\.yml$"
-    "\\.yaml$")
-
-  ;; (leaf yatex
-  ;;   :doc "Yet Another tex-mode for emacs //野鳥//"
-  ;;   :added "2023-07-23"
-  ;;   :require t
-  ;;   :ensure t
-  ;;   :after prog-mode
-  ;;   :hook ((yatex-mode . (lambda ()
-  ;;                       (add-hook 'before-save-hook 'nu-kutoten-buffer nil 'make-it-local)))))
-  
+    "\\.yaml$")  
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -1919,20 +1909,6 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :hook
     (vterm-mode . hide-mode-line-mode)
     (dashboard-mode . hide-mode-line-mode))
-  
-  (leaf highlight-indent-guides
-    :doc "Minor mode to highlight indentation"
-    :req "emacs-24.1"
-    :tag "emacs>=24.1"
-    :url "https://github.com/DarthFennec/highlight-indent-guides"
-    :emacs>= 24.1
-    :ensure t :require t
-    :hook
-    (prog-mode-hook yaml-mode-hook)
-    :custom
-    (highlight-indent-guides-auto-enabled . t)
-    (highlight-indent-guides-responsive . t)
-    (highlight-indent-guides-method . 'character))
 
   (leaf highlight-symbol
     :doc "automatic and manual symbol highlighting"
