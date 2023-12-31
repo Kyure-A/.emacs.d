@@ -125,11 +125,11 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     "Displays choices in the echo area and evaluates the choice"
     (setq chosen (completing-read "Choose an option: " list))
     (cl-loop for i
-	     below (length list)
-	     do (when (equal (car (nth i list)) chosen)
-		  (eval (eval (cdr (nth i list)))) ;; quote を外すのが雑
-		  (cl-return))
-	     finally (message message-str)))
+             below (length list)
+             do (when (equal (car (nth i list)) chosen)
+                  (eval (eval (cdr (nth i list)))) ;; quote を外すのが雑
+                  (cl-return))
+             finally (message message-str)))
 
   (defun Kyure_A/open-recentf ()
     "Outputs a list of 10 most recently opened files to the echo area"
@@ -143,26 +143,26 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
   (defun Kyure_A/open ()
     (interactive)
     (let* ((choices '(("dashboard" . (open-dashboard))
-		      ("documents" . (if (file-exists-p "~/documents")
-					 (find-file "~/documents")
-				       (find-file "~/Documents")))
-		      ("dotfiles" . (find-file "~/dotfiles"))
-		      (".emacs.d" . (find-file "~/.emacs.d"))
-		      ("elpa" . (find-file package-user-dir))
-		      ("recent" . (open-recentf))
-		      ("wsl" . (find-file "/mnt/c/Users/kyre/")))))
+                      ("documents" . (if (file-exists-p "~/documents")
+                                         (find-file "~/documents")
+                                       (find-file "~/Documents")))
+                      ("dotfiles" . (find-file "~/dotfiles"))
+                      (".emacs.d" . (find-file "~/.emacs.d"))
+                      ("elpa" . (find-file package-user-dir))
+                      ("recent" . (open-recentf))
+                      ("wsl" . (find-file "/mnt/c/Users/kyre/")))))
       (Kyure_A/echo-choices choices "invalid options")))
 
   (defun Kyure_A/start-repl ()
     (interactive)
     (let* ((mode-repl-pair '(("lisp-mode" . (start-sly))
-			     ("hy-mode" . (hy-repl)))))
+                             ("hy-mode" . (hy-repl)))))
       (cl-loop for i
-	       below (length mode-repl-pair)
-	       do (when (equal (car (nth i mode-repl-pair)) (format "%s" major-mode))
-		    (eval (eval (cdr (nth i mode-repl-pair))))
-		    (cl-return))
-	       finally (message (format "[start-repl] couldn't found repl for %s" major-mode)))))
+               below (length mode-repl-pair)
+               do (when (equal (car (nth i mode-repl-pair)) (format "%s" major-mode))
+                    (eval (eval (cdr (nth i mode-repl-pair))))
+                    (cl-return))
+               finally (message (format "[start-repl] couldn't found repl for %s" major-mode)))))
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -261,11 +261,6 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :ensure t
     :after spinner)
   
-  (leaf dedis
-    :quelpa (dedis :repo "Kyure-A/dedis.el"
-		   :fetcher github
-		   :upgrade t))
-  
   (leaf elcord
     :doc "Allows you to integrate Rich Presence from Discord"
     :req "emacs-25.1"
@@ -350,13 +345,6 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :added "2023-06-14"
     :ensure t)
   
-  (leaf smooth-scrolling
-    :doc "Make emacs scroll smoothly"
-    :tag "convenience"
-    :url "http://github.com/aspiers/smooth-scrolling/"
-    :added "2022-09-09"
-    :ensure t)
-
   (leaf sublimity
     :doc "smooth-scrolling, minimap and distraction-free mode"
     :req "emacs-26.1"
@@ -379,16 +367,6 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
      ("s" . tetris-move-down)
      ("d" . tetris-move-right)
      ("RET" . tetris-move-bottom)))
-
-  (leaf onlyonce
-    :require t
-    :quelpa (onlyonce :repo "Kyure-A/onlyonce.el"
-		      :fetcher github
-		      :upgrade t)
-    :config
-    (onlyonce-add 'fira-code-mode-install-fonts)
-    (onlyonce-add 'all-the-icons-install-fonts)
-    (onlyonce-startup))
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
