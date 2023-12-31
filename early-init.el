@@ -67,7 +67,8 @@
   (customize-set-variable 'package-archives
 			  '(("melpa" . "https://melpa.org/packages/")
 			    ("org"   . "https://orgmode.org/elpa/")
-			    ("gnu"   . "https://elpa.gnu.org/packages/")))
+			    ("gnu"   . "https://elpa.gnu.org/packages/")
+			    ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
   (package-initialize)
   ;; leaf が入っていないときに leaf を入れる
   (when (not (package-installed-p 'leaf))
