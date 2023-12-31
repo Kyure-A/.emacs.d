@@ -306,8 +306,19 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :added "2022-09-09"
     :emacs>= 27.1
     :ensure t
-    :require t)
+    :require
+    :global-minor-mode t)
 
+  (leaf jobcan
+    :doc "Managing jobcan in Emacs"
+    :req "emacs-25.1" "elquery-1.1.0" "ht-2.4" "request-0.3.3" "s-1.13.1"
+    :tag "tools" "emacs>=25.1"
+    :url "https://github.com/Kyure-A/jobcan.el"
+    :added "2023-12-31"
+    :emacs>= 25.1
+    :ensure t
+    :after elquery)
+  
   (leaf mozc
     :doc "minor mode to input Japanese with Mozc"
     :tag "input method" "multilingual" "mule"
