@@ -83,6 +83,7 @@
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left) :after leaf)
   (leaf package :require t)
   (leaf use-package :ensure t)
+  (leaf el-get :ensure t :require t)
   (leaf quelpa
     :ensure t
     :require t
