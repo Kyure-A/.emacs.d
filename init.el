@@ -61,15 +61,6 @@
   ;; C-l
   ("C-l" . nil)
   ("C-l C-l" . lsp)
-  ("C-l h" . lsp-describe-session)
-  ("C-l t" . lsp-goto-type-definition)
-  ("C-l r" . lsp-rename)
-  ("C-l <f5>" . lsp-restart-workspace)
-  ("C-l l" . lsp-lens-mode)
-  ("C-l s" . lsp-ui-sideline-mode)
-  ("C-l C-d" . lsp-ui-peek-find-definitions)
-  ("C-l C-r" . lsp-ui-peek-find-references)
-  
   ;; C-<any>
   ("C-a" . mwim-beginning-of-code-or-line)
   ("C-d" . smart-hungry-delete-backward-char)
