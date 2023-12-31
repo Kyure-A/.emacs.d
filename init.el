@@ -1168,6 +1168,16 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       (dotenv :repo "pkulev/dotenv.el"
               :fetcher github
               :upgrade t))
+
+    (leaf el-project
+      :doc "Generate project skelton for Emacs Lisp"
+      :req "emacs-24.1"
+      :tag "tools" "emacs>=24.1"
+      :url "https://github.com/Kyure-A/el-project"
+      :added "2023-12-31"
+      :emacs>= 24.1
+      :el-get "Kyure-A/el-project"
+      :require t)
     
     (leaf elsa
       :doc "Emacs Lisp Static Analyser"
