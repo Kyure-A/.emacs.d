@@ -196,8 +196,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :config
     (when (file-exists-p "./elisp")
       (let ((default-directory (locate-user-emacs-file "./elisp")))
-	(add-to-list 'load-path default-directory)
-	(normal-top-level-add-subdirs-to-load-path)))
+        (add-to-list 'load-path default-directory)
+        (normal-top-level-add-subdirs-to-load-path)))
     )
 
   (leaf frame :config (set-frame-parameter nil 'unsplittable t))
@@ -323,8 +323,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
 
   (leaf nu-fun
     :quelpa (nu-fun :repo "ayanyan/nihongo-util"
-		    :fetcher github
-		    :upgrade t)
+                    :fetcher github
+                    :upgrade t)
     :require t
     :custom
     (nu-my-toten . "，")
@@ -527,52 +527,52 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       ;; (ffap-bindings) ;; find-file を便利にするが、ちょっと挙動が嫌なので OFF にした
 
       (leaf dired-async
-	:doc "Asynchronous dired actions"
-	:tag "out-of-MELPA" "network" "async" "dired"
-	:url "https://github.com/jwiegley/emacs-async"
-	:added "2023-09-22"
-	:after dired async
-	:require t)
+        :doc "Asynchronous dired actions"
+        :tag "out-of-MELPA" "network" "async" "dired"
+        :url "https://github.com/jwiegley/emacs-async"
+        :added "2023-09-22"
+        :after dired async
+        :require t)
       
       (leaf dired-toggle
-	:doc "Show dired as sidebar and will not create new buffers when changing dir"
-	:tag "sidebar" "dired"
-	:url "https://github.com/fasheng/dired-toggle"
-	:after dired
-	:ensure t :require t)
+        :doc "Show dired as sidebar and will not create new buffers when changing dir"
+        :tag "sidebar" "dired"
+        :url "https://github.com/fasheng/dired-toggle"
+        :after dired
+        :ensure t :require t)
       
       (leaf dired-k
-	:doc "Highlight dired by size, date, git status"
-	:req "emacs-24.3"
-	:tag "emacs>=24.3"
-	:url "https://github.com/emacsorphanage/dired-k"
-	:emacs>= 24.3
-	:ensure t :require t
-	:after dired
-	:hook (dired-initial-position-hook . dired-k))
+        :doc "Highlight dired by size, date, git status"
+        :req "emacs-24.3"
+        :tag "emacs>=24.3"
+        :url "https://github.com/emacsorphanage/dired-k"
+        :emacs>= 24.3
+        :ensure t :require t
+        :after dired
+        :hook (dired-initial-position-hook . dired-k))
       
       (leaf wdired
-	:doc "Rename files editing their names in dired buffers"
-	:tag "builtin"
-	:after dired
-	:require t)
+        :doc "Rename files editing their names in dired buffers"
+        :tag "builtin"
+        :after dired
+        :require t)
 
       (leaf dired-toggle-sudo
-	:doc "Browse directory with sudo privileges."
-	:tag "dired" "emacs"
-	:added "2023-07-21"
-	:after dired
-	:ensure t)
+        :doc "Browse directory with sudo privileges."
+        :tag "dired" "emacs"
+        :added "2023-07-21"
+        :after dired
+        :ensure t)
 
       (leaf dired-preview
-	:doc "Automatically preview file at point in Dired"
-	:req "emacs-27.1"
-	:tag "convenience" "files" "emacs>=27.1"
-	:url "https://git.sr.ht/~protesilaos/dired-preview"
-	:added "2023-07-30"
-	:after dired
-	:emacs>= 27.1
-	:ensure t)
+        :doc "Automatically preview file at point in Dired"
+        :req "emacs-27.1"
+        :tag "convenience" "files" "emacs>=27.1"
+        :url "https://git.sr.ht/~protesilaos/dired-preview"
+        :added "2023-07-30"
+        :after dired
+        :emacs>= 27.1
+        :ensure t)
       
       (put 'dired-find-alternate-file 'disabled nil))
     
@@ -582,11 +582,11 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :url "https://nishikawasasaki.hatenablog.com/entry/20120222/1329932699"
       :preface
       (defun dired-open-in-accordance-with-situation ()
-	(interactive)
-	(let ((file (dired-get-filename)))
-	  (if (file-directory-p file)
-	      (dired-find-alternate-file)
-	    (dired-find-file))))))
+        (interactive)
+        (let ((file (dired-get-filename)))
+          (if (file-directory-p file)
+              (dired-find-alternate-file)
+            (dired-find-file))))))
   
   (leaf exec-path-from-shell
     :doc "Get environment variables such as $PATH from the shell"
@@ -600,7 +600,7 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     (exec-path-from-shell-check-startup-files . nil)
     (exec-path-from-shell-arguments . nil)
     (exec-path-from-shell-variables . '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
-					"GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))
+                                        "GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))
     :config (exec-path-from-shell-initialize))
   
   (leaf flycheck
@@ -612,8 +612,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :ensure t :require t
     :global-minor-mode global-flycheck-mode
     :bind (:flycheck-mode-map
-	   ("M-n" . flycheck-next-error)
-	   ("M-p" . flycheck-previous-error))
+           ("M-n" . flycheck-next-error)
+           ("M-p" . flycheck-previous-error))
     :custom (flycheck-idle-change-delay . 0))
   
   (leaf hydra
@@ -643,24 +643,24 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       (read-file-name-function . #'disable-counsel-find-file)
       :preface
       (leaf disable-counsel-find-file
-	:url "https://qiita.com/takaxp/items/2fde2c119e419713342b#counsel-find-file-%E3%82%92%E4%BD%BF%E3%82%8F%E3%81%AA%E3%81%84"
-	:preface
-	(defun disable-counsel-find-file (&rest args)
-	  "Disable `counsel-find-file' and use the original `find-file' with ARGS."
-	  (let ((completing-read-function #'completing-read-default)
-		(completion-in-region-function #'completion--in-region))
-	    (apply #'read-file-name-default args))))
+        :url "https://qiita.com/takaxp/items/2fde2c119e419713342b#counsel-find-file-%E3%82%92%E4%BD%BF%E3%82%8F%E3%81%AA%E3%81%84"
+        :preface
+        (defun disable-counsel-find-file (&rest args)
+          "Disable `counsel-find-file' and use the original `find-file' with ARGS."
+          (let ((completing-read-function #'completing-read-default)
+                (completion-in-region-function #'completion--in-region))
+            (apply #'read-file-name-default args))))
       :config
       
       (leaf counsel-projectile
-	:doc "Ivy integration for Projectile"
-	:req "counsel-0.13.4" "projectile-2.5.0"
-	:tag "convenience" "project"
-	:url "https://github.com/ericdanan/counsel-projectile"
-	:added "2022-09-01"
-	:ensure t
-	:after counsel projectile
-	:global-minor-mode counsel-projectile-mode))
+        :doc "Ivy integration for Projectile"
+        :req "counsel-0.13.4" "projectile-2.5.0"
+        :tag "convenience" "project"
+        :url "https://github.com/ericdanan/counsel-projectile"
+        :added "2022-09-01"
+        :ensure t
+        :after counsel projectile
+        :global-minor-mode counsel-projectile-mode))
     
     (leaf ivy
       :doc "Incremental Vertical completYon"
@@ -678,24 +678,24 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :config
       
       (leaf ivy-rich
-	:doc "More friendly display transformer for ivy"
-	:req "emacs-25.1" "ivy-0.13.0"
-	:tag "ivy" "convenience" "emacs>=25.1"
-	:url "https://github.com/Yevgnen/ivy-rich"
-	:emacs>= 25.1
-	:ensure t :require t
-	:after ivy
-	:global-minor-mode t)
+        :doc "More friendly display transformer for ivy"
+        :req "emacs-25.1" "ivy-0.13.0"
+        :tag "ivy" "convenience" "emacs>=25.1"
+        :url "https://github.com/Yevgnen/ivy-rich"
+        :emacs>= 25.1
+        :ensure t :require t
+        :after ivy
+        :global-minor-mode t)
       
       (leaf ivy-posframe
-	:doc "Using posframe to show Ivy"
-	:req "emacs-26.0" "posframe-1.0.0" "ivy-0.13.0"
-	:tag "ivy" "matching" "convenience" "abbrev" "emacs>=26.0"
-	:url "https://github.com/tumashu/ivy-posframe"
-	:emacs>= 26.0
-	:ensure t :require t
-	:after posframe ivy
-	:custom (ivy-posframe-display-functions-alist . '((t . ivy-posframe-display-at-frame-center))))
+        :doc "Using posframe to show Ivy"
+        :req "emacs-26.0" "posframe-1.0.0" "ivy-0.13.0"
+        :tag "ivy" "matching" "convenience" "abbrev" "emacs>=26.0"
+        :url "https://github.com/tumashu/ivy-posframe"
+        :emacs>= 26.0
+        :ensure t :require t
+        :after posframe ivy
+        :custom (ivy-posframe-display-functions-alist . '((t . ivy-posframe-display-at-frame-center))))
       )
 
     (leaf swiper
@@ -869,8 +869,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
   ;;   :tag "out-of-MELPA" "emacs>=27.2"
   ;;   :emacs>= 27.2
   ;;   :quelpa (copilot :repo "zerolfx/copilot.el"
-  ;; 		     :fetcher github
-  ;; 		     :upgrade t)
+  ;;                 :fetcher github
+  ;;                 :upgrade t)
   ;;   :after editorconfig jsonrpc
   ;;   :require t
   ;;   :hook (prog-mode . copilot-mode)
@@ -885,9 +885,9 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
   ;;     :bind ;; (:company-active-map ( "<tab>" . company-copilot-tab))
   ;;     :preface
   ;;     (defun company-copilot-tab ()
-  ;; 	(interactive)
-  ;; 	(or (copilot-accept-completion)
-  ;; 	    (company-indent-or-complete-common nil)))))
+  ;;    (interactive)
+  ;;    (or (copilot-accept-completion)
+  ;;        (company-indent-or-complete-common nil)))))
   
   (leaf editorconfig
     :doc "EditorConfig Emacs Plugin"
@@ -933,8 +933,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     (when (string< "28.1" "29")
       ;; https://github.com/emacs-mirror/emacs/blob/281be72422f42fcc84d43f50723a3e91b7d03cbc/lisp/emacs-lisp/seq.el#L709
       (defun seq-keep (function sequence)
-	"Apply FUNCTION to SEQUENCE and return the list of all the non-nil results."
-	(delq nil (seq-map function sequence)))))
+        "Apply FUNCTION to SEQUENCE and return the list of all the non-nil results."
+        (delq nil (seq-map function sequence)))))
   
   (leaf oj
     :doc "Competitive programming tools client for AtCoder, Codeforces"
@@ -982,25 +982,25 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     (vterm-buffer-name-string . t)
     (vterm-clear-scrollback-when-clearing . t)
     (vterm-keymap-exceptions . '("<f1>"
-				 "<f2>"
-				 "<f10>"
-				 "C-<prior>"
-				 "C-<next>"
-				 "C-RET"
-				 "C-SPC"
-				 "C-c"
-				 "C-g"
-				 "C-l"
-				 "C-s"
-				 "C-u"
-				 "C-v"
-				 "C-w"
-				 "C-x"
-				 "C-y"
-				 "M-v"
-				 "M-w"
-				 "M-x"
-				 "M-y"))
+                                 "<f2>"
+                                 "<f10>"
+                                 "C-<prior>"
+                                 "C-<next>"
+                                 "C-RET"
+                                 "C-SPC"
+                                 "C-c"
+                                 "C-g"
+                                 "C-l"
+                                 "C-s"
+                                 "C-u"
+                                 "C-v"
+                                 "C-w"
+                                 "C-x"
+                                 "C-y"
+                                 "M-v"
+                                 "M-w"
+                                 "M-x"
+                                 "M-y"))
     (vterm-max-scrollback . 5000)
     :config
     (leaf multi-vterm
@@ -1037,8 +1037,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     (defun quickrun-sc (start end)
       (interactive "r")
       (if mark-active
-	  (quickrun :start start :end end)
-	(quickrun))))
+          (quickrun :start start :end end)
+        (quickrun))))
   )
 
 ;; ---------------------------------------------------------------------------------------------- ;;
@@ -1063,10 +1063,10 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :config
       ;; (load "~/.roswell/helper.el")
       (defun start-sly ()
-	"sly の挙動を slime に似せる"
-	(interactive)
-	(split-window-right)
-	(sly))))
+        "sly の挙動を slime に似せる"
+        (interactive)
+        (split-window-right)
+        (sly))))
   
   (leaf *c++
     :config
@@ -1125,8 +1125,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :hook ((dart-mode-hook . lsp))
       :config
       (dap-register-debug-template "Flutter :: Custom debug"
-				   (list :flutterPlatform "x86_64" :program "lib/main_debug.dart" :args
-					 '("--flavor" "customer_a"))))
+                                   (list :flutterPlatform "x86_64" :program "lib/main_debug.dart" :args
+                                         '("--flavor" "customer_a"))))
     
     (leaf flutter
       :doc "Tools for working with Flutter SDK"
@@ -1177,8 +1177,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :require t
       :quelpa
       (dotenv :repo "pkulev/dotenv.el"
-	      :fetcher github
-	      :upgrade t))
+              :fetcher github
+              :upgrade t))
     
     (leaf elsa
       :doc "Emacs Lisp Static Analyser"
@@ -1195,14 +1195,15 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       (elsa-lsp-register)
       
       (leaf flycheck-elsa
-	:doc "Flycheck for Elsa"
-	:req "emacs-25" "flycheck-0.14" "seq-2.0"
-	:tag "convenience" "emacs>=25"
-	:url "https://github.com/emacs-elsa/flycheck-elsa"
-	:added "2023-12-23"
-	:emacs>= 25
-	:ensure t
-	:after flycheck))
+        :doc "Flycheck for Elsa"
+        :req "emacs-25" "flycheck-0.14" "seq-2.0"
+        :tag "convenience" "emacs>=25"
+        :url "https://github.com/emacs-elsa/flycheck-elsa"
+        :added "2023-12-23"
+        :emacs>= 25
+        :ensure t
+        :after flycheck
+        :config (add-hook 'emacs-lisp-mode-hook #'flycheck-elsa-setup)))
 
     (leaf elquery
       :doc "The HTML library for elisp"
@@ -1228,7 +1229,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :req "dash-2.12.0"
       :tag "hash" "hash map" "hash table"
       :added "2023-08-02"
-      :ensure t)
+      :ensure t
+      :require t)
     
     (leaf keg
       :doc "Modern Elisp package development system"
@@ -1242,24 +1244,24 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :config
       
       (leaf keg-mode
-	:doc "Major mode for editing Keg files"
-	:req "emacs-24.4"
-	:tag "convenience" "emacs>=24.4"
-	:url "https://github.com/conao3/keg.el"
-	:added "2023-06-16"
-	:emacs>= 24.4
-	:ensure t :require t)
+        :doc "Major mode for editing Keg files"
+        :req "emacs-24.4"
+        :tag "convenience" "emacs>=24.4"
+        :url "https://github.com/conao3/keg.el"
+        :added "2023-06-16"
+        :emacs>= 24.4
+        :ensure t :require t)
       
       (leaf flycheck-keg
-	:doc "Flycheck for Keg projects"
-	:req "emacs-24.3" "keg-0.1" "flycheck-0.1"
-	:tag "convenience" "emacs>=24.3"
-	:url "https://github.com/conao3/keg.el"
-	:added "2023-06-16"
-	:emacs>= 24.3
-	:ensure t
-	:require t
-	:after keg flycheck))
+        :doc "Flycheck for Keg projects"
+        :req "emacs-24.3" "keg-0.1" "flycheck-0.1"
+        :tag "convenience" "emacs>=24.3"
+        :url "https://github.com/conao3/keg.el"
+        :added "2023-06-16"
+        :emacs>= 24.3
+        :ensure t
+        :require t
+        :after keg flycheck))
 
     (leaf lisp-interaction :bind (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
 
@@ -1349,9 +1351,9 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :require t
     :hook
     (hy-mode . (lambda ()
-		 (setf hy-shell-interpreter-args
-		       (concat "--repl-output-fn=hy.contrib.hy-repr.hy-repr "
-			       hy-shell-interpreter-args))))
+                 (setf hy-shell-interpreter-args
+                       (concat "--repl-output-fn=hy.contrib.hy-repr.hy-repr "
+                               hy-shell-interpreter-args))))
     :preface
     (defun hy-repl ()
       "Start hylang repl as if we were using slime."
@@ -1364,15 +1366,15 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       (vterm-send-return)
       (sit-for 3)
       (let* ((vterm-buffer (buffer-name (current-buffer)))
-	     (result (with-current-buffer vterm-buffer
-		       (buffer-string))))
-	(message vterm-buffer)
-	(when (or (s-contains-p "zsh: correct \'hy\'" result) (s-contains-p "command not found" result))
-	  (message "[hy-repl] hy could not be found. venv environment may not be activated or hy may not be installed.")
-	  (with-current-buffer vterm-buffer
-	    (let (kill-buffer-hook kill-buffer-query-functions)
-	      (kill-buffer)))
-	  (delete-window))))
+             (result (with-current-buffer vterm-buffer
+                       (buffer-string))))
+        (message vterm-buffer)
+        (when (or (s-contains-p "zsh: correct \'hy\'" result) (s-contains-p "command not found" result))
+          (message "[hy-repl] hy could not be found. venv environment may not be activated or hy may not be installed.")
+          (with-current-buffer vterm-buffer
+            (let (kill-buffer-hook kill-buffer-query-functions)
+              (kill-buffer)))
+          (delete-window))))
     )
   
   (leaf markdown-mode
@@ -1385,7 +1387,7 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :ensure t :require t
     :commands markdown-mode
     :mode (("\\.md\\'" . gfm-mode)
-	   ("\\.markdown\\'" . gfm-mode))
+           ("\\.markdown\\'" . gfm-mode))
     :custom
     (markdown-command . "github-markup")
     (markdown-command-needs-filename . t))
@@ -1395,7 +1397,7 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :custom
     (org-directory . "~/document/org")
     (org-latex-pdf-process .  '("lualatex --draftmode %f"
-				"lualatex %f"))
+                                "lualatex %f"))
     (org-startup-truncated . nil)
     (org-enforce-todo-dependencies . t)
     (org-support-shift-select . t)
@@ -1440,13 +1442,13 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :after org
       :custom
       (org-latex-pdf-process . '("lualatex --draftmode %f"
-				 "lualatex %f"))
+                                 "lualatex %f"))
       
       (org-latex-default-class . "ltjsarticle")
       :config
       (add-to-list 'org-latex-classes
-		   '("beamer"
-		     "\\documentclass[presentation]{beamer}
+                   '("beamer"
+                     "\\documentclass[presentation]{beamer}
 [NO-DEFAULT-PACKAGES]
 \\usepackage{luatexja}
 \\usepackage{textcomp}
@@ -1469,11 +1471,11 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
 %%
 \\setbeamercovered{transparent}
 \\setbeamertemplate{navigation symbols}{}"
-		     ("\\section{%s}" . "\\section*{%s}")
-		     ("\\subsection{%s}" . "\\subsection*{%s}")
-		     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-		     ("\\paragraph{%s}" . "\\paragraph*{%s}")
-		     ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+                     ("\\section{%s}" . "\\section*{%s}")
+                     ("\\subsection{%s}" . "\\subsection*{%s}")
+                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                     ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
     
     )
 
@@ -1607,13 +1609,13 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       (tide-node-executable . "~/.asdf/installs/nodejs/19.0.0/bin/node")
       :config
       (defun tide-start ()
-	(interactive)
-	(tide-setup)
-	(flycheck-mode t)
-	(setq flycheck-check-syntax-automatically '(save mode-enabled))
-	(eldoc-mode t)
-	(tide-hl-identifier-mode t)
-	(company-mode t)))
+        (interactive)
+        (tide-setup)
+        (flycheck-mode t)
+        (setq flycheck-check-syntax-automatically '(save mode-enabled))
+        (eldoc-mode t)
+        (tide-hl-identifier-mode t)
+        (company-mode t)))
 
     (leaf vue-mode
       :doc "Major mode for vue component based on mmm-mode"
@@ -1686,7 +1688,7 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
   ;;   :ensure t
   ;;   :after prog-mode
   ;;   :hook ((yatex-mode . (lambda ()
-  ;; 			   (add-hook 'before-save-hook 'nu-kutoten-buffer nil 'make-it-local)))))
+  ;;                       (add-hook 'before-save-hook 'nu-kutoten-buffer nil 'make-it-local)))))
   
   )
 
@@ -1773,42 +1775,42 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     (defun centaur-tabs-buffer-groups ()
       (list
        (cond
-	((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode 'magit-mode) "Terminal")
-	((derived-mode-p 'emacs-lisp-mode) "Emacs")
-	((string-match-p (rx (or
-			      "\*dashboard\*"
-			      "\*scratch\*"
-			      "\*sdcv\*"
-			      "\*setup-tracker\*"
+        ((derived-mode-p 'eshell-mode 'term-mode 'shell-mode 'vterm-mode 'multi-term-mode 'dired-mode 'magit-mode) "Terminal")
+        ((derived-mode-p 'emacs-lisp-mode) "Emacs")
+        ((string-match-p (rx (or
+                              "\*dashboard\*"
+                              "\*scratch\*"
+                              "\*sdcv\*"
+                              "\*setup-tracker\*"
                               "\*tramp"
                               "\*Completions\*"
-			      "\*Flycheck errors\*"
-			      "\*Ido Completions\*"
+                              "\*Flycheck errors\*"
+                              "\*Ido Completions\*"
                               "\*Messages\*"
-			      "\*Warnings\*"
+                              "\*Warnings\*"
                               ))
-			 (buffer-name))
-	 "Emacs")
-	((string-match-p (rx (or
-			      "\*copilot events\*"
-			      "\*copilot stderr\*"
+                         (buffer-name))
+         "Emacs")
+        ((string-match-p (rx (or
+                              "\*copilot events\*"
+                              "\*copilot stderr\*"
                               ))
-			 (buffer-name))
-	 "Copilot")
-	((string-match-p (rx (or
-			      "\*rust-analyzer::stderr\*"
-			      "\*rust-analyzer\*"
-			      ))
-			 (buffer-name))
-	 "rust-analyzer")
-	((string-match-p (rx (or
-			      "\*clang-error\*"
-			      "\*clang-output\*"
+                         (buffer-name))
+         "Copilot")
+        ((string-match-p (rx (or
+                              "\*rust-analyzer::stderr\*"
+                              "\*rust-analyzer\*"
                               ))
-			 (buffer-name))
-	 "C++")
-	((derived-mode-p 'c++-mode) "C++")
-	(t "Common")))))
+                         (buffer-name))
+         "rust-analyzer")
+        ((string-match-p (rx (or
+                              "\*clang-error\*"
+                              "\*clang-output\*"
+                              ))
+                         (buffer-name))
+         "C++")
+        ((derived-mode-p 'c++-mode) "C++")
+        (t "Common")))))
 
   (leaf dashboard
     :doc "A startup screen extracted from Spacemacs"
@@ -1823,8 +1825,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
      (:dashboard-mode-map ("<f3>" . quit-dashboard)))
     :custom
     (dashboard-items . '((bookmarks . 5)
-			 (recents  . 5)
-			 (projects . 5)))
+                         (recents  . 5)
+                         (projects . 5)))
     (initial-buffer-choice . (lambda () (get-buffer "*dashboard*")))
     (dashboard-center-content . t)
     (dashboard-set-heading-icons . t)
@@ -1832,42 +1834,42 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     (dashboard-banner-logo-title . "Kyure_A's Emacs")
     :config
     (setq dashboard-footer-messages '("「今日も一日がんばるぞい！」 - 涼風青葉"
-				      "「なんだかホントに入社した気分です！」 - 涼風青葉"
-				      "「そしてそのバグの程度で実力も知れるわけです」- 阿波根うみこ"
-				      "「えーー！なるっちの担当箇所がバグだらけ！？」 - 桜ねね"
-				      "「C++ を完全に理解してしまったかもしれない」 - 桜ねね"
-				      "「これでもデバッグはプロ級だし 今はプログラムの知識だってあるんだからまかせてよね！」 - 桜ねね"))
+                                      "「なんだかホントに入社した気分です！」 - 涼風青葉"
+                                      "「そしてそのバグの程度で実力も知れるわけです」- 阿波根うみこ"
+                                      "「えーー！なるっちの担当箇所がバグだらけ！？」 - 桜ねね"
+                                      "「C++ を完全に理解してしまったかもしれない」 - 桜ねね"
+                                      "「これでもデバッグはプロ級だし 今はプログラムの知識だってあるんだからまかせてよね！」 - 桜ねね"))
     :preface
 
     (leaf open-dashboard
       :url "https://github.com/seagle0128/.emacs.d/blob/8cbec0c132cd6de06a8c293598a720d377f3f5b9/lisp/init-dashboard.el#L198"
       :preface
       (defun open-dashboard ()
-	"Open the *dashboard* buffer and jump to the first widget."
-	(interactive)
-	;; Check if need to recover layout
-	(if (length> (window-list-1)
+        "Open the *dashboard* buffer and jump to the first widget."
+        (interactive)
+        ;; Check if need to recover layout
+        (if (length> (window-list-1)
                      ;; exclude `treemacs' window
                      (if (and (fboundp 'treemacs-current-visibility)
                               (eq (treemacs-current-visibility) 'visible))
-			 2
+                         2
                        1))
             (setq dashboard-recover-layout-p t))
-	;; Display dashboard in maximized window
-	(delete-other-windows)
-	;; Refresh dashboard buffer
-	(dashboard-refresh-buffer)
-	;; Jump to the first section
-	(dashboard-goto-recent-files)))
+        ;; Display dashboard in maximized window
+        (delete-other-windows)
+        ;; Refresh dashboard buffer
+        (dashboard-refresh-buffer)
+        ;; Jump to the first section
+        (dashboard-goto-recent-files)))
 
     (leaf quit-dashboard
       :url "https://github.com/seagle0128/.emacs.d/blob/8cbec0c132cd6de06a8c293598a720d377f3f5b9/lisp/init-dashboard.el#L219"
       :preface
       (defun quit-dashboard ()
-	"Quit dashboard window."
-	(interactive)
-	(quit-window t)
-	(and dashboard-recover-layout-p
+        "Quit dashboard window."
+        (interactive)
+        (quit-window t)
+        (and dashboard-recover-layout-p
              (and (bound-and-true-p winner-mode) (winner-undo))
              (setq dashboard-recover-layout-p nil))))
     :config
@@ -1971,8 +1973,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     (with-eval-after-load 'page-break-lines
       (blackout 'page-break-lines-mode ""))
     (set-fontset-font "fontset-default"
-		      (cons page-break-lines-char page-break-lines-char)
-		      (face-attribute 'default :family)))
+                      (cons page-break-lines-char page-break-lines-char)
+                      (face-attribute 'default :family)))
 
   (leaf rainbow-delimiters
     :doc "Highlight brackets according to their depth"
