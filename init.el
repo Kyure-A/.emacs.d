@@ -319,9 +319,7 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :config (setq mozc-candidate-style 'echo-area))
 
   (leaf nu-fun
-    :quelpa (nu-fun :repo "ayanyan/nihongo-util"
-                    :fetcher github
-                    :upgrade t)
+    :el-get "ayanyan/nihongo-util"
     :require t
     :custom
     (nu-my-toten . "，")
@@ -1164,11 +1162,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :ensure t :require t)
 
     (leaf dotenv
-      :require t
-      :quelpa
-      (dotenv :repo "pkulev/dotenv.el"
-              :fetcher github
-              :upgrade t))
+      :el-get "pkulev/dotenv.el"
+      :require t)
 
     (leaf el-project
       :doc "Generate project skelton for Emacs Lisp"

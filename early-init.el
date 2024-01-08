@@ -83,20 +83,7 @@
   (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left) :after leaf)
   (leaf package :require t)
   (leaf use-package :ensure t)
-  (leaf el-get :ensure t :require t)
-  (leaf quelpa
-    :ensure t
-    :require t
-    :after leaf
-    :custom
-    (quelpa-checkout-melpa-p . nil)
-    :config
-    (add-to-list 'quelpa-melpa-recipe-stores "~/.elpkg")
-    (quelpa
-     '(quelpa-leaf
-       :fetcher git
-       :url "https://github.com/quelpa/quelpa-leaf.git"))
-    (leaf quelpa-leaf :after leaf quelpa :require t :init (quelpa-leaf-init))))
+  (leaf el-get :ensure t :require t))
 
 ;; ---------------------------------------------------------------------------------------------- ;;
 
@@ -130,9 +117,8 @@
   :doc "起動時の見た目と起動後の見た目が大きく異なるのが気になるので early-init.el で呼び出したい見た目関連のものをまとめた"
   :config
   (leaf monokai-theme
-    :quelpa (monokai-theme :repo "Kyure-A/monokai-emacs"
-			   :fetcher github
-			   :upgrade t)
+    :el-get "Kyure-A/monokai-emacs"
+    :require t
     :config (load-theme 'monokai t))
   (leaf doom-modeline :ensure t :global-minor-mode t :custom (doom-modeline-icon . t))
   (scroll-bar-mode -1)
