@@ -1938,14 +1938,7 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :url "https://github.com/purcell/page-break-lines"
     :emacs>= 24.4
     :ensure t :require t
-    :global-minor-mode global-page-break-lines-mode
-    :config
-    (leaf-handler-package page-break-lines page-break-lines nil)
-    (with-eval-after-load 'page-break-lines
-      (blackout 'page-break-lines-mode ""))
-    (set-fontset-font "fontset-default"
-                      (cons page-break-lines-char page-break-lines-char)
-                      (face-attribute 'default :family)))
+    :global-minor-mode global-page-break-lines-mode)
 
   (leaf rainbow-delimiters
     :doc "Highlight brackets according to their depth"
