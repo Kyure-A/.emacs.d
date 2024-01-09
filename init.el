@@ -1128,6 +1128,27 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :hook (dart-mode . (lambda ()
                            (add-hook 'after-save-hook #'flutter-run-or-hot-reload nil t))))
     )
+
+  (leaf *docker
+    :config
+    (leaf dockerfile-mode
+      :doc "Major mode for editing Docker's Dockerfiles"
+      :req "emacs-24"
+      :tag "tools" "processes" "languages" "docker" "emacs>=24"
+      :url "https://github.com/spotify/dockerfile-mode"
+      :added "2024-01-08"
+      :emacs>= 24
+      :ensure t)
+    
+    (leaf docker
+      :doc "Interface to Docker"
+      :req "aio-1.0" "dash-2.19.1" "emacs-26.1" "s-1.13.0" "tablist-1.1" "transient-0.4.3"
+      :tag "convenience" "filename" "emacs>=26.1"
+      :url "https://github.com/Silex/docker.el"
+      :added "2024-01-08"
+      :emacs>= 26.1
+      :ensure t
+      :after aio tablist))
   
   (leaf *emacs-lisp
     :doc "Emacs Lisp"
