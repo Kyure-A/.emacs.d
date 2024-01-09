@@ -308,7 +308,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
     :added "2023-12-31"
     :emacs>= 25.1
     :ensure t
-    :after elquery)
+    :after elquery
+    :require t)
   
   (leaf mozc
     :doc "minor mode to input Japanese with Mozc"
@@ -1228,7 +1229,8 @@ https://qiita.com/ballforest/items/5a76f284af254724144a"
       :url "https://github.com/AdamNiederer/elquery"
       :added "2023-12-23"
       :emacs>= 25.1
-      :ensure t)
+      :ensure t
+      :require t)
     
     (leaf f
       :doc "Modern API for working with files and directories"
