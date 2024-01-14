@@ -7,7 +7,6 @@
 ** Author
 Kyure_A
 
-
 ** Repository
 https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 
@@ -80,6 +79,17 @@ Source: https://zenn.dev/takeokunn/articles/56010618502ccc#:~:text=%E5%85%83%E8%
     (declare (indent 0))
     `(setq my/delayed-priority-low-configurations
 	   (append my/delayed-priority-low-configurations ',body)))
+#+end_src
+
+*** el-clone
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (unless (file-directory-p (locate-user-emacs-file "elpa/el-clone"))
+      (package-vc-install "https://github.com/takeokunn/el-clone.git")))
+
+  (eval-and-compile
+    (add-to-list 'load-path (locate-user-emacs-file "elpa/el-clone"))
+    (require 'el-clone))
 #+end_src
 
 
@@ -276,208 +286,276 @@ Source: https://zenn.dev/takeokunn/articles/56010618502ccc#:~:text=%E5%85%83%E8%
     (display-time-day-and-date . t))
 #+end_src
 
+*** Auto revert
+#+begin_src emacs-lisp
+  (leaf autorevert
+    :doc "revert buffers when files on disk change"
+    :tag "builtin"
+    :global-minor-mode global-auto-revert-mode
+    :custom (auto-revert-interval . 1))
+#+end_src
+
+*** which function
+#+begin_src emacs-lisp
+  (leaf which-function-mode :tag "builtin" :custom (which-function-mode . t))
+#+end_src
+*** recent file
+#+begin_src emacs-lisp
+  (leaf recentf
+    :tag "builtin"
+    :global-minor-mode t
+    :custom
+    (recentf-max-saved-items . 150)
+    (recentf-auto-cleanup . 'never)
+    (recentf-exclude
+     '("/dotfiles" "/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.tmp/"))
+    :config
+    (leaf recentf-ext
+      :doc "Recentf extensions"
+      :tag "files" "convenience"
+      :url "http://www.emacswiki.org/cgi-bin/wiki/download/recentf-ext.el"
+      :ensure t :require t))
+#+end_src
+
+*** suppress window splitting
+#+begin_src emacs-lisp
+  (set-frame-parameter nil 'unsplittable t)
+#+end_src
+
+*** load custom.el
+#+begin_src emacs-lisp
+  (setq custom-file (locate-user-emacs-file "custom.el"))
+#+end_src
+
+*** debug-on-error
+#+begin_src emacs-lisp
+  (setq debug-on-error t)
+#+end_src
+*** supress byte compile warning
+#+begin_src emacs-lisp
+  (setq byte-compile-warnings '(not cl-functions obsolete)
+#+end_src
+
+*** disable make lockfiles
+#+begin_src emacs-lisp
+  (setq create-lockfiles nil)
+#+end_src
+*** backup directories
+#+begin_src emacs-lisp
+  (setq backup-directory-alist '((".*" . "~/.tmp")))
+#+end_src
+*** auto save
+#+begin_src emacs-lisp
+  (setq auto-save-file-name-transforms '((".*" "~/.tmp/" t)))
+  (setq auto-save-list-file-prefix nil)
+  (setq auto-save-default nil)
+#+end_src
+
 
 ** Emacs Lisp Libraries
+*** async
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "jwiegley/emacs-async"))
+
+  (with-delayed-execution-priority-high
+    (message "Loading \"async\"...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-async")))
+#+end_src
+
+*** async-await
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "chuntaro/emacs-async-await"))
+
+  (with-delayed-execution-priority-high
+    (message "Loading \"async-await\"...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-async-await")))
+#+end_src
+
+*** dash
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "magnars/dash.el"))
+
+  (with-delayed-execution-priority-high
+    (message "Loading \"dash\"...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/dash")))
+#+end_src
+
+*** others
 #+begin_src emacs-lisp 
-    (leaf *emacs-lisp
-      :doc "Emacs Lisp"
+  (leaf *emacs-lisp
+    :doc "Emacs Lisp"
+    :config
+
+    (leaf dotenv
+      :el-get "pkulev/dotenv.el"
+      :require t)
+
+    (leaf el-project
+      :doc "Generate project skelton for Emacs Lisp"
+      :req "emacs-24.1"
+      :tag "tools" "emacs>=24.1"
+      :url "https://github.com/Kyure-A/el-project"
+      :added "2023-12-31"
+      :emacs>= 24.1
+      :ensure t
+      :require t)
+
+    (leaf elsa
+      :doc "Emacs Lisp Static Analyser"
+      :req "emacs-26.1" "trinary-0" "f-0" "dash-2.14" "cl-lib-0.3" "lsp-mode-0" "ansi-0" "async-1.9.7" "lgr-0.1.0"
+      :tag "lisp" "languages" "emacs>=26.1"
+      :url "https://github.com/emacs-elsa/Elsa"
+      :added "2023-06-29"
+      :emacs>= 26.1
+      :ensure t
+      :require t
+      :after trinary lsp-mode ansi lgr
       :config
 
-      (leaf async
-	:doc "Asynchronous processing in Emacs"
-	:req "emacs-24.4"
-	:tag "async" "emacs>=24.4"
-	:url "https://github.com/jwiegley/emacs-async"
-	:added "2023-09-22"
-	:emacs>= 24.4
-	:ensure t
-	:require t)
+      (elsa-lsp-register)
 
-      (leaf async-await
-	:doc "Async/Await"
-	:req "emacs-25.1" "promise-1.1" "iter2-0.9.10"
-	:tag "convenience" "await" "async" "emacs>=25.1"
-	:url "https://github.com/chuntaro/emacs-async-await"
-	:added "2023-06-30"
-	:emacs>= 25.1
-	:ensure t
-	:after iter2)
+      (leaf flycheck-elsa
+        :doc "Flycheck for Elsa"
+        :req "emacs-25" "flycheck-0.14" "seq-2.0"
+        :tag "convenience" "emacs>=25"
+        :url "https://github.com/emacs-elsa/flycheck-elsa"
+        :added "2023-12-23"
+        :emacs>= 25
+        :ensure t
+        :after flycheck
+        :config
+        (add-hook 'emacs-lisp-mode-hook #'flycheck-elsa-setup)
+        (setq flycheck-elsa-backend 'eask)))
 
-      (leaf dash
-	:doc "A modern list library for Emacs"
-	:req "emacs-24"
-	:tag "lisp" "extensions" "emacs>=24"
-	:url "https://github.com/magnars/dash.el"
-	:emacs>= 24
-	:ensure t :require t)
+    (leaf elquery
+      :doc "The HTML library for elisp"
+      :req "emacs-25.1" "dash-2.13.0"
+      :tag "webscale" "tools" "hypermedia" "html" "emacs>=25.1"
+      :url "https://github.com/AdamNiederer/elquery"
+      :added "2023-12-23"
+      :emacs>= 25.1
+      :ensure t
+      :require t)
 
-      (leaf dotenv
-	:el-get "pkulev/dotenv.el"
-	:require t)
+    (leaf f
+      :doc "Modern API for working with files and directories"
+      :req "emacs-24.1" "s-1.7.0" "dash-2.2.0"
+      :tag "directories" "files" "emacs>=24.1"
+      :url "http://github.com/rejeep/f.el"
+      :added "2023-05-26"
+      :emacs>= 24.1
+      :require t
+      :ensure t)
 
-      (leaf el-project
-	:doc "Generate project skelton for Emacs Lisp"
-	:req "emacs-24.1"
-	:tag "tools" "emacs>=24.1"
-	:url "https://github.com/Kyure-A/el-project"
-	:added "2023-12-31"
-	:emacs>= 24.1
-	:ensure t
-	:require t)
+    (leaf ht
+      :doc "The missing hash table library for Emacs"
+      :req "dash-2.12.0"
+      :tag "hash" "hash map" "hash table"
+      :added "2023-08-02"
+      :ensure t
+      :require t)
 
-      (leaf elsa
-	:doc "Emacs Lisp Static Analyser"
-	:req "emacs-26.1" "trinary-0" "f-0" "dash-2.14" "cl-lib-0.3" "lsp-mode-0" "ansi-0" "async-1.9.7" "lgr-0.1.0"
-	:tag "lisp" "languages" "emacs>=26.1"
-	:url "https://github.com/emacs-elsa/Elsa"
-	:added "2023-06-29"
-	:emacs>= 26.1
-	:ensure t
-	:require t
-	:after trinary lsp-mode ansi lgr
-	:config
+    (leaf keg
+      :doc "Modern Elisp package development system"
+      :req "emacs-24.1"
+      :tag "convenience" "emacs>=24.1"
+      :url "https://github.com/conao3/keg.el"
+      :added "2023-06-16"
+      :emacs>= 24.1
+      :ensure t
+      :require t
+      :config
 
-	(elsa-lsp-register)
+      (leaf keg-mode
+        :doc "Major mode for editing Keg files"
+        :req "emacs-24.4"
+        :tag "convenience" "emacs>=24.4"
+        :url "https://github.com/conao3/keg.el"
+        :added "2023-06-16"
+        :emacs>= 24.4
+        :ensure t :require t)
 
-	(leaf flycheck-elsa
-	  :doc "Flycheck for Elsa"
-	  :req "emacs-25" "flycheck-0.14" "seq-2.0"
-	  :tag "convenience" "emacs>=25"
-	  :url "https://github.com/emacs-elsa/flycheck-elsa"
-	  :added "2023-12-23"
-	  :emacs>= 25
-	  :ensure t
-	  :after flycheck
-	  :config
-	  (add-hook 'emacs-lisp-mode-hook #'flycheck-elsa-setup)
-	  (setq flycheck-elsa-backend 'eask)))
+      (leaf flycheck-keg
+        :doc "Flycheck for Keg projects"
+        :req "emacs-24.3" "keg-0.1" "flycheck-0.1"
+        :tag "convenience" "emacs>=24.3"
+        :url "https://github.com/conao3/keg.el"
+        :added "2023-06-16"
+        :emacs>= 24.3
+        :ensure t
+        :require t
+        :after keg flycheck))
 
-      (leaf elquery
-	:doc "The HTML library for elisp"
-	:req "emacs-25.1" "dash-2.13.0"
-	:tag "webscale" "tools" "hypermedia" "html" "emacs>=25.1"
-	:url "https://github.com/AdamNiederer/elquery"
-	:added "2023-12-23"
-	:emacs>= 25.1
-	:ensure t
-	:require t)
+    (leaf lisp-interaction :bind (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
 
-      (leaf f
-	:doc "Modern API for working with files and directories"
-	:req "emacs-24.1" "s-1.7.0" "dash-2.2.0"
-	:tag "directories" "files" "emacs>=24.1"
-	:url "http://github.com/rejeep/f.el"
-	:added "2023-05-26"
-	:emacs>= 24.1
-	:require t
-	:ensure t)
+    (leaf package-build
+      :doc "Tools for assembling a package archive"
+      :req "emacs-26.1"
+      :tag "tools" "maint" "emacs>=26.1"
+      :url "https://github.com/melpa/package-build"
+      :added "2023-11-15"
+      :emacs>= 26.1
+      :ensure t)
 
-      (leaf ht
-	:doc "The missing hash table library for Emacs"
-	:req "dash-2.12.0"
-	:tag "hash" "hash map" "hash table"
-	:added "2023-08-02"
-	:ensure t
-	:require t)
+    (leaf package-lint
+      :doc "A linting library for elisp package authors"
+      :req "cl-lib-0.5" "emacs-24.4" "let-alist-1.0.6" "compat-29.1"
+      :tag "lisp" "emacs>=24.4"
+      :url "https://github.com/purcell/package-lint"
+      :added "2023-11-15"
+      :emacs>= 24.4
+      :ensure t
+      :after compat)
 
-      (leaf keg
-	:doc "Modern Elisp package development system"
-	:req "emacs-24.1"
-	:tag "convenience" "emacs>=24.1"
-	:url "https://github.com/conao3/keg.el"
-	:added "2023-06-16"
-	:emacs>= 24.1
-	:ensure t
-	:require t
-	:config
+    (leaf promise
+      :doc "Promises/A+"
+      :req "emacs-25.1"
+      :tag "convenience" "promise" "async" "emacs>=25.1"
+      :url "https://github.com/chuntaro/emacs-promise"
+      :emacs>= 25.1
+      :ensure t :require t)
 
-	(leaf keg-mode
-	  :doc "Major mode for editing Keg files"
-	  :req "emacs-24.4"
-	  :tag "convenience" "emacs>=24.4"
-	  :url "https://github.com/conao3/keg.el"
-	  :added "2023-06-16"
-	  :emacs>= 24.4
-	  :ensure t :require t)
+    (leaf queue
+      :doc "Queue data structure"
+      :tag "queue" "data structures" "extensions"
+      :url "http://www.dr-qubit.org/emacs.php"
+      :ensure t :require t)
 
-	(leaf flycheck-keg
-	  :doc "Flycheck for Keg projects"
-	  :req "emacs-24.3" "keg-0.1" "flycheck-0.1"
-	  :tag "convenience" "emacs>=24.3"
-	  :url "https://github.com/conao3/keg.el"
-	  :added "2023-06-16"
-	  :emacs>= 24.3
-	  :ensure t
-	  :require t
-	  :after keg flycheck))
+    (leaf recur
+      :doc "Tail call optimization"
+      :req "emacs-24.3"
+      :tag "lisp" "emacs>=24.3"
+      :url "https://github.com/ROCKTAKEY/recur"
+      :added "2023-08-02"
+      :emacs>= 24.3
+      :ensure t)
 
-      (leaf lisp-interaction :bind (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
+    (leaf request
+      :doc "Compatible layer for URL request"
+      :req "emacs-24.4"
+      :tag "emacs>=24.4"
+      :url "https://github.com/tkf/emacs-request"
+      :emacs>= 24.4
+      :ensure t :require t)
 
-      (leaf package-build
-	:doc "Tools for assembling a package archive"
-	:req "emacs-26.1"
-	:tag "tools" "maint" "emacs>=26.1"
-	:url "https://github.com/melpa/package-build"
-	:added "2023-11-15"
-	:emacs>= 26.1
-	:ensure t)
+    (leaf s
+      :doc "The long lost Emacs string manipulation library."
+      :tag "strings"
+      :ensure t :require t)
 
-      (leaf package-lint
-	:doc "A linting library for elisp package authors"
-	:req "cl-lib-0.5" "emacs-24.4" "let-alist-1.0.6" "compat-29.1"
-	:tag "lisp" "emacs>=24.4"
-	:url "https://github.com/purcell/package-lint"
-	:added "2023-11-15"
-	:emacs>= 24.4
-	:ensure t
-	:after compat)
-
-      (leaf promise
-	:doc "Promises/A+"
-	:req "emacs-25.1"
-	:tag "convenience" "promise" "async" "emacs>=25.1"
-	:url "https://github.com/chuntaro/emacs-promise"
-	:emacs>= 25.1
-	:ensure t :require t)
-
-      (leaf queue
-	:doc "Queue data structure"
-	:tag "queue" "data structures" "extensions"
-	:url "http://www.dr-qubit.org/emacs.php"
-	:ensure t :require t)
-
-      (leaf recur
-	:doc "Tail call optimization"
-	:req "emacs-24.3"
-	:tag "lisp" "emacs>=24.3"
-	:url "https://github.com/ROCKTAKEY/recur"
-	:added "2023-08-02"
-	:emacs>= 24.3
-	:ensure t)
-
-      (leaf request
-	:doc "Compatible layer for URL request"
-	:req "emacs-24.4"
-	:tag "emacs>=24.4"
-	:url "https://github.com/tkf/emacs-request"
-	:emacs>= 24.4
-	:ensure t :require t)
-
-      (leaf s
-	:doc "The long lost Emacs string manipulation library."
-	:tag "strings"
-	:ensure t :require t)
-
-      (leaf undercover
-	:doc "Test coverage library for Emacs Lisp"
-	:req "emacs-24" "dash-2.0.0" "shut-up-0.3.2"
-	:tag "tools" "coverage" "tests" "lisp" "emacs>=24"
-	:url "https://github.com/sviridov/undercover.el"
-	:added "2023-06-16"
-	:emacs>= 24
-	:ensure t
-	:require t
-	:after shut-up))
+    (leaf undercover
+      :doc "Test coverage library for Emacs Lisp"
+      :req "emacs-24" "dash-2.0.0" "shut-up-0.3.2"
+      :tag "tools" "coverage" "tests" "lisp" "emacs>=24"
+      :url "https://github.com/sviridov/undercover.el"
+      :added "2023-06-16"
+      :emacs>= 24
+      :ensure t
+      :require t
+      :after shut-up))
 #+end_src
 
 
@@ -732,7 +810,7 @@ Source: https://zenn.dev/takeokunn/articles/56010618502ccc#:~:text=%E5%85%83%E8%
     :hook
     (typescript-mode-hook . tide-start)
     :custom
-    (tide-node-executable . "~/.asdf/installs/nodejs/19.0.0/bin/node")
+    (tide-node-executable . "~/.nix-profile/bin/node")
     :config
     (defun tide-start ()
       (interactive)
@@ -989,6 +1067,24 @@ Source: https://zenn.dev/takeokunn/articles/56010618502ccc#:~:text=%E5%85%83%E8%
     :emacs>= 26.1
     :ensure t
     :after compat)
+#+end_src
+
+*** exec-path-from-shell
+#+begin_src emacs-lisp
+  (leaf exec-path-from-shell
+    :doc "Get environment variables such as $PATH from the shell"
+    :req "emacs-24.1" "cl-lib-0.6"
+    :tag "environment" "unix" "emacs>=24.1"
+    :url "https://github.com/purcell/exec-path-from-shell"
+    :emacs>= 24.1
+    :ensure t
+    :defun (exec-path-from-shell-initialize)
+    :custom
+    (exec-path-from-shell-check-startup-files . nil)
+    (exec-path-from-shell-arguments . nil)
+    (exec-path-from-shell-variables . '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
+                                        "GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))
+    :config (exec-path-from-shell-initialize))
 #+end_src
 
 *** Vterm
@@ -1425,6 +1521,18 @@ GitHub Education License was expired
 
 #+end_src
 
+*** gcmh
+#+begin_src emacs-lisp
+  (leaf gcmh
+    :doc "the Garbage Collector Magic Hack"
+    :req "emacs-24"
+    :tag "internal" "emacs>=24"
+    :url "https://gitlab.com/koral/gcmh"
+    :emacs>= 24
+    :ensure t :require t
+    :hook (after-init-hook . gcmh-mode)
+    :custom (gcmh-verbose . t))
+#+end_src
 *** hydra
 #+begin_src emacs-lisp
   (leaf hydra
@@ -1574,6 +1682,15 @@ GitHub Education License was expired
     (neo-theme . (if (display-graphic-p) 'icons 'arrow)))
 #+end_src
 
+*** nu-fun
+#+begin_src emacs-lisp
+  (leaf nu-fun
+    :el-get "ayanyan/nihongo-util"
+    :require t
+    :custom
+    (nu-my-toten . "，")
+    (nu-my-kuten . "．"))
+#+end_src
 *** pdf-tools
 #+begin_src emacs-lisp
   (leaf pdf-tools
@@ -1590,6 +1707,23 @@ GitHub Education License was expired
     (pdf-loader-install))
 #+end_src
 
+
+
+*** popwin
+#+begin_src emacs-lisp
+  (leaf popwin
+    :doc "Popup Window Manager"
+    :req "emacs-24.3"
+    :tag "convenience" "emacs>=24.3"
+    :url "https://github.com/emacsorphanage/popwin"
+    :emacs>= 24.3
+    :ensure t
+    :require t
+    :custom
+    (display-buffer-function . 'popwin:display-buffer)
+    (popwin:special-display-config  . t)
+    (popwin:popup-window-position . 'bottom))
+#+end_src
 *** projectile
 #+begin_src emacs-lisp
   (leaf projectile
@@ -1600,6 +1734,15 @@ GitHub Education License was expired
     :emacs>= 25.1
     :ensure t :require t
     :after dashboard)
+#+end_src
+*** restart-emacs
+#+begin_src emacs-lisp
+  (leaf restart-emacs
+    :doc "Restart emacs from within emacs"
+    :tag "convenience"
+    :url "https://github.com/iqbalansari/restart-emacs"
+    :added "2023-06-14"
+    :ensure t)
 #+end_src
 *** skewer-mode
 #+begin_src emacs-lisp
@@ -1613,6 +1756,19 @@ GitHub Education License was expired
     :after js2-mode)
 #+end_src
 
+
+*** smartparens
+#+begin_src emacs-lisp
+  (leaf smartparens
+    :doc "Automatic insertion, wrapping and paredit-like navigation with user defined pairs."
+    :req "dash-2.13.0" "cl-lib-0.3"
+    :tag "editing" "convenience" "abbrev"
+    :url "https://github.com/Fuco1/smartparens"
+    :ensure t :require t
+    :global-minor-mode smartparens-global-mode show-smartparens-global-mode
+    :config
+    (leaf smartparens-config :require t :after smartparens :hook (web-mode-hook . (lambda () (sp-pair "<#" "#>")))))
+#+end_src
 *** undo-tree
 #+begin_src emacs-lisp
   (leaf undo-tree
@@ -1642,6 +1798,15 @@ GitHub Education License was expired
     (undohist-initialize))
 #+end_src
 
+*** visual-regexp
+#+begin_src emacs-lisp
+  (leaf visual-regexp
+    :doc "A regexp/replace command for Emacs with interactive visual feedback"
+    :req "cl-lib-0.2"
+    :tag "feedback" "visual" "replace" "regexp"
+    :url "https://github.com/benma/visual-regexp.el/"
+    :ensure t :require t)
+#+end_src
 *** which-key
 #+begin_src emacs-lisp
     (leaf which-key
@@ -1655,6 +1820,14 @@ GitHub Education License was expired
       :config (which-key-setup-side-window-bottom))
 #+end_src
 
+*** yafolding
+#+begin_src emacs-lisp
+  (leaf yafolding
+    :doc "Folding code blocks based on indentation"
+    :tag "folding"
+    :ensure t :require t
+    :hook (prog-mode-hook . yafolding-mode))
+#+end_src
 *** yasnippet
 #+begin_src emacs-lisp
     (leaf yasnippet
@@ -1752,6 +1925,18 @@ Allows you to integrate Rich Presence from Discord.
           "Apply FUNCTION to SEQUENCE and return the list of all the non-nil results."
           (delq nil (seq-map function sequence)))))
 #+end_src
+
+*** mozc
+#+begin_src emacs-lisp
+  (leaf mozc
+    :doc "minor mode to input Japanese with Mozc"
+    :tag "input method" "multilingual" "mule"
+    :added "2023-07-20"
+    :ensure t
+    :require t
+    :config (setq mozc-candidate-style 'echo-area))
+#+end_src
+
 *** Node.js
 #+begin_src emacs-lisp 
   (leaf nodejs-repl
@@ -2073,178 +2258,6 @@ Allows you to integrate Rich Presence from Discord.
 #+end_src
 
 
-
-* Uncategorized
-** Core
-#+begin_src emacs-lisp
-  (leaf *core-packages
-    :doc "基幹部分の設定"
-    :config
-
-    (leaf auto-save
-      :custom
-      (auto-save-file-name-transforms . '((".*" "~/.tmp/" t)))
-      (auto-save-list-file-prefix . nil)
-      (auto-save-default . nil))
-
-    (leaf bytecomp
-      :custom
-      (byte-compile-warnings . '(not cl-functions obsolete))
-      (debug-on-error . nil))
-
-    (leaf color :require t)
-
-    (leaf cus-edit
-      :doc "custom が自動で設定を追記するのを無効にする"
-      :url "https://emacs-jp.github.io/tips/emacs-in-2020"
-      :custom `((custom-file . ,(locate-user-emacs-file "custom.el"))))
-
-    (leaf files
-      :custom
-      (backup-directory-alist . '((".*" . "~/.tmp")))
-      (create-lockfiles . nil)
-      :config
-      (when (file-exists-p "./elisp")
-        (let ((default-directory (locate-user-emacs-file "./elisp")))
-          (add-to-list 'load-path default-directory)
-          (normal-top-level-add-subdirs-to-load-path)))
-      )
-
-    (leaf frame :config (set-frame-parameter nil 'unsplittable t))
-
-    (leaf recentf
-      :tag "builtin"
-      :global-minor-mode t
-      :custom
-      (recentf-max-saved-items . 150)
-      (recentf-auto-cleanup . 'never)
-      (recentf-exclude
-       '("/dotfiles" "/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.tmp/"))
-      :config
-      (leaf recentf-ext
-        :doc "Recentf extensions"
-        :tag "files" "convenience"
-        :url "http://www.emacswiki.org/cgi-bin/wiki/download/recentf-ext.el"
-        :ensure t :require t))
-    )
-#+end_src
-
-
-**  a
-#+begin_src emacs-lisp
-  (leaf *inbox
-    :doc "分類が面倒なパッケージを入れる"
-    :config
-
-    (leaf gcmh
-      :doc "the Garbage Collector Magic Hack"
-      :req "emacs-24"
-      :tag "internal" "emacs>=24"
-      :url "https://gitlab.com/koral/gcmh"
-      :emacs>= 24
-      :ensure t :require t
-      :hook (after-init-hook . gcmh-mode)
-      :custom (gcmh-verbose . t))
-
-    (leaf mozc
-      :doc "minor mode to input Japanese with Mozc"
-      :tag "input method" "multilingual" "mule"
-      :added "2023-07-20"
-      :ensure t
-      :require t
-      :config (setq mozc-candidate-style 'echo-area))
-
-    (leaf nu-fun
-      :el-get "ayanyan/nihongo-util"
-      :require t
-      :custom
-      (nu-my-toten . "，")
-      (nu-my-kuten . "．"))
-
-    (leaf restart-emacs
-      :doc "Restart emacs from within emacs"
-      :tag "convenience"
-      :url "https://github.com/iqbalansari/restart-emacs"
-      :added "2023-06-14"
-      :ensure t)
-
-    (leaf tetris
-      :bind
-      (:tetris-mode-map
-       ("w" . tetris-rotate-prev)
-       ("a" . tetris-move-left)
-       ("s" . tetris-move-down)
-       ("d" . tetris-move-right)
-       ("RET" . tetris-move-bottom)))
-    )
-
-  ;; ---------------------------------------------------------------------------------------------- ;;
-
-  (leaf *edit
-    :doc "補完や構文のチェック, 入力に関するプラグイン"
-    :config
-
-    (leaf autorevert
-      :doc "revert buffers when files on disk change"
-      :tag "builtin"
-      :global-minor-mode global-auto-revert-mode
-      :custom (auto-revert-interval . 1))
-
-    (leaf exec-path-from-shell
-      :doc "Get environment variables such as $PATH from the shell"
-      :req "emacs-24.1" "cl-lib-0.6"
-      :tag "environment" "unix" "emacs>=24.1"
-      :url "https://github.com/purcell/exec-path-from-shell"
-      :emacs>= 24.1
-      :ensure t
-      :defun (exec-path-from-shell-initialize)
-      :custom
-      (exec-path-from-shell-check-startup-files . nil)
-      (exec-path-from-shell-arguments . nil)
-      (exec-path-from-shell-variables . '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
-                                          "GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))
-      :config (exec-path-from-shell-initialize))
-
-    (leaf popwin
-      :doc "Popup Window Manager"
-      :req "emacs-24.3"
-      :tag "convenience" "emacs>=24.3"
-      :url "https://github.com/emacsorphanage/popwin"
-      :emacs>= 24.3
-      :ensure t
-      :require t
-      :custom
-      (display-buffer-function . 'popwin:display-buffer)
-      (popwin:special-display-config  . t)
-      (popwin:popup-window-position . 'bottom))
-
-    (leaf smartparens
-      :doc "Automatic insertion, wrapping and paredit-like navigation with user defined pairs."
-      :req "dash-2.13.0" "cl-lib-0.3"
-      :tag "editing" "convenience" "abbrev"
-      :url "https://github.com/Fuco1/smartparens"
-      :ensure t :require t
-      :global-minor-mode smartparens-global-mode show-smartparens-global-mode
-      :config
-      (leaf smartparens-config :require t :after smartparens :hook (web-mode-hook . (lambda () (sp-pair "<#" "#>")))))
-
-    (leaf visual-regexp
-      :doc "A regexp/replace command for Emacs with interactive visual feedback"
-      :req "cl-lib-0.2"
-      :tag "feedback" "visual" "replace" "regexp"
-      :url "https://github.com/benma/visual-regexp.el/"
-      :ensure t :require t)
-
-    (leaf which-function-mode :tag "builtin" :custom (which-function-mode . t))
-
-    (leaf yafolding
-      :doc "Folding code blocks based on indentation"
-      :tag "folding"
-      :ensure t :require t
-      :hook (prog-mode-hook . yafolding-mode))
-
-    )
-#+end_src
 
 ** Footer
 #+begin_src emacs-lisp 

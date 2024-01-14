@@ -56,6 +56,14 @@
   `(setq my/delayed-priority-low-configurations
 	 (append my/delayed-priority-low-configurations ',body)))
 
+(eval-when-compile
+  (unless (file-directory-p (locate-user-emacs-file "elpa/el-clone"))
+    (package-vc-install "https://github.com/takeokunn/el-clone.git")))
+
+(eval-and-compile
+  (add-to-list 'load-path (locate-user-emacs-file "elpa/el-clone"))
+  (require 'el-clone))
+
 (leaf *global-set-key
   :bind
 
@@ -206,37 +214,69 @@
   (display-time-string-forms . '((format "%s:%s:%s" 24-hours minutes seconds)))
   (display-time-day-and-date . t))
 
+(leaf autorevert
+  :doc "revert buffers when files on disk change"
+  :tag "builtin"
+  :global-minor-mode global-auto-revert-mode
+  :custom (auto-revert-interval . 1))
+
+(leaf which-function-mode :tag "builtin" :custom (which-function-mode . t))
+
+(leaf recentf
+  :tag "builtin"
+  :global-minor-mode t
+  :custom
+  (recentf-max-saved-items . 150)
+  (recentf-auto-cleanup . 'never)
+  (recentf-exclude
+   '("/dotfiles" "/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.tmp/"))
+  :config
+  (leaf recentf-ext
+    :doc "Recentf extensions"
+    :tag "files" "convenience"
+    :url "http://www.emacswiki.org/cgi-bin/wiki/download/recentf-ext.el"
+    :ensure t :require t))
+
+(set-frame-parameter nil 'unsplittable t)
+
+(setq custom-file (locate-user-emacs-file "custom.el"))
+
+(setq debug-on-error t)
+
+(setq byte-compile-warnings '(not cl-functions obsolete)
+
+(setq create-lockfiles nil)
+
+(setq backup-directory-alist '((".*" . "~/.tmp")))
+
+(setq auto-save-file-name-transforms '((".*" "~/.tmp/" t)))
+(setq auto-save-list-file-prefix nil)
+(setq auto-save-default nil)
+
+(eval-when-compile
+  (el-clone :repo "jwiegley/emacs-async"))
+
+(with-delayed-execution-priority-high
+  (message "Loading \"async\"...")
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-async")))
+
+(eval-when-compile
+  (el-clone :repo "chuntaro/emacs-async-await"))
+
+(with-delayed-execution-priority-high
+  (message "Loading \"async-await\"...")
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-async-await")))
+
+(eval-when-compile
+  (el-clone :repo "magnars/dash.el"))
+
+(with-delayed-execution-priority-high
+  (message "Loading \"dash\"...")
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/dash")))
+
 (leaf *emacs-lisp
   :doc "Emacs Lisp"
   :config
-
-  (leaf async
-    :doc "Asynchronous processing in Emacs"
-    :req "emacs-24.4"
-    :tag "async" "emacs>=24.4"
-    :url "https://github.com/jwiegley/emacs-async"
-    :added "2023-09-22"
-    :emacs>= 24.4
-    :ensure t
-    :require t)
-
-  (leaf async-await
-    :doc "Async/Await"
-    :req "emacs-25.1" "promise-1.1" "iter2-0.9.10"
-    :tag "convenience" "await" "async" "emacs>=25.1"
-    :url "https://github.com/chuntaro/emacs-async-await"
-    :added "2023-06-30"
-    :emacs>= 25.1
-    :ensure t
-    :after iter2)
-
-  (leaf dash
-    :doc "A modern list library for Emacs"
-    :req "emacs-24"
-    :tag "lisp" "extensions" "emacs>=24"
-    :url "https://github.com/magnars/dash.el"
-    :emacs>= 24
-    :ensure t :require t)
 
   (leaf dotenv
     :el-get "pkulev/dotenv.el"
@@ -627,7 +667,7 @@
   :hook
   (typescript-mode-hook . tide-start)
   :custom
-  (tide-node-executable . "~/.asdf/installs/nodejs/19.0.0/bin/node")
+  (tide-node-executable . "~/.nix-profile/bin/node")
   :config
   (defun tide-start ()
     (interactive)
@@ -851,6 +891,21 @@
   :emacs>= 26.1
   :ensure t
   :after compat)
+
+(leaf exec-path-from-shell
+  :doc "Get environment variables such as $PATH from the shell"
+  :req "emacs-24.1" "cl-lib-0.6"
+  :tag "environment" "unix" "emacs>=24.1"
+  :url "https://github.com/purcell/exec-path-from-shell"
+  :emacs>= 24.1
+  :ensure t
+  :defun (exec-path-from-shell-initialize)
+  :custom
+  (exec-path-from-shell-check-startup-files . nil)
+  (exec-path-from-shell-arguments . nil)
+  (exec-path-from-shell-variables . '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
+                                      "GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))
+  :config (exec-path-from-shell-initialize))
 
 (leaf centaur-tabs
   :doc "Aesthetic, modern looking customizable tabs plugin"
@@ -1178,6 +1233,16 @@
          ("M-p" . flycheck-previous-error))
   :custom (flycheck-idle-change-delay . 0))
 
+(leaf gcmh
+  :doc "the Garbage Collector Magic Hack"
+  :req "emacs-24"
+  :tag "internal" "emacs>=24"
+  :url "https://gitlab.com/koral/gcmh"
+  :emacs>= 24
+  :ensure t :require t
+  :hook (after-init-hook . gcmh-mode)
+  :custom (gcmh-verbose . t))
+
 (leaf hydra
   :doc "Make bindings that stick around."
   :req "cl-lib-0.5" "lv-0"
@@ -1311,6 +1376,13 @@
   (neo-create-file-auto-open . t)
   (neo-theme . (if (display-graphic-p) 'icons 'arrow)))
 
+(leaf nu-fun
+  :el-get "ayanyan/nihongo-util"
+  :require t
+  :custom
+  (nu-my-toten . "，")
+  (nu-my-kuten . "．"))
+
 (leaf pdf-tools
   :doc "Support library for PDF documents"
   :req "emacs-26.3" "tablist-1.0" "let-alist-1.0.4"
@@ -1324,6 +1396,19 @@
   :config (pdf-tools-install)
   (pdf-loader-install))
 
+(leaf popwin
+  :doc "Popup Window Manager"
+  :req "emacs-24.3"
+  :tag "convenience" "emacs>=24.3"
+  :url "https://github.com/emacsorphanage/popwin"
+  :emacs>= 24.3
+  :ensure t
+  :require t
+  :custom
+  (display-buffer-function . 'popwin:display-buffer)
+  (popwin:special-display-config  . t)
+  (popwin:popup-window-position . 'bottom))
+
 (leaf projectile
   :doc "Manage and navigate projects in Emacs easily"
   :req "emacs-25.1"
@@ -1333,6 +1418,13 @@
   :ensure t :require t
   :after dashboard)
 
+(leaf restart-emacs
+  :doc "Restart emacs from within emacs"
+  :tag "convenience"
+  :url "https://github.com/iqbalansari/restart-emacs"
+  :added "2023-06-14"
+  :ensure t)
+
 (leaf skewer-mode
   :doc "live browser JavaScript, CSS, and HTML interaction"
   :req "simple-httpd-1.4.0" "js2-mode-20090723" "emacs-24"
@@ -1341,6 +1433,16 @@
   :emacs>= 24
   :ensure t :require t
   :after js2-mode)
+
+(leaf smartparens
+  :doc "Automatic insertion, wrapping and paredit-like navigation with user defined pairs."
+  :req "dash-2.13.0" "cl-lib-0.3"
+  :tag "editing" "convenience" "abbrev"
+  :url "https://github.com/Fuco1/smartparens"
+  :ensure t :require t
+  :global-minor-mode smartparens-global-mode show-smartparens-global-mode
+  :config
+  (leaf smartparens-config :require t :after smartparens :hook (web-mode-hook . (lambda () (sp-pair "<#" "#>")))))
 
 (leaf undo-tree
   :doc "Treat undo history as a tree"
@@ -1365,6 +1467,13 @@
   :config
   (undohist-initialize))
 
+(leaf visual-regexp
+  :doc "A regexp/replace command for Emacs with interactive visual feedback"
+  :req "cl-lib-0.2"
+  :tag "feedback" "visual" "replace" "regexp"
+  :url "https://github.com/benma/visual-regexp.el/"
+  :ensure t :require t)
+
 (leaf which-key
   :doc "Display available keybindings in popup"
   :req "emacs-24.4"
@@ -1374,6 +1483,12 @@
   :ensure t :require t
   :global-minor-mode t
   :config (which-key-setup-side-window-bottom))
+
+(leaf yafolding
+  :doc "Folding code blocks based on indentation"
+  :tag "folding"
+  :ensure t :require t
+  :hook (prog-mode-hook . yafolding-mode))
 
 (leaf yasnippet
   :doc "Yet another snippet extension for Emacs"
@@ -1453,6 +1568,14 @@
     (defun seq-keep (function sequence)
       "Apply FUNCTION to SEQUENCE and return the list of all the non-nil results."
       (delq nil (seq-map function sequence)))))
+
+(leaf mozc
+  :doc "minor mode to input Japanese with Mozc"
+  :tag "input method" "multilingual" "mule"
+  :added "2023-07-20"
+  :ensure t
+  :require t
+  :config (setq mozc-candidate-style 'echo-area))
 
 (leaf nodejs-repl
   :doc "Run Node.js REPL"
@@ -1717,170 +1840,6 @@
                       (cl-return))
                  finally (message (format "[start-repl] couldn't found repl for %s" major-mode)))))
     )
-
-(leaf *core-packages
-  :doc "基幹部分の設定"
-  :config
-
-  (leaf auto-save
-    :custom
-    (auto-save-file-name-transforms . '((".*" "~/.tmp/" t)))
-    (auto-save-list-file-prefix . nil)
-    (auto-save-default . nil))
-
-  (leaf bytecomp
-    :custom
-    (byte-compile-warnings . '(not cl-functions obsolete))
-    (debug-on-error . nil))
-
-  (leaf color :require t)
-
-  (leaf cus-edit
-    :doc "custom が自動で設定を追記するのを無効にする"
-    :url "https://emacs-jp.github.io/tips/emacs-in-2020"
-    :custom `((custom-file . ,(locate-user-emacs-file "custom.el"))))
-
-  (leaf files
-    :custom
-    (backup-directory-alist . '((".*" . "~/.tmp")))
-    (create-lockfiles . nil)
-    :config
-    (when (file-exists-p "./elisp")
-      (let ((default-directory (locate-user-emacs-file "./elisp")))
-        (add-to-list 'load-path default-directory)
-        (normal-top-level-add-subdirs-to-load-path)))
-    )
-
-  (leaf frame :config (set-frame-parameter nil 'unsplittable t))
-
-  (leaf recentf
-    :tag "builtin"
-    :global-minor-mode t
-    :custom
-    (recentf-max-saved-items . 150)
-    (recentf-auto-cleanup . 'never)
-    (recentf-exclude
-     '("/dotfiles" "/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.tmp/"))
-    :config
-    (leaf recentf-ext
-      :doc "Recentf extensions"
-      :tag "files" "convenience"
-      :url "http://www.emacswiki.org/cgi-bin/wiki/download/recentf-ext.el"
-      :ensure t :require t))
-  )
-
-(leaf *inbox
-  :doc "分類が面倒なパッケージを入れる"
-  :config
-
-  (leaf gcmh
-    :doc "the Garbage Collector Magic Hack"
-    :req "emacs-24"
-    :tag "internal" "emacs>=24"
-    :url "https://gitlab.com/koral/gcmh"
-    :emacs>= 24
-    :ensure t :require t
-    :hook (after-init-hook . gcmh-mode)
-    :custom (gcmh-verbose . t))
-
-  (leaf mozc
-    :doc "minor mode to input Japanese with Mozc"
-    :tag "input method" "multilingual" "mule"
-    :added "2023-07-20"
-    :ensure t
-    :require t
-    :config (setq mozc-candidate-style 'echo-area))
-
-  (leaf nu-fun
-    :el-get "ayanyan/nihongo-util"
-    :require t
-    :custom
-    (nu-my-toten . "，")
-    (nu-my-kuten . "．"))
-
-  (leaf restart-emacs
-    :doc "Restart emacs from within emacs"
-    :tag "convenience"
-    :url "https://github.com/iqbalansari/restart-emacs"
-    :added "2023-06-14"
-    :ensure t)
-
-  (leaf tetris
-    :bind
-    (:tetris-mode-map
-     ("w" . tetris-rotate-prev)
-     ("a" . tetris-move-left)
-     ("s" . tetris-move-down)
-     ("d" . tetris-move-right)
-     ("RET" . tetris-move-bottom)))
-  )
-
-;; ---------------------------------------------------------------------------------------------- ;;
-
-(leaf *edit
-  :doc "補完や構文のチェック, 入力に関するプラグイン"
-  :config
-
-  (leaf autorevert
-    :doc "revert buffers when files on disk change"
-    :tag "builtin"
-    :global-minor-mode global-auto-revert-mode
-    :custom (auto-revert-interval . 1))
-
-  (leaf exec-path-from-shell
-    :doc "Get environment variables such as $PATH from the shell"
-    :req "emacs-24.1" "cl-lib-0.6"
-    :tag "environment" "unix" "emacs>=24.1"
-    :url "https://github.com/purcell/exec-path-from-shell"
-    :emacs>= 24.1
-    :ensure t
-    :defun (exec-path-from-shell-initialize)
-    :custom
-    (exec-path-from-shell-check-startup-files . nil)
-    (exec-path-from-shell-arguments . nil)
-    (exec-path-from-shell-variables . '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
-                                        "GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))
-    :config (exec-path-from-shell-initialize))
-
-  (leaf popwin
-    :doc "Popup Window Manager"
-    :req "emacs-24.3"
-    :tag "convenience" "emacs>=24.3"
-    :url "https://github.com/emacsorphanage/popwin"
-    :emacs>= 24.3
-    :ensure t
-    :require t
-    :custom
-    (display-buffer-function . 'popwin:display-buffer)
-    (popwin:special-display-config  . t)
-    (popwin:popup-window-position . 'bottom))
-
-  (leaf smartparens
-    :doc "Automatic insertion, wrapping and paredit-like navigation with user defined pairs."
-    :req "dash-2.13.0" "cl-lib-0.3"
-    :tag "editing" "convenience" "abbrev"
-    :url "https://github.com/Fuco1/smartparens"
-    :ensure t :require t
-    :global-minor-mode smartparens-global-mode show-smartparens-global-mode
-    :config
-    (leaf smartparens-config :require t :after smartparens :hook (web-mode-hook . (lambda () (sp-pair "<#" "#>")))))
-
-  (leaf visual-regexp
-    :doc "A regexp/replace command for Emacs with interactive visual feedback"
-    :req "cl-lib-0.2"
-    :tag "feedback" "visual" "replace" "regexp"
-    :url "https://github.com/benma/visual-regexp.el/"
-    :ensure t :require t)
-
-  (leaf which-function-mode :tag "builtin" :custom (which-function-mode . t))
-
-  (leaf yafolding
-    :doc "Folding code blocks based on indentation"
-    :tag "folding"
-    :ensure t :require t
-    :hook (prog-mode-hook . yafolding-mode))
-
-  )
 
 (provide 'init)
 
