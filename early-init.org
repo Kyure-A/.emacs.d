@@ -1,0 +1,134 @@
+#+title: early-init.org
+#+description: Kyure_A's Emacs config
+#+author: Kyure_A
+
+* Introduction
+
+** Author
+Kyure_A
+
+** Repository
+https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
+
+* Configurations
+** Header
+#+begin_src emacs-lisp
+  ;;; early-init.el ---  -*- lexical-binding: t -*-
+
+  ;; Author: Kyure_A <twitter.com/@kyureq>
+  ;; Maintainer: Kyure_A <twitter.com/@kyureq>
+
+  ;;; Commentary:
+
+  ;;; Code:
+#+end_src
+
+** Suppress auto package loading
+#+begin_src emacs-lisp
+  (setq package-enable-at-startup nil)
+#+end_src
+
+** Disable GC at startup
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold most-positive-fixnum)
+  (add-hook 'emacs-startup-hook (lambda () (setq gc-cons-threshold 536870912)))
+#+end_src
+
+** Disable Magit File Name at startup
+#+begin_src emacs-lisp
+  (defconst init/saved-file-name-handler-alist file-name-handler-alist)
+  (setq file-name-handler-alist nil)
+  (add-hook 'emacs-startup-hook (lambda () (setq file-name-handler-alist init/saved-file-name-handler-alist)))
+#+end_src
+
+** other
+#+begin_src emacs-lisp
+  (setq package-user-dir "~/.elpkg/elpa")
+  (add-to-list 'load-path "./elpa")
+  (setq inhibit-startup-screen t)
+  (setq initial-scratch-message nil)
+  (setq inhibit-startup-buffer-menu t)
+  (setq message-log-max nil)
+  (setq ring-bell-function 'ignore)
+#+end_src
+
+** Setup package archive
+#+begin_src emacs-lisp
+  (eval-and-compile
+    (customize-set-variable 'package-archives
+                            '(("melpa" . "https://melpa.org/packages/")
+                              ("org"   . "https://orgmode.org/elpa/")
+                              ("gnu"   . "https://elpa.gnu.org/packages/")
+                              ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+    (package-initialize))
+#+end_src
+
+** Setup leaf.el
+#+begin_src emacs-lisp
+  (eval-and-compile
+    (when (not (package-installed-p 'leaf))
+      (package-refresh-contents)
+      (package-install 'leaf)))
+
+  (leaf *leaf
+    :config
+    (leaf leaf-manager :ensure t :after leaf)
+    (leaf leaf-keywords :ensure t :init (leaf-keywords-init) :after leaf)
+    (leaf leaf-convert :ensure t :after leaf)
+    (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left) :after leaf)
+    (leaf package :require t)
+    (leaf use-package :ensure t))
+#+end_src
+
+** Color Scheme
+I love monokai!
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "Kyure_A/monokai-emacs"))
+
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/monokai-emacs"))
+  (require 'monokai-theme)
+  (load-theme 'monokai t)
+#+end_src
+
+** nano-emacs like style
+[[https://github.com/rougier/nano-emacs/blob/b8631088220dbbcd885ad1353bdc52b569655f85/nano-layout.el#L21][Source]]
+and disable tool-bar and menu-bar.
+#+begin_src emacs-lisp
+  (setq default-frame-alist
+            (append (list
+                     '(min-height . 1)
+                     '(height     . 45)
+                     '(min-width  . 1)
+                     '(width      . 81)
+                     '(vertical-scroll-bars . nil)
+                     '(internal-border-width . 24)
+                     '(left-fringe    . 1)
+                     '(right-fringe   . 1)
+                     '(fullscreen . maximized)
+                     '(tool-bar-lines . 0)
+                     '(menu-bar-lines . 0))))
+#+end_src
+
+** Disable scroll bar
+#+begin_src emacs-lisp
+  (scroll-bar-mode -1)
+#+end_src
+
+** suppress window resize
+#+begin_src emacs-lisp
+  (setq frame-inhibit-implied-resize t)
+#+end_src
+
+** delete other window at window setup
+#+begin_src emacs-lisp
+  (add-hook 'window-setup-hook 'delete-other-windows)
+#+end_src
+
+** Footer
+#+begin_src emacs-lisp
+  (provide 'early-init)
+
+  ;; End:
+  ;;; early-init.el ends here
+#+end_src
