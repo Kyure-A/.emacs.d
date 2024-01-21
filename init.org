@@ -34,6 +34,12 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
   ;;; Code:  
 #+end_src
 
+*** require leaf
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (require 'leaf)) 
+#+end_src
+
 *** User Info
 #+begin_src emacs-lisp 
   (setq user-full-name "Kyure_A")
@@ -151,7 +157,7 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 *** global-set-key
 **** Special Keys
 #+begin_src emacs-lisp
-  (global-set-key (kbd "<f2>") 'vterm-toggle)
+  (global-set-key (kbd "<f2>") 'eat)
   (global-set-key (kbd "<f3>") 'dashboard-open)
   (global-set-key (kbd "RET") 'smart-newline)
   (global-set-key (kbd "C-RET") 'newline)
@@ -268,34 +274,17 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 #+end_src
 
 *** Scroll
-**** fast-scroll
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "ahungry/fast-scroll"))
-
-  (with-delayed-execution-priority-high
-    (add-to-list 'load-path (locate-user-emacs-file "ahungry/fast-scroll"))
-    (autoload-if-found '(fast-scroll-mode) "fast-scroll")
-    (fast-scroll-mode)
-    (with-eval-after-load 'fast-scroll
-      (add-hook 'fast-scroll-start-hook (lambda () (flycheck-mode -1)))
-      (add-hook 'fast-scroll-end-hook (lambda () (flycheck-mode 1)))
-      (fast-scroll-config)
-      (setq jit-lock-defer-time 0)))
-#+end_src
 
 **** good-scroll
+cause bug?
 #+begin_src emacs-lisp :tangle no
-  (leaf good-scroll
-    :doc "Good pixel line scrolling"
-    :req "emacs-27.1"
-    :tag "emacs>=27.1"
-    :url "https://github.com/io12/good-scroll.el"
-    :added "2022-09-09"
-    :emacs>= 27.1
-    :ensure t
-    :require nil
-    :global-minor-mode t)
+  (eval-when-compile
+    (el-clone :repo "io12/good-scroll.el"))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/good-scroll"))
+    (autoload-if-found '(good-scroll-mode) "good-scroll")
+    (good-scroll-mode t))
 #+end_src
 
 **** sublimity
@@ -309,7 +298,7 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
     (sublimity-mode t)
     (with-eval-after-load 'sublimity
       (setq sublimity-attractive-centering-width 200)
-      (setq sublimity-scroll-weight 5)
+      (setq sublimity-scroll-weight 15)
       (setq sublimity-scroll-drift-length 10)))
 #+end_src
 
@@ -339,14 +328,16 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 
 *** After save
 #+begin_src emacs-lisp
+  (defun my/compile-init-files ()
+    (interactive)
+    (org-babel-tangle-file "~/.emacs.d/early-init.org" "~/.emacs.d/early-init.el" "emacs-lisp")
+    (org-babel-tangle-file "~/.emacs.d/init.org" "~/.emacs.d/init.el" "emacs-lisp")
+    (byte-compile-file "~/.emacs.d/early-init.el")
+    (byte-compile-file "~/.emacs.d/init.el"))
+
   (add-hook 'org-mode-hook
             (lambda ()
-              (add-hook 'after-save-hook (lambda ()
-                                           (org-babel-tangle-file "~/.emacs.d/early-init.org" "~/.emacs.d/early-init.el" "emacs-lisp")
-                                           (org-babel-tangle-file "~/.emacs.d/init.org" "~/.emacs.d/init.el" "emacs-lisp")
-                                           (byte-compile-file "~/.emacs.d/early-init.el")
-                                           (byte-compile-file "~/.emacs.d/init.el")
-                                           ))))
+              (add-hook 'after-save-hook #'my/compile-init-files)))
 #+end_src
 
 *** Show Clock
@@ -385,9 +376,6 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
     :url "http://www.emacswiki.org/cgi-bin/wiki/download/recentf-ext.el"
     :ensure t :require t)
 #+end_src
-
-#+RESULTS:
-: recentf-ext
 
 *** suppress window splitting
 #+begin_src emacs-lisp
@@ -562,6 +550,16 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 
   (with-delayed-execution-priority-high
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/shrink-path")))
+#+end_src
+
+*** transient
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "magit/transient"
+              :load-paths `(,(locate-user-emacs-file "el-clone/transient/lisp"))))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/transient/lisp")))
 #+end_src
 
 *** queue
@@ -808,6 +806,7 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
     (add-to-list 'auto-mode-alist '("\\.mts$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.cts$" . typescript-mode))
     (add-hook 'typescript-mode-hook #'tide-setup)
+    (add-hook 'typescript-mode-hook #'flycheck-mode)
     (setq tide-node-executable "~/.nix-profile/bin/node"))
 #+end_src
 
@@ -1223,33 +1222,6 @@ Disabled by default.
 #+end_src
 
 *** Dashboard
-#+begin_src emacs-lisp 
-  (eval-when-compile
-    (el-clone :repo "emacs-dashboard/emacs-dashboard"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-dashboard"))
-    (autoload-if-found '(dashboard-setup-startup-hook) "dashboard")
-    (dashboard-setup-startup-hook)
-    (with-eval-after-load 'dashboard
-      (define-key dashboard-mode-map (kbd "<f3>") #'quit-dashboard)
-      (setq dashboard-items '((bookmarks . 5)
-                              (recents  . 5)
-                              (projects . 5)))
-      (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-      (setq dashboard-center-content t)
-      (setq dashboard-set-heading-icons t)
-      (setq dashboard-set-file-icons t)
-      (setq dashboard-banner-logo-title "Kyure_A's Emacs")
-      (setq dashboard-footer-messages '("「今日も一日がんばるぞい！」 - 涼風青葉"
-                                            "「なんだかホントに入社した気分です！」 - 涼風青葉"
-                                            "「そしてそのバグの程度で実力も知れるわけです」- 阿波根うみこ"
-                                            "「えーー！なるっちの担当箇所がバグだらけ！？」 - 桜ねね"
-                                            "「C++ を完全に理解してしまったかもしれない」 - 桜ねね"
-                                            "「これでもデバッグはプロ級だし 今はプログラムの知識だってあるんだからまかせてよね！」 - 桜ねね"))
-      (setq dashboard-startup-banner (if (or (eq window-system 'x) (eq window-system 'ns) (eq window-system 'w32)) "~/.emacs.d/static/banner.png" "~/.emacs.d/static/banner.txt"))))
-#+end_src
-
 **** open-dashboard
 [[https://github.com/seagle0128/.emacs.d/blob/8cbec0c132cd6de06a8c293598a720d377f3f5b9/lisp/init-dashboard.el#L198][Source]]
 #+begin_src emacs-lisp
@@ -1267,7 +1239,7 @@ Disabled by default.
     ;; Display dashboard in maximized window
     (delete-other-windows)
     ;; Refresh dashboard buffer
-    (dashboard-refresh-buffer)
+    (dashboard-open)
     ;; Jump to the first section
     (dashboard-goto-recent-files))
 #+end_src
@@ -1282,98 +1254,112 @@ Disabled by default.
          (setq dashboard-recover-layout-p nil)))
 #+end_src
 
-*** Dirvish/Dired
+**** dashboard
 #+begin_src emacs-lisp 
-  (leaf dirvish
-    :doc "A modern file manager based on dired mode"
-    :req "emacs-27.1" "transient-0.3.7"
+  (eval-when-compile
+    (el-clone :repo "emacs-dashboard/emacs-dashboard"))
+
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-dashboard"))
+  (require 'dashboard)
+  (with-eval-after-load 'dashboard
+    (dashboard-setup-startup-hook)
+    (define-key dashboard-mode-map (kbd "<f3>") #'quit-dashboard)
+    (setq dashboard-items '((bookmarks . 5)
+                            (recents  . 5)
+                            (projects . 5)))
+    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+    (setq dashboard-center-content t)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-banner-logo-title "Kyure_A's Emacs")
+    (setq dashboard-footer-messages '("「今日も一日がんばるぞい！」 - 涼風青葉"
+                                      "「なんだかホントに入社した気分です！」 - 涼風青葉"
+                                      "「そしてそのバグの程度で実力も知れるわけです」- 阿波根うみこ"
+                                      "「えーー！なるっちの担当箇所がバグだらけ！？」 - 桜ねね"
+                                      "「C++ を完全に理解してしまったかもしれない」 - 桜ねね"
+                                      "「これでもデバッグはプロ級だし 今はプログラムの知識だってあるんだからまかせてよね！」 - 桜ねね"))
+    (setq dashboard-startup-banner (if (or (eq window-system 'x) (eq window-system 'ns) (eq window-system 'w32)) "~/.emacs.d/static/banner.png" "~/.emacs.d/static/banner.txt")))
+#+end_src
+
+
+*** dirvish/dired
+**** dirvish
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "alexluigit/dirvish"
+              :load-paths `(,(locate-user-emacs-file "el-clone/dirvish/extensions"))))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/dirvish"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/dirvish/extensions"))
+    (autoload-if-found '(dirvish-override-dired-mode) "dirvish")
+    (dirvish-override-dired-mode)
+    (with-eval-after-load 'dirvish
+      (setq dirvish-attributes '(vc-state subtree-state all-the-icons collapse git-msg file-time file-size))
+      (setq dirvish-preview-dispatchers (cl-substitute 'pdf-preface 'pdf dirvish-preview-dispatchers))))
+#+end_src
+**** dired
+#+begin_src emacs-lisp
+  (with-eval-after-load 'dired
+    (setq dired-recursive-copies 'always)
+    (put 'dired-find-alternate-file 'disabled nil)
+    (define-key dired-mode-map (kbd "RET") #'dired-open-in-accordance-with-situation)
+    (define-key dired-mode-map (kbd "<left>") #'dired-up-directory)
+    (define-key dired-mode-map (kbd "<right>") #'dired-open-in-accordance-with-situation))
+#+end_src
+**** dired-async
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "jwiegley/emacs-async"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-async"))
+    (autoload-if-found '(dired-async-mode) "dired-async")
+    (dired-async-mode t))
+#+end_src
+**** dired-k
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacsorphanage/dired-k"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/dired-k"))
+    (autoload-if-found '(dired-k) "dired-k")
+    (add-hook 'dired-initial-position-hook #'dired-k))
+#+end_src
+
+**** dired-open-in-accordance-with-situation
+[[https://nishikawasasaki.hatenablog.com/entry/20120222/1329932699][Source]]
+#+begin_src emacs-lisp
+  (defun dired-open-in-accordance-with-situation ()
+    (interactive)
+    (let ((file (dired-get-filename)))
+      (if (file-directory-p file)
+          (dired-find-alternate-file)
+        (dired-find-file))))
+#+end_src
+
+**** dired-preview
+#+begin_src emacs-lisp
+  (leaf dired-preview
+    :doc "Automatically preview file at point in Dired"
+    :req "emacs-27.1"
     :tag "convenience" "files" "emacs>=27.1"
-    :url "https://github.com/alexluigit/dirvish"
-    :added "2023-06-07"
-    :emacs>= 27.1
+    :url "https://git.sr.ht/~protesilaos/dired-preview"
+    :added "2023-07-30"
     :after dired
-    :ensure t
-    :init (dirvish-override-dired-mode)
-    :custom
-    (dirvish-attributes . '(vc-state subtree-state all-the-icons collapse git-msg file-time file-size))
-    (dirvish-preview-dispatchers . (cl-substitute 'pdf-preface 'pdf dirvish-preview-dispatchers))    
-    :config
+    :emacs>= 27.1
+    :ensure t)
+#+end_src
 
-    (leaf dired
-      :tag "builtin"
-      :bind
-      (:dired-mode-map
-       ("RET" . dired-open-in-accordance-with-situation)
-       ("<right>" . dired-open-in-accordance-with-situation)
-       ("<left>" . dired-up-directory)
-       ("a" . dired-find-file)
-       ("e" . wdired-change-to-wdired-mode))
-      :custom
-      (dired-recursive-copies . 'always)
-      :config
-      ;; (ffap-bindings) ;; find-file を便利にするが、ちょっと挙動が嫌なので OFF にした
-
-      (leaf dired-async
-        :doc "Asynchronous dired actions"
-        :tag "out-of-MELPA" "network" "async" "dired"
-        :url "https://github.com/jwiegley/emacs-async"
-        :added "2023-09-22"
-        :after dired async
-        :require t)
-
-      (leaf dired-toggle
-        :doc "Show dired as sidebar and will not create new buffers when changing dir"
-        :tag "sidebar" "dired"
-        :url "https://github.com/fasheng/dired-toggle"
-        :after dired
-        :ensure t :require t)
-
-      (leaf dired-k
-        :doc "Highlight dired by size, date, git status"
-        :req "emacs-24.3"
-        :tag "emacs>=24.3"
-        :url "https://github.com/emacsorphanage/dired-k"
-        :emacs>= 24.3
-        :ensure t :require t
-        :after dired
-        :hook (dired-initial-position-hook . dired-k))
-
-      (leaf wdired
-        :doc "Rename files editing their names in dired buffers"
-        :tag "builtin"
-        :after dired
-        :require t)
-
-      (leaf dired-toggle-sudo
-        :doc "Browse directory with sudo privileges."
-        :tag "dired" "emacs"
-        :added "2023-07-21"
-        :after dired
-        :ensure t)
-
-      (leaf dired-preview
-        :doc "Automatically preview file at point in Dired"
-        :req "emacs-27.1"
-        :tag "convenience" "files" "emacs>=27.1"
-        :url "https://git.sr.ht/~protesilaos/dired-preview"
-        :added "2023-07-30"
-        :after dired
-        :emacs>= 27.1
-        :ensure t)
-
-      (put 'dired-find-alternate-file 'disabled nil))
-
-    :preface
-
-    (leaf dired-open-in-accordance-with-situation
-      :url "https://nishikawasasaki.hatenablog.com/entry/20120222/1329932699"
-      :preface
-      (defun dired-open-in-accordance-with-situation ()
-        (interactive)
-        (let ((file (dired-get-filename)))
-          (if (file-directory-p file)
-              (dired-find-alternate-file)
-            (dired-find-file))))))
+**** dired-toggle-sudo
+#+begin_src emacs-lisp
+  (leaf dired-toggle-sudo
+    :doc "Browse directory with sudo privileges."
+    :tag "dired" "emacs"
+    :added "2023-07-21"
+    :after dired
+    :ensure t)
 #+end_src
 
 *** editorconfig
@@ -1600,6 +1586,7 @@ GitHub Education License was expired
     (el-clone :repo "ayanyan/nihongo-util"))
 
   (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/nihongo-util"))
     (require 'nu-fun)
     (setq nu-my-toten "，")
     (setq nu-my-kuten "．"))
@@ -1805,7 +1792,7 @@ Allows you to integrate Rich Presence from Discord.
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/jobcan"))
-    (autoload-if-found '(jobcan-status) "jobcan"))
+    (require 'jobcan))
 #+end_src
 
 *** Magit
@@ -1899,6 +1886,25 @@ Allows you to integrate Rich Presence from Discord.
 
 ** Visual
 *** all-the-icons
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "domtronn/all-the-icons.el"))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons")))
+#+end_src
+
+*** all-the-icons-dired
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "wyuenho/all-the-icons-dired"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons-dired"))
+    (autoload-if-found '(all-the-icons-dired-mode) "all-the-icons-dired")
+    (add-hook 'dired-mode #'all-the-icons-dired-mode))
+#+end_src
+
 #+begin_src emacs-lisp 
   (leaf all-the-icons
     :doc "A library for inserting Developer icons"
@@ -1906,58 +1912,47 @@ Allows you to integrate Rich Presence from Discord.
     :tag "lisp" "convenient" "emacs>=24.3"
     :url "https://github.com/domtronn/all-the-icons.el"
     :emacs>= 24.3
-    :ensure t :require t
     :require t
     :config
 
-  (leaf all-the-icons-dired
-    :doc "Shows icons for each file in dired mode"
-    :req "emacs-24.4" "all-the-icons-2.2.0"
-    :tag "dired" "icons" "files" "emacs>=24.4"
-    :url "https://github.com/wyuenho/all-the-icons-dired"
-    :emacs>= 24.4
-    :ensure t :require t
-    :after all-the-icons
-    :hook (dired-mode . all-the-icons-dired-mode))
+    (leaf all-the-icons-ivy
+      :doc "Shows icons while using ivy and counsel"
+      :req "emacs-24.4" "all-the-icons-2.4.0" "ivy-0.8.0"
+      :tag "faces" "emacs>=24.4"
+      :emacs>= 24.4
+      :ensure t :require t
+      :after all-the-icons ivy)
 
-  (leaf all-the-icons-ivy
-    :doc "Shows icons while using ivy and counsel"
-    :req "emacs-24.4" "all-the-icons-2.4.0" "ivy-0.8.0"
-    :tag "faces" "emacs>=24.4"
-    :emacs>= 24.4
-    :ensure t :require t
-    :after all-the-icons ivy)
-
-  (leaf all-the-icons-ivy-rich
-    :doc "Better experience with icons for ivy"
-    :req "emacs-25.1" "ivy-rich-0.1.0" "all-the-icons-2.2.0"
-    :tag "ivy" "icons" "convenience" "emacs>=25.1"
-    :url "https://github.com/seagle0128/all-the-icons-ivy-rich"
-    :emacs>= 25.1
-    :ensure t :require t
-    :after ivy-rich all-the-icons
-    :global-minor-mode t)
+    (leaf all-the-icons-ivy-rich
+      :doc "Better experience with icons for ivy"
+      :req "emacs-25.1" "ivy-rich-0.1.0" "all-the-icons-2.2.0"
+      :tag "ivy" "icons" "convenience" "emacs>=25.1"
+      :url "https://github.com/seagle0128/all-the-icons-ivy-rich"
+      :emacs>= 25.1
+      :ensure t :require t
+      :after ivy-rich all-the-icons
+      :global-minor-mode t)
   )
 #+end_src
 
 *** beacon
 #+begin_src emacs-lisp 
-    (leaf beacon
-      :doc "Highlight the cursor whenever the window scrolls"
-      :req "seq-2.14"
-      :tag "convenience"
-      :url "https://github.com/Malabarba/beacon"
-      :ensure t :require t
-      :global-minor-mode t
-      :custom (beacon-color . "red"))
+  (eval-when-compile
+    (el-clone :repo "Malabarba/beacon"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/beacon"))
+    (autoload-if-found '(beacon-mode) "beacon")
+    (beacon-mode t)
+    (with-eval-after-load 'beacon
+      (setq beacon-color "red")))
+
 #+end_src
 
 *** display-line-numbers
 #+begin_src emacs-lisp
-  (leaf display-line-numbers
-      :doc "interface for display-line-numbers"
-      :tag "builtin"
-      :config (custom-set-variables '(display-line-numbers-width-start t)))
+  (with-delayed-execution
+    (custom-set-variables '(display-line-numbers-width-start t)))
 #+end_src
 
 *** doom-modeline
@@ -2026,14 +2021,14 @@ Allows you to integrate Rich Presence from Discord.
 #+end_src
 *** page-break-lines
 #+begin_src emacs-lisp 
-    (leaf page-break-lines
-      :doc "Display ^L page breaks as tidy horizontal lines"
-      :req "emacs-24.4"
-      :tag "faces" "convenience" "emacs>=24.4"
-      :url "https://github.com/purcell/page-break-lines"
-      :emacs>= 24.4
-      :ensure t :require t
-      :global-minor-mode global-page-break-lines-mode)
+  (leaf page-break-lines
+    :doc "Display ^L page breaks as tidy horizontal lines"
+    :req "emacs-24.4"
+    :tag "faces" "convenience" "emacs>=24.4"
+    :url "https://github.com/purcell/page-break-lines"
+    :emacs>= 24.4
+    :ensure t :require t
+    :global-minor-mode global-page-break-lines-mode)
 #+end_src
 
 *** paren
@@ -2141,6 +2136,8 @@ Allows you to integrate Rich Presence from Discord.
     (interactive "p")
     (delete-word (- arg)))
 #+end_src
+
+*** eat-toggle
 
 *** others
 #+begin_src emacs-lisp 

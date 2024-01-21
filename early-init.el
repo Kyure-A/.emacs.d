@@ -41,8 +41,6 @@
   :config
   (leaf leaf-manager :ensure t :after leaf)
   (leaf leaf-keywords :ensure t :init (leaf-keywords-init) :after leaf)
-  (leaf leaf-convert :ensure t :after leaf)
-  (leaf leaf-tree :ensure t :custom (imenu-list-size . 30) (imenu-list-position . 'left) :after leaf)
   (leaf package :require t)
   (leaf use-package :ensure t))
 

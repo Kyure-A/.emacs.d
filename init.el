@@ -16,6 +16,9 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'leaf))
+
 (setq user-full-name "Kyure_A")
 (setq user-mail-address "k@kyre.moe")
 
@@ -110,7 +113,7 @@
   (add-to-list 'load-path "~/.elpkg/elpa/el-clone")
   (require 'el-clone))
 
-(global-set-key (kbd "<f2>") 'vterm-toggle)
+(global-set-key (kbd "<f2>") 'eat)
 (global-set-key (kbd "<f3>") 'dashboard-open)
 (global-set-key (kbd "RET") 'smart-newline)
 (global-set-key (kbd "C-RET") 'newline)
@@ -194,19 +197,6 @@
 (setq scroll-preserve-screen-position 'always)
 
 (eval-when-compile
-  (el-clone :repo "ahungry/fast-scroll"))
-
-(with-delayed-execution-priority-high
-  (add-to-list 'load-path (locate-user-emacs-file "ahungry/fast-scroll"))
-  (autoload-if-found '(fast-scroll-mode) "fast-scroll")
-  (fast-scroll-mode)
-  (with-eval-after-load 'fast-scroll
-    (add-hook 'fast-scroll-start-hook (lambda () (flycheck-mode -1)))
-    (add-hook 'fast-scroll-end-hook (lambda () (flycheck-mode 1)))
-    (fast-scroll-config)
-    (setq jit-lock-defer-time 0)))
-
-(eval-when-compile
   (el-clone :repo "zk-phi/sublimity"))
 
 (with-delayed-execution-priority-high
@@ -215,7 +205,7 @@
   (sublimity-mode t)
   (with-eval-after-load 'sublimity
     (setq sublimity-attractive-centering-width 200)
-    (setq sublimity-scroll-weight 5)
+    (setq sublimity-scroll-weight 15)
     (setq sublimity-scroll-drift-length 10)))
 
 (setq-default indent-tabs-mode nil)
@@ -230,14 +220,16 @@
 (with-delayed-execution
   (delete-selection-mode t))
 
+(defun my/compile-init-files ()
+  (interactive)
+  (org-babel-tangle-file "~/.emacs.d/early-init.org" "~/.emacs.d/early-init.el" "emacs-lisp")
+  (org-babel-tangle-file "~/.emacs.d/init.org" "~/.emacs.d/init.el" "emacs-lisp")
+  (byte-compile-file "~/.emacs.d/early-init.el")
+  (byte-compile-file "~/.emacs.d/init.el"))
+
 (add-hook 'org-mode-hook
           (lambda ()
-            (add-hook 'after-save-hook (lambda ()
-                                         (org-babel-tangle-file "~/.emacs.d/early-init.org" "~/.emacs.d/early-init.el" "emacs-lisp")
-                                         (org-babel-tangle-file "~/.emacs.d/init.org" "~/.emacs.d/init.el" "emacs-lisp")
-                                         (byte-compile-file "~/.emacs.d/early-init.el")
-                                         (byte-compile-file "~/.emacs.d/init.el")
-                                         ))))
+            (add-hook 'after-save-hook #'my/compile-init-files)))
 
 (with-delayed-execution
   (display-time-mode t)
@@ -377,6 +369,13 @@
 
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/shrink-path")))
+
+(eval-when-compile
+  (el-clone :repo "magit/transient"
+            :load-paths `(,(locate-user-emacs-file "el-clone/transient/lisp"))))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/transient/lisp")))
 
 (eval-when-compile
   (el-clone :repo "emacsmirror/queue"))
@@ -575,6 +574,7 @@
   (add-to-list 'auto-mode-alist '("\\.mts$" . typescript-mode))
   (add-to-list 'auto-mode-alist '("\\.cts$" . typescript-mode))
   (add-hook 'typescript-mode-hook #'tide-setup)
+  (add-hook 'typescript-mode-hook #'flycheck-mode)
   (setq tide-node-executable "~/.nix-profile/bin/node"))
 
 (leaf vue-mode
@@ -880,31 +880,6 @@
     :config (add-to-list 'company-backends 'company-shell))
   )
 
-(eval-when-compile
-  (el-clone :repo "emacs-dashboard/emacs-dashboard"))
-
-(with-delayed-execution
-  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-dashboard"))
-  (autoload-if-found '(dashboard-setup-startup-hook) "dashboard")
-  (dashboard-setup-startup-hook)
-  (with-eval-after-load 'dashboard
-    (define-key dashboard-mode-map (kbd "<f3>") #'quit-dashboard)
-    (setq dashboard-items '((bookmarks . 5)
-                            (recents  . 5)
-                            (projects . 5)))
-    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-    (setq dashboard-center-content t)
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-set-file-icons t)
-    (setq dashboard-banner-logo-title "Kyure_A's Emacs")
-    (setq dashboard-footer-messages '("「今日も一日がんばるぞい！」 - 涼風青葉"
-                                          "「なんだかホントに入社した気分です！」 - 涼風青葉"
-                                          "「そしてそのバグの程度で実力も知れるわけです」- 阿波根うみこ"
-                                          "「えーー！なるっちの担当箇所がバグだらけ！？」 - 桜ねね"
-                                          "「C++ を完全に理解してしまったかもしれない」 - 桜ねね"
-                                          "「これでもデバッグはプロ級だし 今はプログラムの知識だってあるんだからまかせてよね！」 - 桜ねね"))
-    (setq dashboard-startup-banner (if (or (eq window-system 'x) (eq window-system 'ns) (eq window-system 'w32)) "~/.emacs.d/static/banner.png" "~/.emacs.d/static/banner.txt"))))
-
 (defun open-dashboard ()
   "Open the *dashboard* buffer and jump to the first widget."
   (interactive)
@@ -919,7 +894,7 @@
   ;; Display dashboard in maximized window
   (delete-other-windows)
   ;; Refresh dashboard buffer
-  (dashboard-refresh-buffer)
+  (dashboard-open)
   ;; Jump to the first section
   (dashboard-goto-recent-files))
 
@@ -931,96 +906,89 @@
        (and (bound-and-true-p winner-mode) (winner-undo))
        (setq dashboard-recover-layout-p nil)))
 
-(leaf dirvish
-  :doc "A modern file manager based on dired mode"
-  :req "emacs-27.1" "transient-0.3.7"
+(eval-when-compile
+  (el-clone :repo "emacs-dashboard/emacs-dashboard"))
+
+(add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-dashboard"))
+(require 'dashboard)
+(with-eval-after-load 'dashboard
+  (dashboard-setup-startup-hook)
+  (define-key dashboard-mode-map (kbd "<f3>") #'quit-dashboard)
+  (setq dashboard-items '((bookmarks . 5)
+                          (recents  . 5)
+                          (projects . 5)))
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+  (setq dashboard-center-content t)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-banner-logo-title "Kyure_A's Emacs")
+  (setq dashboard-footer-messages '("「今日も一日がんばるぞい！」 - 涼風青葉"
+                                    "「なんだかホントに入社した気分です！」 - 涼風青葉"
+                                    "「そしてそのバグの程度で実力も知れるわけです」- 阿波根うみこ"
+                                    "「えーー！なるっちの担当箇所がバグだらけ！？」 - 桜ねね"
+                                    "「C++ を完全に理解してしまったかもしれない」 - 桜ねね"
+                                    "「これでもデバッグはプロ級だし 今はプログラムの知識だってあるんだからまかせてよね！」 - 桜ねね"))
+  (setq dashboard-startup-banner (if (or (eq window-system 'x) (eq window-system 'ns) (eq window-system 'w32)) "~/.emacs.d/static/banner.png" "~/.emacs.d/static/banner.txt")))
+
+(eval-when-compile
+  (el-clone :repo "alexluigit/dirvish"
+            :load-paths `(,(locate-user-emacs-file "el-clone/dirvish/extensions"))))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/dirvish"))
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/dirvish/extensions"))
+  (autoload-if-found '(dirvish-override-dired-mode) "dirvish")
+  (dirvish-override-dired-mode)
+  (with-eval-after-load 'dirvish
+    (setq dirvish-attributes '(vc-state subtree-state all-the-icons collapse git-msg file-time file-size))
+    (setq dirvish-preview-dispatchers (cl-substitute 'pdf-preface 'pdf dirvish-preview-dispatchers))))
+
+(with-eval-after-load 'dired
+  (setq dired-recursive-copies 'always)
+  (put 'dired-find-alternate-file 'disabled nil)
+  (define-key dired-mode-map (kbd "RET") #'dired-open-in-accordance-with-situation)
+  (define-key dired-mode-map (kbd "<left>") #'dired-up-directory)
+  (define-key dired-mode-map (kbd "<right>") #'dired-open-in-accordance-with-situation))
+
+(eval-when-compile
+  (el-clone :repo "jwiegley/emacs-async"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-async"))
+  (autoload-if-found '(dired-async-mode) "dired-async")
+  (dired-async-mode t))
+
+(eval-when-compile
+  (el-clone :repo "emacsorphanage/dired-k"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/dired-k"))
+  (autoload-if-found '(dired-k) "dired-k")
+  (add-hook 'dired-initial-position-hook #'dired-k))
+
+(defun dired-open-in-accordance-with-situation ()
+  (interactive)
+  (let ((file (dired-get-filename)))
+    (if (file-directory-p file)
+        (dired-find-alternate-file)
+      (dired-find-file))))
+
+(leaf dired-preview
+  :doc "Automatically preview file at point in Dired"
+  :req "emacs-27.1"
   :tag "convenience" "files" "emacs>=27.1"
-  :url "https://github.com/alexluigit/dirvish"
-  :added "2023-06-07"
-  :emacs>= 27.1
+  :url "https://git.sr.ht/~protesilaos/dired-preview"
+  :added "2023-07-30"
   :after dired
-  :ensure t
-  :init (dirvish-override-dired-mode)
-  :custom
-  (dirvish-attributes . '(vc-state subtree-state all-the-icons collapse git-msg file-time file-size))
-  (dirvish-preview-dispatchers . (cl-substitute 'pdf-preface 'pdf dirvish-preview-dispatchers))    
-  :config
+  :emacs>= 27.1
+  :ensure t)
 
-  (leaf dired
-    :tag "builtin"
-    :bind
-    (:dired-mode-map
-     ("RET" . dired-open-in-accordance-with-situation)
-     ("<right>" . dired-open-in-accordance-with-situation)
-     ("<left>" . dired-up-directory)
-     ("a" . dired-find-file)
-     ("e" . wdired-change-to-wdired-mode))
-    :custom
-    (dired-recursive-copies . 'always)
-    :config
-    ;; (ffap-bindings) ;; find-file を便利にするが、ちょっと挙動が嫌なので OFF にした
-
-    (leaf dired-async
-      :doc "Asynchronous dired actions"
-      :tag "out-of-MELPA" "network" "async" "dired"
-      :url "https://github.com/jwiegley/emacs-async"
-      :added "2023-09-22"
-      :after dired async
-      :require t)
-
-    (leaf dired-toggle
-      :doc "Show dired as sidebar and will not create new buffers when changing dir"
-      :tag "sidebar" "dired"
-      :url "https://github.com/fasheng/dired-toggle"
-      :after dired
-      :ensure t :require t)
-
-    (leaf dired-k
-      :doc "Highlight dired by size, date, git status"
-      :req "emacs-24.3"
-      :tag "emacs>=24.3"
-      :url "https://github.com/emacsorphanage/dired-k"
-      :emacs>= 24.3
-      :ensure t :require t
-      :after dired
-      :hook (dired-initial-position-hook . dired-k))
-
-    (leaf wdired
-      :doc "Rename files editing their names in dired buffers"
-      :tag "builtin"
-      :after dired
-      :require t)
-
-    (leaf dired-toggle-sudo
-      :doc "Browse directory with sudo privileges."
-      :tag "dired" "emacs"
-      :added "2023-07-21"
-      :after dired
-      :ensure t)
-
-    (leaf dired-preview
-      :doc "Automatically preview file at point in Dired"
-      :req "emacs-27.1"
-      :tag "convenience" "files" "emacs>=27.1"
-      :url "https://git.sr.ht/~protesilaos/dired-preview"
-      :added "2023-07-30"
-      :after dired
-      :emacs>= 27.1
-      :ensure t)
-
-    (put 'dired-find-alternate-file 'disabled nil))
-
-  :preface
-
-  (leaf dired-open-in-accordance-with-situation
-    :url "https://nishikawasasaki.hatenablog.com/entry/20120222/1329932699"
-    :preface
-    (defun dired-open-in-accordance-with-situation ()
-      (interactive)
-      (let ((file (dired-get-filename)))
-        (if (file-directory-p file)
-            (dired-find-alternate-file)
-          (dired-find-file))))))
+(leaf dired-toggle-sudo
+  :doc "Browse directory with sudo privileges."
+  :tag "dired" "emacs"
+  :added "2023-07-21"
+  :after dired
+  :ensure t)
 
 (leaf editorconfig
   :doc "EditorConfig Emacs Plugin"
@@ -1186,6 +1154,7 @@
   (el-clone :repo "ayanyan/nihongo-util"))
 
 (with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/nihongo-util"))
   (require 'nu-fun)
   (setq nu-my-toten "，")
   (setq nu-my-kuten "．"))
@@ -1342,7 +1311,7 @@
 
 (with-delayed-execution
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/jobcan"))
-  (autoload-if-found '(jobcan-status) "jobcan"))
+  (require 'jobcan))
 
 (eval-when-compile
   (el-clone :repo "magit/magit"
@@ -1414,58 +1383,60 @@
         (quickrun :start start :end end)
       (quickrun))))
 
+(eval-when-compile
+  (el-clone :repo "domtronn/all-the-icons.el"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons")))
+
+(eval-when-compile
+  (el-clone :repo "wyuenho/all-the-icons-dired"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons-dired"))
+  (autoload-if-found '(all-the-icons-dired-mode) "all-the-icons-dired")
+  (add-hook 'dired-mode #'all-the-icons-dired-mode))
+
 (leaf all-the-icons
   :doc "A library for inserting Developer icons"
   :req "emacs-24.3"
   :tag "lisp" "convenient" "emacs>=24.3"
   :url "https://github.com/domtronn/all-the-icons.el"
   :emacs>= 24.3
-  :ensure t :require t
   :require t
   :config
 
-(leaf all-the-icons-dired
-  :doc "Shows icons for each file in dired mode"
-  :req "emacs-24.4" "all-the-icons-2.2.0"
-  :tag "dired" "icons" "files" "emacs>=24.4"
-  :url "https://github.com/wyuenho/all-the-icons-dired"
-  :emacs>= 24.4
-  :ensure t :require t
-  :after all-the-icons
-  :hook (dired-mode . all-the-icons-dired-mode))
+  (leaf all-the-icons-ivy
+    :doc "Shows icons while using ivy and counsel"
+    :req "emacs-24.4" "all-the-icons-2.4.0" "ivy-0.8.0"
+    :tag "faces" "emacs>=24.4"
+    :emacs>= 24.4
+    :ensure t :require t
+    :after all-the-icons ivy)
 
-(leaf all-the-icons-ivy
-  :doc "Shows icons while using ivy and counsel"
-  :req "emacs-24.4" "all-the-icons-2.4.0" "ivy-0.8.0"
-  :tag "faces" "emacs>=24.4"
-  :emacs>= 24.4
-  :ensure t :require t
-  :after all-the-icons ivy)
-
-(leaf all-the-icons-ivy-rich
-  :doc "Better experience with icons for ivy"
-  :req "emacs-25.1" "ivy-rich-0.1.0" "all-the-icons-2.2.0"
-  :tag "ivy" "icons" "convenience" "emacs>=25.1"
-  :url "https://github.com/seagle0128/all-the-icons-ivy-rich"
-  :emacs>= 25.1
-  :ensure t :require t
-  :after ivy-rich all-the-icons
-  :global-minor-mode t)
+  (leaf all-the-icons-ivy-rich
+    :doc "Better experience with icons for ivy"
+    :req "emacs-25.1" "ivy-rich-0.1.0" "all-the-icons-2.2.0"
+    :tag "ivy" "icons" "convenience" "emacs>=25.1"
+    :url "https://github.com/seagle0128/all-the-icons-ivy-rich"
+    :emacs>= 25.1
+    :ensure t :require t
+    :after ivy-rich all-the-icons
+    :global-minor-mode t)
 )
 
-(leaf beacon
-  :doc "Highlight the cursor whenever the window scrolls"
-  :req "seq-2.14"
-  :tag "convenience"
-  :url "https://github.com/Malabarba/beacon"
-  :ensure t :require t
-  :global-minor-mode t
-  :custom (beacon-color . "red"))
+(eval-when-compile
+  (el-clone :repo "Malabarba/beacon"))
 
-(leaf display-line-numbers
-    :doc "interface for display-line-numbers"
-    :tag "builtin"
-    :config (custom-set-variables '(display-line-numbers-width-start t)))
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/beacon"))
+  (autoload-if-found '(beacon-mode) "beacon")
+  (beacon-mode t)
+  (with-eval-after-load 'beacon
+    (setq beacon-color "red")))
+
+(with-delayed-execution
+  (custom-set-variables '(display-line-numbers-width-start t)))
 
 (eval-when-compile
   (el-clone :repo "seagle0128/doom-modeline"))
