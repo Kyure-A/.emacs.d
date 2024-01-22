@@ -343,7 +343,8 @@
   (el-clone :repo "conao3/keg.el"))
 
 (with-delayed-execution
-  (add-to-list 'load-path (locate-user-emacs-file "el-clone/keg")))
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/keg"))
+  (add-to-list 'auto-mode-alist '("Keg" . emacs-lisp-mode)))
 
 (eval-when-compile
   (el-clone :repo "purcell/package-lint"))
@@ -452,44 +453,36 @@
   :ensure t :require t
   :hook ((c-mode c++-mode) . (lambda () (google-set-c-style))))
 
-(leaf dart-mode
-  :doc "Major mode for editing Dart files"
-  :req "emacs-24.3"
-  :tag "languages" "emacs>=24.3"
-  :url "https://github.com/bradyt/dart-mode"
-  :emacs>= 24.3
-  :after prog
-  :ensure t :require t
-  :hook (dart-mode-hook . flycheck-mode)
-  :custom
-  (dart-enable-analysis-server . t))
+(eval-when-compile
+  (el-clone :repo "bradyt/dart-mode"))
 
-(leaf lsp-dart
-  :doc "Dart support lsp-mode"
-  :req "emacs-26.3" "lsp-treemacs-0.3" "lsp-mode-7.0.1" "dap-mode-0.6" "f-0.20.0" "dash-2.14.1" "dart-mode-1.0.5"
-  :tag "extensions" "languages" "emacs>=26.3" "lsp"
-  :url "https://emacs-lsp.github.io/lsp-dart"
-  :emacs>= 26.3
-  :ensure t :require t
-  :after lsp-treemacs lsp-mode dap-mode dart-mode
-  :commands lsp
-  :hook ((dart-mode-hook . lsp))
-  :config
-  (dap-register-debug-template "Flutter :: Custom debug"
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/dart-mode"))
+  (autoload-if-found '(dart-mode) "dart-mode")
+  (add-to-list 'auto-mode-alist '("\\.dart$" . dart-mode))
+  (with-eval-after-load 'dart
+    (add-hook 'dart-mode-hook #'flycheck-mode)
+    (setq dart-enable-analysis-server t)))
+
+(eval-when-compile
+  (el-clone :repo "emacs-lsp/lsp-dart"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/lsp-dart"))
+  (add-hook 'dart-mode-hook #'lsp)
+  (with-eval-after-load 'lsp-dart
+    (dap-register-debug-template "Flutter :: Custom debug"
                                (list :flutterPlatform "x86_64" :program "lib/main_debug.dart" :args
-                                     '("--flavor" "customer_a"))))
+                                     '("--flavor" "customer_a")))))
 
-(leaf flutter
-  :doc "Tools for working with Flutter SDK"
-  :req "emacs-25.1"
-  :tag "languages" "emacs>=25.1"
-  :url "https://github.com/amake/flutter.el"
-  :added "2023-08-22"
-  :emacs>= 25.1
-  :after dart-mode
-  :ensure t
-  :hook (dart-mode . (lambda ()
-                       (add-hook 'after-save-hook #'flutter-run-or-hot-reload nil t))))
+(eval-when-compile
+  (el-clone :repo "amake/flutter.el"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/flutter"))
+  (autoload-if-found '(flutter-run-or-hot-reload) "flutter")
+  (with-eval-after-load 'flutter
+    (add-hook 'dart-mode (lambda () (add-hook 'after-save-hook #'flutter-run-or-hot-reload nil t)))))
 
 (eval-when-compile
   (el-clone :repo "spotify/dockerfile-mode"))
@@ -518,6 +511,23 @@
   (add-hook 'hy-mode (lambda () (setq hy-shell-interpreter-args
                             (concat "--repl-output-fn=hy.contrib.hy-repr.hy-repr "
                                     hy-shell-interpreter-args)))))
+
+(eval-when-compile
+  (el-clone :repo "NixOS/nix-mode"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/nix-mode"))
+
+  (autoload-if-found '(nix-mode) "nix-mode")
+  (autoload-if-found '(nix-drv-mode) "nix-drv-mode")
+  (autoload-if-found '(company-nix) "nix-company")
+  (add-to-list 'auto-mode-alist '("\\.nix$" . nix-mode))
+
+  (with-eval-after-load 'nix-mode
+    (add-hook 'nix-mode-hook #'lsp))
+
+  (with-eval-after-load 'company
+    (push 'company-nix company-backends)))
 
 (leaf powershell
   :doc "Mode for editing PowerShell scripts"
@@ -569,6 +579,10 @@
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/tide"))
   (autoload-if-found '(typescript-mode) "typescript-mode")
   (autoload-if-found '(tide-setup) "tide")
+  (add-to-list 'auto-mode-alist '("\\.js$" . typescript-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-mode))
+  (add-to-list 'auto-mode-alist '("\\.mjs$" . typescript-mode))
+  (add-to-list 'auto-mode-alist '("\\.cjs$" . typescript-mode))
   (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
   (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-mode))
   (add-to-list 'auto-mode-alist '("\\.mts$" . typescript-mode))
@@ -586,30 +600,25 @@
   :ensure t
   :after mmm-mode vue-html-mode ssass-mode edit-indirect)
 
-(leaf csv-mode
-  :doc "Major mode for editing comma/char separated values"
-  :req "emacs-27.1" "cl-lib-0.5"
-  :tag "convenience" "emacs>=27.1"
-  :url "https://elpa.gnu.org/packages/csv-mode.html"
-  :emacs>= 27.1
-  :after prog
-  :ensure t :require t
-  :mode "\\.csv$")
+(eval-when-compile
+  (el-clone :repo "emacsmirror/csv-mode"))
 
-(leaf markdown-mode
-  :doc "Major mode for Markdown-formatted text"
-  :req "emacs-26.1"
-  :tag "itex" "github flavored markdown" "markdown" "emacs>=26.1"
-  :url "https://jblevins.org/projects/markdown-mode/"
-  :emacs>= 26.1
-  :after prog
-  :ensure t :require t
-  :commands markdown-mode
-  :mode (("\\.md\\'" . gfm-mode)
-         ("\\.markdown\\'" . gfm-mode))
-  :custom
-  (markdown-command . "github-markup")
-  (markdown-command-needs-filename . t))
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/csv-mode"))
+  (autoload-if-found '(csv-mode) "csv-mode")
+  (add-to-list 'auto-mode-alist '("\\.csv$" . csv-mode)))
+
+(eval-when-compile
+  (el-clone :repo "jrblevin/markdown-mode"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/markdown-mode"))
+  (autoload-if-found '(markdown-mode gfm-mode) "markdown-mode")
+  (add-to-list 'auto-mode-alist '("\\.md$" . gfm-mode))
+  (add-to-list 'auto-mode-alist '("\\.markdown$" . gfm-mode))
+  (with-eval-after-load 'markdown
+    (setq markdown-command "github-markup")
+    (setq markdown-command-needs-filename t)))
 
 (with-eval-after-load 'org
   (setq org-directory "~/document/org")
@@ -691,40 +700,31 @@
   :after prog
   :mode "\\.hdl$")
 
-(leaf web-mode
-  :doc "major mode for editing web templates"
-  :req "emacs-23.1"
-  :tag "languages" "emacs>=23.1"
-  :url "https://web-mode.org"
-  :emacs>= 23.1
-  :after prog
-  :ensure t :require t
-  :mode
-  "\\.[agj]sp\\'"
-  "\\.as[cp]x\\'"
-  "\\.djhtml\\'"
-  "\\.ejs\\'"
-  "\\.erb\\'"
-  "\\.html\\'"
-  "\\.js\\'"
-  "\\.jsx\\'"
-  "\\.mustache\\'"
-  "\\.php\\'"
-  "\\.phtml\\'"
-  "\\.tpl\\'"
-  "\\.vue\\'"
-  :custom
-  (web-mode-markup-indent-offset . 2)
-  (web-mode-enable-auto-pairing . t)
-  (web-mode-enable-auto-closing . t)
-  (web-mode-tag-auto-close-style . 2)
-  (web-mode-enable-auto-quoting . nil)
-  (web-mode-enable-current-column-highlight . t)
-  (web-mode-enable-current-element-highlight . t)
-  :config
-  (leaf html+-mode :require nil)
-  (with-eval-after-load 'web-mode (sp-local-pair '(web-mode) "<" ">" :actions :rem))
-  (put 'web-mode-markup-indent-offset 'safe-local-variable 'integerp))
+(eval-when-compile
+  (el-clone :repo "fxbois/web-mode"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/web-mode"))
+  (autoload-if-found '(web-mode) "web-mode" nil t)
+  (add-to-list 'auto-mode-alist '("\\.[agj]sp$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.gsp$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.liquid$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.svg$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl$" . web-mode))
+
+  (with-eval-after-load 'web-mode
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-enable-auto-pairing t)
+    (setq web-mode-enable-auto-closing t)
+    (setq web-mode-tag-auto-close-style 2)
+    (setq web-mode-enable-auto-quoting nil)
+    (setq web-mode-enable-current-column-highlight t)
+    (setq web-mode-enable-current-element-highlight t)
+    (setq web-mode-comment-style 2)
+    (setq web-mode-enable-auto-indentation nil)))
 
 (eval-when-compile
   (el-clone :repo "yoshiki/yaml-mode"))
@@ -798,87 +798,70 @@
     (setq centaur-tabs-adjust-buffer-order t)
     (setq centaur-tabs-cycle-scope 'groups)))
 
-(leaf company
-  :doc "Modular text completion framework"
-  :req "emacs-25.1"
-  :tag "matching" "convenience" "abbrev" "emacs>=25.1"
-  :url "http://company-mode.github.io/"
-  :emacs>= 25.1
-  :ensure t :require t
-  :global-minor-mode global-company-mode
-  :bind (:company-active-map ( "<tab>" . company-complete-common-or-cycle))
-  :custom
-  (company-idle-delay . 0)
-  (company-minimum-prefix-length . 2)
-  (company-selection-wrap-around . t)
-  (company-tooltip-align-annotations . t)
-  (company-require-match . 'never)
-  (company-transformers . '(company-sort-by-statistics company-sort-by-backend-importance))
-  :config
+(eval-when-compile
+  (el-clone :repo "company-mode/company-mode"))
 
-  (leaf company-box
-    :doc "Company front-end with icons"
-    :req "emacs-26.0.91" "dash-2.19.0" "company-0.9.6" "frame-local-0.0.1"
-    :tag "convenience" "front-end" "completion" "company" "emacs>=26.0.91"
-    :url "https://github.com/sebastiencs/company-box"
-    :emacs>= 26.0
-    :ensure t :require t
-    :require t
-    :after company frame-local
-    :hook ((company-mode-hook . company-box-mode))
-    :custom
-    (company-box-icons-alist . 'company-box-icons-all-the-icons)
-    (company-box-doc-enable . nil))
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-mode"))
+  (autoload-if-found '(global-company-mode) "company")
+  (global-company-mode)
+  (with-eval-after-load 'company
+    (define-key company-active-map (kbd "<tab>") #'company-complete-common-or-cycle)
+    (setq company-idle-delay 0)
+    (setq company-minimum-prefix-length 2)
+    (setq company-selection-wrap-around t)
+    (setq company-tooltip-align-annotations t)
+    (setq company-require-match 'never)
+    (setq company-transformers '(company-sort-by-statistics company-sort-by-backend-importance))))
 
-  (leaf company-clang :doc "company-mode completion backend for Clang" :after company)
+(eval-when-compile
+  (el-clone :repo "sebastiencs/company-box"))
 
-  (leaf company-etags :doc "company-mode completion backend for etags" :after company)
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-box"))
+  (autoload-if-found '(company-box-mode) "company-box")
+  (with-eval-after-load 'company-mode
+    (when window-system
+      (add-hook 'company-mode-hook #'company-box-mode)))
+  (with-eval-after-load 'company-box
+    (setq company-box-icons-alist 'company-box-icons-all-the-icons))
+  (with-eval-after-load 'company-box-doc
+    (setq company-box-doc-enable nil)))
 
-  (leaf company-gtags :doc "company-mode completion backend for GNU Global" :after company)
+(eval-when-compile
+  (el-clone :repo "tumashu/company-posframe"))
 
-  (leaf company-statistics
-    :doc "Sort candidates using completion history"
-    :req "emacs-24.3" "company-0.8.5"
-    :tag "matching" "convenience" "abbrev" "emacs>=24.3"
-    :url "https://github.com/company-mode/company-statistics"
-    :emacs>= 24.3
-    :ensure t :require t
-    :require t
-    :after company
-    :global-minor-mode t
-    :hook (after-init-hook))
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-posframe"))
+  (autoload-if-found '(company-posframe-mode) "company-posframe")
+  (company-posframe-mode t))
 
-  (leaf company-posframe
-    :doc "Use a posframe as company candidate menu"
-    :req "emacs-26.0" "company-0.9.0" "posframe-0.9.0"
-    :tag "matching" "convenience" "abbrev" "emacs>=26.0"
-    :url "https://github.com/tumashu/company-posframe"
-    :emacs>= 26.0
-    :ensure t :require t
-    :after company posframe
-    :global-minor-mode t)
+(eval-when-compile
+  (el-clone :repo "expez/company-quickhelp"))
 
-  (leaf company-quickhelp
-    :doc "Popup documentation for completion candidates"
-    :req "emacs-24.3" "company-0.8.9" "pos-tip-0.4.6"
-    :tag "quickhelp" "documentation" "popup" "company" "emacs>=24.3"
-    :url "https://www.github.com/expez/company-quickhelp"
-    :emacs>= 24.3
-    :ensure t :require t
-    :after company pos-tip
-    :custom (company-quickhelp-delay . 0.1))
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-quickhelp"))
+  (autoload-if-found '(company-quickhelp-mode) "company-quickhelp")
+  (company-quickhelp-mode t))
 
-  (leaf company-shell
-    :doc "Company mode backend for shell functions"
-    :req "emacs-24.4" "company-0.8.12" "dash-2.12.0" "cl-lib-0.5"
-    :tag "auto-completion" "shell" "company" "emacs>=24.4"
-    :url "https://github.com/Alexander-Miller/company-shell"
-    :added "2023-04-20"
-    :emacs>= 24.4
-    :ensure t
-    :after company
-    :config (add-to-list 'company-backends 'company-shell))
-  )
+(eval-when-compile
+  (el-clone :repo "Alexander-Miller/company-shell"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-shell"))
+  (autoload-if-found '(company-shell) "company-shell")
+  (add-to-list 'company-backends 'company-shell))
+
+(eval-when-compile
+  (el-clone :repo "company-mode/company-statistics"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-statistics"))
+  (autoload-if-found '(company-statistics-mode) "company-statistics")
+  (company-statistics-mode t))
+
+(defvar dashboard-recover-layout-p nil
+  "Whether recovers the layout.")
 
 (defun open-dashboard ()
   "Open the *dashboard* buffer and jump to the first widget."
@@ -990,15 +973,13 @@
   :after dired
   :ensure t)
 
-(leaf editorconfig
-  :doc "EditorConfig Emacs Plugin"
-  :req "cl-lib-0.5" "nadvice-0.3" "emacs-24"
-  :tag "emacs>=24"
-  :url "https://github.com/editorconfig/editorconfig-emacs#readme"
-  :emacs>= 24
-  :ensure t :require t
-  :after nadvice
-  :global-minor-mode t)
+(eval-when-compile
+  (el-clone :repo "editorconfig/editorconfig-emacs"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/editorconfig-emacs"))
+  (autoload-if-found '(editorconfig-mode) "editorconfig")
+  (editorconfig-mode t))
 
 (eval-when-compile
   (el-clone :repo "flycheck/flycheck"))
@@ -1009,103 +990,80 @@
   (with-eval-after-load 'flycheck
     (setq flycheck-idle-change-delay 0)))
 
-(leaf gcmh
-  :doc "the Garbage Collector Magic Hack"
-  :req "emacs-24"
-  :tag "internal" "emacs>=24"
-  :url "https://gitlab.com/koral/gcmh"
-  :emacs>= 24
-  :ensure t :require t
-  :hook (after-init-hook . gcmh-mode)
-  :custom (gcmh-verbose . t))
+(eval-when-compile
+  (el-clone :repo "emacsmirror/gcmh"))
 
-(leaf hydra
-  :doc "Make bindings that stick around."
-  :req "cl-lib-0.5" "lv-0"
-  :tag "bindings"
-  :url "https://github.com/abo-abo/hydra"
-  :ensure t :require t
-  :after lv)
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/gcmh"))
+  (autoload-if-found '(gcmh-mode) "gcmh")
+  (gcmh-mode)
+  (with-eval-after-load 'gcmh
+    (setq gcmh-verbose t)))
 
-(leaf counsel
-  :doc "Various completion functions using Ivy"
-  :req "emacs-24.5" "ivy-0.13.4" "swiper-0.13.4"
-  :tag "tools" "matching" "convenience" "emacs>=24.5"
-  :url "https://github.com/abo-abo/swiper"
-  :emacs>= 24.5
-  :ensure t :require t
-  :after ivy swiper
-  :global-minor-mode t
-  :bind
-  (:counsel-mode-map ([remap find-file] . nil))
-  :custom
-  (counsel-find-file-ignore-regexp . (regexp-opt '("./" "../")))
-  (read-file-name-function . #'disable-counsel-find-file)
-  :preface
-  (leaf disable-counsel-find-file
-    :url "https://qiita.com/takaxp/items/2fde2c119e419713342b#counsel-find-file-%E3%82%92%E4%BD%BF%E3%82%8F%E3%81%AA%E3%81%84"
-    :preface
-    (defun disable-counsel-find-file (&rest args)
-      "Disable `counsel-find-file' and use the original `find-file' with ARGS."
-      (let ((completing-read-function #'completing-read-default)
-            (completion-in-region-function #'completion--in-region))
-        (apply #'read-file-name-default args))))
-  :config
+(eval-when-compile
+  (el-clone :repo "abo-abo/hydra"))
 
-  (leaf counsel-projectile
-    :doc "Ivy integration for Projectile"
-    :req "counsel-0.13.4" "projectile-2.5.0"
-    :tag "convenience" "project"
-    :url "https://github.com/ericdanan/counsel-projectile"
-    :added "2022-09-01"
-    :ensure t
-    :after counsel projectile
-    :global-minor-mode counsel-projectile-mode))
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/hydra")))
 
-(leaf ivy
-  :doc "Incremental Vertical completYon"
-  :req "emacs-24.5"
-  :tag "matching" "emacs>=24.5"
-  :url "https://github.com/abo-abo/swiper"
-  :emacs>= 24.5
-  :ensure t :require t
-  :global-minor-mode t
-  :custom
-  (ivy-use-virtual-buffers . t)
-  (ivy-wrap . t)
-  (ivy-extra-directories . t)
-  (enable-recursive-minibuffers . t)
-  :config
+;; ivy, counsel and swiper are managed as monorepo.
+(eval-when-compile
+  (el-clone :repo "abo-abo/swiper"))
 
-  (leaf ivy-rich
-    :doc "More friendly display transformer for ivy"
-    :req "emacs-25.1" "ivy-0.13.0"
-    :tag "ivy" "convenience" "emacs>=25.1"
-    :url "https://github.com/Yevgnen/ivy-rich"
-    :emacs>= 25.1
-    :ensure t :require t
-    :after ivy
-    :global-minor-mode t)
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/swiper")))
 
-  (leaf ivy-posframe
-    :doc "Using posframe to show Ivy"
-    :req "emacs-26.0" "posframe-1.0.0" "ivy-0.13.0"
-    :tag "ivy" "matching" "convenience" "abbrev" "emacs>=26.0"
-    :url "https://github.com/tumashu/ivy-posframe"
-    :emacs>= 26.0
-    :ensure t :require t
-    :after posframe ivy
-    :custom (ivy-posframe-display-functions-alist . '((t . ivy-posframe-display-at-frame-center))))
-  )
+(with-delayed-execution-priority-high
+  (autoload-if-found '(counsel-mode) "counsel")
+  (counsel-mode t)
+  (with-eval-after-load 'counsel
+    (define-key counsel-mode-map [remap find-file] nil)
+    (setq counsel-find-file-ignore-regexp (regexp-opt '("./" "../")))
+    (setq read-file-name-function #'disable-counsel-find-file)))
 
-(leaf swiper
-  :doc "Isearch with an overview. Oh, man!"
-  :req "emacs-24.5" "ivy-0.13.4"
-  :tag "matching" "emacs>=24.5"
-  :url "https://github.com/abo-abo/swiper"
-  :emacs>= 24.5
-  :ensure t :require t
-  :after ivy)
+(defun disable-counsel-find-file (&rest args)
+  "Disable `counsel-find-file' and use the original `find-file' with ARGS."
+  (let ((completing-read-function #'completing-read-default)
+        (completion-in-region-function #'completion--in-region))
+    (apply #'read-file-name-default args)))
+
+(eval-when-compile
+  (el-clone :repo "ericdanan/counsel-projectile"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/counsel-projectile"))
+  (autoload-if-found '(counsel-projectile-mode) "counsel-projectile")
+  (counsel-projectile-mode t))
+
+(with-delayed-execution-priority-high
+  (autoload-if-found '(ivy-mode ivy-read ivy-completion-read) "ivy")
+  (with-eval-after-load 'ivy
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-wrap t)
+    (setq ivy-extra-directories t)
+    (setq enable-recursive-minibuffers t)))
+
+(eval-when-compile
+  (el-clone :repo "Yevgnen/ivy-rich"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/ivy-rich"))
+  (autoload-if-found '(ivy-rich-mode) "ivy-rich")
+  (with-eval-after-load 'ivy
+    (ivy-rich-mode t)))
+
+(eval-when-compile
+  (el-clone :repo "tumashu/ivy-posframe"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/ivy-posframe"))
+  (autoload-if-found '(ivy-posframe-mode) "ivy-posframe")
+  (with-eval-after-load 'ivy
+    (ivy-posframe-mode t)
+    (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))))
+
+(with-delayed-execution-priority-high
+  (autoload-if-found '(swiper) "swiper"))
 
 (eval-when-compile
   (el-clone :repo "emacs-lsp/lsp-mode"
@@ -1132,13 +1090,16 @@
   :added "2023-09-05"
   :ensure t)
 
-(leaf multiple-cursors
-  :doc "Multiple cursors for Emacs."
-  :req "cl-lib-0.5"
-  :tag "cursors" "editing"
-  :url "https://github.com/magnars/multiple-cursors.el"
-  :added "2023-12-04"
-  :ensure t)
+(eval-when-compile
+  (el-clone :repo "magnars/multiple-cursors.el"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/multiple-cursors"))
+  (autoload-if-found '(mc/edit-lines mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this) "multiple-cursors")
+  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") #'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this))
 
 (leaf neotree
   :doc "A tree plugin like NerdTree for Vim"
@@ -1159,19 +1120,6 @@
   (setq nu-my-toten "，")
   (setq nu-my-kuten "．"))
 
-(leaf pdf-tools
-  :doc "Support library for PDF documents"
-  :req "emacs-26.3" "tablist-1.0" "let-alist-1.0.4"
-  :tag "multimedia" "files" "emacs>=26.3"
-  :url "http://github.com/vedang/pdf-tools/"
-  :added "2023-07-23"
-  :emacs>= 26.3
-  :ensure t
-  :require t
-  :after tablist
-  :config (pdf-tools-install)
-  (pdf-loader-install))
-
 (leaf popwin
   :doc "Popup Window Manager"
   :req "emacs-24.3"
@@ -1185,21 +1133,17 @@
   (popwin:special-display-config  . t)
   (popwin:popup-window-position . 'bottom))
 
-(leaf projectile
-  :doc "Manage and navigate projects in Emacs easily"
-  :req "emacs-25.1"
-  :tag "convenience" "project" "emacs>=25.1"
-  :url "https://github.com/bbatsov/projectile"
-  :emacs>= 25.1
-  :ensure t :require t
-  :after dashboard)
+(eval-when-compile
+    (el-clone :repo "tumashu/posframe"))
 
-(leaf restart-emacs
-  :doc "Restart emacs from within emacs"
-  :tag "convenience"
-  :url "https://github.com/iqbalansari/restart-emacs"
-  :added "2023-06-14"
-  :ensure t)
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/posframe")))
+
+(eval-when-compile
+  (el-clone :repo "bbatsov/projectile"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/projectile")))
 
 (leaf skewer-mode
   :doc "live browser JavaScript, CSS, and HTML interaction"
@@ -1230,33 +1174,29 @@
     (setq undo-tree-auto-save-history t)
     (setq undo-tree-history-directory-alist  '(("." . "~/.emacs.d/.tmp")))))
 
-(leaf undohist
-  :doc "Persistent undo history for GNU Emacs"
-  :req "cl-lib-1.0"
-  :tag "convenience"
-  :ensure t :require t
-  :custom
-  (undohist-directory . "~/.emacs.d/.tmp/")
-  (undohist-ignored-files . '("/.tmp/" "COMMIT_EDITMSG" "/elpa"))
-  :config
-  (undohist-initialize))
+(eval-when-compile
+  (el-clone :repo "benma/visual-regexp.el"))
 
-(leaf visual-regexp
-  :doc "A regexp/replace command for Emacs with interactive visual feedback"
-  :req "cl-lib-0.2"
-  :tag "feedback" "visual" "replace" "regexp"
-  :url "https://github.com/benma/visual-regexp.el/"
-  :ensure t :require t)
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/visual-regexp"))
+  (autoload-if-found '(vr/replace) "visual-regexp"))
 
-(leaf which-key
-  :doc "Display available keybindings in popup"
-  :req "emacs-24.4"
-  :tag "emacs>=24.4"
-  :url "https://github.com/justbur/emacs-which-key"
-  :emacs>= 24.4
-  :ensure t :require t
-  :global-minor-mode t
-  :config (which-key-setup-side-window-bottom))
+(eval-when-compile
+  (el-clone :repo "justbur/emacs-which-key"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-which-key"))
+  (autoload-if-found '(which-key-mode) "which-key")
+  (which-key-mode))
+
+(eval-when-compile
+  (el-clone :repo "yanghaoxie/which-key-posframe"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/which-key-posframe"))
+  (autoload-if-found '(which-key-posframe-mode) "which-key-posframe")
+  (with-eval-after-load 'which-key
+    (which-key-posframe-mode)))
 
 (leaf yafolding
   :doc "Folding code blocks based on indentation"
@@ -1397,33 +1337,13 @@
   (autoload-if-found '(all-the-icons-dired-mode) "all-the-icons-dired")
   (add-hook 'dired-mode #'all-the-icons-dired-mode))
 
-(leaf all-the-icons
-  :doc "A library for inserting Developer icons"
-  :req "emacs-24.3"
-  :tag "lisp" "convenient" "emacs>=24.3"
-  :url "https://github.com/domtronn/all-the-icons.el"
-  :emacs>= 24.3
-  :require t
-  :config
+(eval-when-compile
+  (el-clone :repo "seagle0128/all-the-icons-ivy-rich"))
 
-  (leaf all-the-icons-ivy
-    :doc "Shows icons while using ivy and counsel"
-    :req "emacs-24.4" "all-the-icons-2.4.0" "ivy-0.8.0"
-    :tag "faces" "emacs>=24.4"
-    :emacs>= 24.4
-    :ensure t :require t
-    :after all-the-icons ivy)
-
-  (leaf all-the-icons-ivy-rich
-    :doc "Better experience with icons for ivy"
-    :req "emacs-25.1" "ivy-rich-0.1.0" "all-the-icons-2.2.0"
-    :tag "ivy" "icons" "convenience" "emacs>=25.1"
-    :url "https://github.com/seagle0128/all-the-icons-ivy-rich"
-    :emacs>= 25.1
-    :ensure t :require t
-    :after ivy-rich all-the-icons
-    :global-minor-mode t)
-)
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons-ivy-rich"))
+  (autoload-if-found '(all-the-icons-ivy-rich-mode) "all-the-icons-ivy-rich")
+  (all-the-icons-ivy-rich-mode t))
 
 (eval-when-compile
   (el-clone :repo "Malabarba/beacon"))
