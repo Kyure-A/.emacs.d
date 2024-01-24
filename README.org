@@ -10,6 +10,9 @@ Kyure_A
 ** Repository
 https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 
+** Screen shot
+[[file:../assets/emacs_screenshot.png]]
+
 * Configurations
 
 ** Initialize
