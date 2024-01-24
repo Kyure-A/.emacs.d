@@ -227,7 +227,7 @@
 (defun my/compile-init-org ()
   (shell-command-to-string
    (mapconcat #'shell-quote-argument
-              `("emacs" "-Q" "--batch" "--eval" "(progn (require 'ob-tangle) (org-babel-tangle-file \"~/.emacs.d/init.org\" \"~/.emacs.d/init.el\" \"emacs-lisp\"))")
+              `("emacs" "-Q" "--batch" "--eval" "(progn (require 'ob-tangle) (org-babel-tangle-file \"~/.emacs.d/README.org\" \"~/.emacs.d/init.el\" \"emacs-lisp\"))")
               " ")))
 
 (defun my/compile-early-init-org ()
