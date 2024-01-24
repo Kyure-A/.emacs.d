@@ -16,7 +16,6 @@
 (setq file-name-handler-alist nil)
 (add-hook 'emacs-startup-hook (lambda () (setq file-name-handler-alist init/saved-file-name-handler-alist)))
 
-(setq package-user-dir "~/.elpkg/elpa")
 (add-to-list 'load-path "./elpa")
 (setq inhibit-startup-screen t)
 (setq initial-scratch-message nil)
@@ -32,17 +31,13 @@
                             ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
   (package-initialize))
 
-(eval-and-compile
-  (when (not (package-installed-p 'leaf))
-    (package-refresh-contents)
-    (package-install 'leaf)))
+(eval-when-compile
+  (unless (file-directory-p "~/.emacs.d/elpa/el-clone")
+    (package-vc-install "https://github.com/Kyure-A/el-clone.git")))
 
-(leaf *leaf
-  :config
-  (leaf leaf-manager :ensure t :after leaf)
-  (leaf leaf-keywords :ensure t :init (leaf-keywords-init) :after leaf)
-  (leaf package :require t)
-  (leaf use-package :ensure t))
+(eval-and-compile
+  (add-to-list 'load-path "~/.emacs.d/elpa/el-clone")
+  (require 'el-clone))
 
 (eval-when-compile
   (el-clone :repo "Kyure_A/monokai-emacs"))

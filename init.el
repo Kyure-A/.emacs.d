@@ -16,9 +16,6 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'leaf))
-
 (setq user-full-name "Kyure_A")
 (setq user-mail-address "k@kyre.moe")
 
@@ -105,14 +102,6 @@
 (with-delayed-execution-priority-high
   (require 'cl-lib))
 
-(eval-when-compile
-  (unless (file-directory-p "~/.elpkg/elpa/el-clone")
-    (package-vc-install "https://github.com/Kyure-A/el-clone.git")))
-
-(eval-and-compile
-  (add-to-list 'load-path "~/.elpkg/elpa/el-clone")
-  (require 'el-clone))
-
 (global-set-key (kbd "<f2>") 'eat)
 (global-set-key (kbd "<f3>") 'dashboard-open)
 (global-set-key (kbd "RET") 'smart-newline)
@@ -133,11 +122,8 @@
 (global-set-key (kbd "C-x C-z") 'nil)
 (global-set-key (kbd "C-x C-c") 'nil)
 
-(global-set-key (kbd "C-c C-f") 'leaf-convert-insert-template)
 (global-set-key (kbd "C-c e b") 'eval-buffer)
 (global-set-key (kbd "C-c e m") 'menu-bar-mode)
-(global-set-key (kbd "C-c l c") 'leaf-convert-region-replace)
-(global-set-key (kbd "C-c l t") 'leaf-tree-mode)
 (global-set-key (kbd "C-c o") 'Kyure_A/open)
 (global-set-key (kbd "C-c p") 'smartparens-global-mode)
 (global-set-key (kbd "C-c s") 'Kyure_A/start-repl)
@@ -165,6 +151,15 @@
 
 (with-delayed-execution
   (fset 'yes-or-no-p 'y-or-n-p))
+
+(eval-when-compile
+  (el-clone :repo "abo-abo/avy"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/avy"))
+  (with-eval-after-load 'avy
+    (setq avy-all-windows nil)
+    (setq avy-background t)))
 
 (eval-when-compile
   (el-clone :repo "alezost/mwim.el"))
@@ -220,10 +215,32 @@
 (with-delayed-execution
   (delete-selection-mode t))
 
+(defun auto-yes (old-fun &rest args)
+  (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t))
+             ((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
+    (apply old-fun args)))
+
+(advice-add #'async-shell-command :around #'auto-yes)
+
+(add-to-list 'display-buffer-alist '("*Async Shell Command*" display-buffer-no-window (nil)))
+
+(defun my/compile-init-org ()
+  (shell-command-to-string
+   (mapconcat #'shell-quote-argument
+              `("emacs" "-Q" "--batch" "--eval" "(progn (require 'ob-tangle) (org-babel-tangle-file \"~/.emacs.d/init.org\" \"~/.emacs.d/init.el\" \"emacs-lisp\"))")
+              " ")))
+
+(defun my/compile-early-init-org ()
+  (shell-command-to-string
+   (mapconcat #'shell-quote-argument
+              `("emacs" "-Q" "--batch" "--eval" "(progn (require 'ob-tangle) (org-babel-tangle-file \"~/.emacs.d/early-init.org\" \"~/.emacs.d/early-init.el\" \"emacs-lisp\"))")
+              " ")))
+
+
 (defun my/compile-init-files ()
   (interactive)
-  (org-babel-tangle-file "~/.emacs.d/early-init.org" "~/.emacs.d/early-init.el" "emacs-lisp")
-  (org-babel-tangle-file "~/.emacs.d/init.org" "~/.emacs.d/init.el" "emacs-lisp")
+  (my/compile-early-init-org)
+  (my/compile-init-org)
   (byte-compile-file "~/.emacs.d/early-init.el")
   (byte-compile-file "~/.emacs.d/init.el"))
 
@@ -250,11 +267,13 @@
   (setq recentf-auto-cleanup 'never)
   (setq recentf-exclude '("/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.tmp/")))
 
-(leaf recentf-ext
-  :doc "Recentf extensions"
-  :tag "files" "convenience"
-  :url "http://www.emacswiki.org/cgi-bin/wiki/download/recentf-ext.el"
-  :ensure t :require t)
+(eval-when-compile
+  (el-clone :repo "emacsmirror/recently"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/recently"))
+  (autoload-if-found '(recently-mode) "recently")
+  (recently-mode t))
 
 (set-frame-parameter nil 'unsplittable t)
 
@@ -271,6 +290,18 @@
 (setq auto-save-default nil)
 
 (eval-when-compile
+  (el-clone :repo "skeeto/emacs-aio"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-aio")))
+
+(eval-when-compile
+  (el-clone :repo "rejeep/ansi"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/ansi")))
+
+(eval-when-compile
   (el-clone :repo "jwiegley/emacs-async"))
 
 (with-delayed-execution-priority-high
@@ -281,6 +312,24 @@
 
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-async-await")))
+
+(eval-when-compile
+  (el-clone :repo "alezost/bui.el"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/bui")))
+
+(eval-when-compile
+    (el-clone :repo "Alexander-Miller/cfrs"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/cfrs")))
+
+(eval-when-compile
+  (el-clone :repo "phikal/compat.el"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/compat")))
 
 (eval-when-compile
   (el-clone :repo "magnars/dash.el"))
@@ -328,16 +377,40 @@
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/elquery")))
 
 (eval-when-compile
+  (el-clone :repo "magit/emacsql"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacsql")))
+
+(eval-when-compile
+  (el-clone :repo "cask/epl"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/epl")))
+
+(eval-when-compile
   (el-clone :repo "rejeep/f.el"))
 
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/f")))
 
 (eval-when-compile
+  (el-clone :repo "sebastiencs/frame-local"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/frame-local")))
+
+(eval-when-compile
   (el-clone :repo "Wilfred/ht.el"))
 
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/ht")))
+
+(eval-when-compile
+  (el-clone :repo "doublep/iter2"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/iter2")))
 
 (eval-when-compile
   (el-clone :repo "conao3/keg.el"))
@@ -347,11 +420,33 @@
   (add-to-list 'auto-mode-alist '("Keg" . emacs-lisp-mode)))
 
 (eval-when-compile
+  (el-clone :repo "Fuco1/emacs-lgr"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-lgr")))
+
+(with-delayed-execution
+  (define-key lisp-interaction-mode-map (kbd "C-j") #'eval-print-last-sexp))
+
+(eval-when-compile
+  (el-clone :repo "melpa/package-build"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/package-build"))
+  (require 'package-build))
+
+(eval-when-compile
   (el-clone :repo "purcell/package-lint"))
 
 (with-delayed-execution
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/package-lint"))
   (autoload-if-found '(package-lint-current-buffer) "package-lint"))
+
+(eval-when-compile
+  (el-clone :repo "tjarvstrand/pos-tip"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/pos-tip")))
 
 (eval-when-compile
   (el-clone :repo "chuntaro/emacs-promise"))
@@ -372,11 +467,41 @@
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/shrink-path")))
 
 (eval-when-compile
+  (el-clone :repo "skeeto/emacs-web-server"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-web-server")))
+
+(eval-when-compile
+  (el-clone :repo "politza/tablist"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/tablist")))
+
+(eval-when-compile
   (el-clone :repo "magit/transient"
             :load-paths `(,(locate-user-emacs-file "el-clone/transient/lisp"))))
 
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/transient/lisp")))
+
+(eval-when-compile
+  (el-clone :repo "emacs-elsa/trinary-logic"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/trinary-logic")))
+
+(eval-when-compile
+  (el-clone :repo "Alexander-Miller/pfuture"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/pfuture")))
+
+(eval-when-compile
+  (el-clone :repo "emacsorphanage/pkg-info"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/pkg-info")))
 
 (eval-when-compile
   (el-clone :repo "emacsmirror/queue"))
@@ -396,27 +521,29 @@
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-request")))
 
-(leaf lisp-interaction :bind (:lisp-interaction-mode-map ("C-j" . eval-print-last-sexp)))
+(eval-when-compile
+  (el-clone :repo "cask/shut-up"))
 
-(leaf package-build
-  :doc "Tools for assembling a package archive"
-  :req "emacs-26.1"
-  :tag "tools" "maint" "emacs>=26.1"
-  :url "https://github.com/melpa/package-build"
-  :added "2023-11-15"
-  :emacs>= 26.1
-  :ensure t)
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/shut-up")))
 
-(leaf undercover
-  :doc "Test coverage library for Emacs Lisp"
-  :req "emacs-24" "dash-2.0.0" "shut-up-0.3.2"
-  :tag "tools" "coverage" "tests" "lisp" "emacs>=24"
-  :url "https://github.com/sviridov/undercover.el"
-  :added "2023-06-16"
-  :emacs>= 24
-  :ensure t
-  :require t
-  :after shut-up)
+(eval-when-compile
+  (el-clone :repo "sviridov/undercover.el"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/undercover")))
+
+(eval-when-compile
+  (el-clone :repo "ahyatt/emacs-websocket"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-websocket")))
+
+(eval-when-compile
+  (el-clone :repo "zkry/yaml.el"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/yaml")))
 
 (eval-when-compile
   (el-clone :url "https://repo.or.cz/arduino-mode.git"
@@ -427,31 +554,25 @@
   (autoload-if-found '(arduino-mode) "arduino-mode")
   (add-to-list 'auto-mode-alist '("\\.ino$" . arduino-mode)))
 
-(leaf lisp-mode :require t :mode "\\.cl\\'")
+(with-delayed-execution
+  (autoload-if-found '(lisp-mode) "lisp-mode")
+  (add-to-list 'auto-mode-alist '("\\.cl$" . lisp-mode)))
 
-(leaf sly
-  :doc "Sylvester the Cat's Common Lisp IDE"
-  :req "emacs-24.3"
-  :tag "sly" "lisp" "languages" "emacs>=24.3"
-  :url "https://github.com/joaotavora/sly"
-  :emacs>= 24.3
-  :after prog
-  :ensure t :require t
-  :custom (inferior-lisp-program . "/usr/bin/sbcl")
-  :config
-  ;; (load "~/.roswell/helper.el")
+(eval-when-compile
+  (el-clone :repo "joaotavora/sly"
+            :load-paths `(,(locate-user-emacs-file "el-clone/sly/lib")
+                          ,(locate-user-emacs-file "el-clone/sly/contrib")
+                          ,(locate-user-emacs-file "el-clone/sly/slynk"))))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/sly"))
+  (autoload-if-found '(sly) "sly")
+  (setq inferior-lisp-program "/usr/bin/sbcl")
   (defun start-sly ()
-    "sly の挙動を slime に似せる"
+    "Make Sly startup behavior similar to Slime"
     (interactive)
     (split-window-right)
     (sly)))
-
-(leaf google-c-style
-  :doc "Google's C/C++ style for c-mode"
-  :tag "tools" "c"
-  :after prog
-  :ensure t :require t
-  :hook ((c-mode c++-mode) . (lambda () (google-set-c-style))))
 
 (eval-when-compile
   (el-clone :repo "bradyt/dart-mode"))
@@ -529,22 +650,13 @@
   (with-eval-after-load 'company
     (push 'company-nix company-backends)))
 
-(leaf powershell
-  :doc "Mode for editing PowerShell scripts"
-  :req "emacs-24"
-  :tag "languages" "powershell" "emacs>=24"
-  :url "http://github.com/jschaf/powershell.el"
-  :added "2023-06-02"
-  :emacs>= 24
-  :after prog
-  :ensure t)
+(eval-when-compile
+  (el-clone :repo "jschaf/powershell.el"))
 
-(leaf lsp-pwsh
-  :doc "client for PowerShellEditorServices"
-  :tag "out-of-MELPA" "lsp"
-  :added "2023-06-02"
-  :require t
-  :after lsp powershell)
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/powershell"))
+  (autoload-if-found '(powershell powershell-mode) "powershell")
+  (add-to-list 'auto-mode-alist '("\\.ps1$" . powershell-mode)))
 
 (eval-when-compile
   (el-clone :repo "rust-lang/rust-mode")
@@ -591,15 +703,6 @@
   (add-hook 'typescript-mode-hook #'flycheck-mode)
   (setq tide-node-executable "~/.nix-profile/bin/node"))
 
-(leaf vue-mode
-  :doc "Major mode for vue component based on mmm-mode"
-  :req "mmm-mode-0.5.5" "vue-html-mode-0.2" "ssass-mode-0.2" "edit-indirect-0.1.4"
-  :tag "languages"
-  :added "2023-02-26"
-  :after prog
-  :ensure t
-  :after mmm-mode vue-html-mode ssass-mode edit-indirect)
-
 (eval-when-compile
   (el-clone :repo "emacsmirror/csv-mode"))
 
@@ -626,47 +729,10 @@
                               "lualatex %f"))
   (setq org-startup-truncated nil)
   (setq org-enforce-todo-dependencies t)
-  (setq org-support-shift-select t))
-
-(leaf ox-beamer
-  :require t
-  :after org
-  :custom
-  (org-latex-pdf-process . '("lualatex --draftmode %f"
+  (setq org-support-shift-select t)
+  (setq org-latex-pdf-process '("lualatex --draftmode %f"
                              "lualatex %f"))
-
-  (org-latex-default-class . "ltjsarticle")
-    :config
-    (add-to-list 'org-latex-classes
-                 '("beamer"
-                   "\\documentclass[presentation]{beamer}
-[NO-DEFAULT-PACKAGES]
-\\usepackage{luatexja}
-\\usepackage{textcomp}
-\\usepackage{graphicx}
-% \\usepackage{booktabs}
-\\usepackage{longtable}
-\\usepackage{wrapfig}
-\\usepackage{ulem}
-\\usepackage{hyperref}
-\\hypersetup{pdfencoding=auto, linkbordercolor={0 1 0}}
-%% Fonts
-% mathematical font
-\\usepackage{fontspec}
-\\usepackage{amsmath, amssymb}
-% Japanese
-\\usepackage{luacode}
-\\usepackage{luatexja-otf}
-\\usepackage[ipaex]{luatexja-preset}
-\\renewcommand{\\kanjifamilydefault}{\\gtdefault}
-%%
-\\setbeamercovered{transparent}
-\\setbeamertemplate{navigation symbols}{}"
-                     ("\\section{%s}" . "\\section*{%s}")
-                     ("\\subsection{%s}" . "\\subsection*{%s}")
-                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                     ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                     ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+  (setq org-latex-default-class "ltjsarticle"))
 
 (eval-when-compile
   (el-clone :repo "minad/org-modern"))
@@ -690,15 +756,13 @@
   (with-eval-after-load 'org-roam-mode
     (add-hook 'org-roam-mode-hook #'org-roam-ui-mode)))
 
-(leaf org-tempo :require t)
+(with-delayed-execution
+  (with-eval-after-load 'org
+    (require 'org-tempo)))
 
-(leaf vhdl-mode
-  :doc "major mode for editing VHDL code"
-  :tag "builtin" "nand2tetris"
-  :added "2022-08-28"
-  :require t
-  :after prog
-  :mode "\\.hdl$")
+(with-delayed-execution
+  (autoload-if-found '(vhdl-mode) "vhdl")
+  (add-to-list 'auto-mode-alist '("\\.hdl$" . vhdl-mode)))
 
 (eval-when-compile
   (el-clone :repo "fxbois/web-mode"))
@@ -760,20 +824,24 @@
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-eat"))
   (autoload-if-found '(eat) "eat"))
 
-(leaf exec-path-from-shell
-  :doc "Get environment variables such as $PATH from the shell"
-  :req "emacs-24.1" "cl-lib-0.6"
-  :tag "environment" "unix" "emacs>=24.1"
-  :url "https://github.com/purcell/exec-path-from-shell"
-  :emacs>= 24.1
-  :ensure t
-  :defun (exec-path-from-shell-initialize)
-  :custom
-  (exec-path-from-shell-check-startup-files . nil)
-  (exec-path-from-shell-arguments . nil)
-  (exec-path-from-shell-variables . '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
-                                      "GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))
-  :config (exec-path-from-shell-initialize))
+(eval-when-compile
+  (el-clone :repo "purcell/exec-path-from-shell"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/exec-path-from-shell"))
+  (autoload-if-found '(exec-path-from-shell-initialize) "exec-path-from-shell")
+  (exec-path-from-shell-initialize)
+  (with-eval-after-load 'exec-path-from-shell
+    (setq exec-path-from-shell-check-startup-files nil)
+    (setq exec-path-from-shell-arguments nil)
+    (setq exec-path-from-shell-variables '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
+                                        "GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))))
+
+(eval-when-compile
+  (el-clone :repo "abo-abo/ace-window"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/ace-window")))
 
 (eval-when-compile
   (el-clone :repo "ema2159/centaur-tabs"))
@@ -863,17 +931,16 @@
 (defvar dashboard-recover-layout-p nil
   "Whether recovers the layout.")
 
+(defun dashboard-goto-recent-files ()
+  "Go to recent files."
+  (interactive)
+  (let ((func (local-key-binding "r")))
+    (and func (funcall func))))
+
 (defun open-dashboard ()
   "Open the *dashboard* buffer and jump to the first widget."
   (interactive)
-  ;; Check if need to recover layout
-  (if (length> (window-list-1)
-               ;; exclude `treemacs' window
-               (if (and (fboundp 'treemacs-current-visibility)
-                        (eq (treemacs-current-visibility) 'visible))
-                   2
-                 1))
-      (setq dashboard-recover-layout-p t))
+  (setq dashboard-recover-layout-p t)
   ;; Display dashboard in maximized window
   (delete-other-windows)
   ;; Refresh dashboard buffer
@@ -890,13 +957,18 @@
        (setq dashboard-recover-layout-p nil)))
 
 (eval-when-compile
+  (el-clone :repo "bbatsov/projectile"))
+
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/projectile"))
+  (require 'projectile))
+
+(eval-when-compile
   (el-clone :repo "emacs-dashboard/emacs-dashboard"))
 
-(add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-dashboard"))
-(require 'dashboard)
-(with-eval-after-load 'dashboard
-  (dashboard-setup-startup-hook)
-  (define-key dashboard-mode-map (kbd "<f3>") #'quit-dashboard)
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-dashboard"))
+  (autoload-if-found '(dashboard-mode dashboard-open) "dashboard")
   (setq dashboard-items '((bookmarks . 5)
                           (recents  . 5)
                           (projects . 5)))
@@ -911,7 +983,11 @@
                                     "「えーー！なるっちの担当箇所がバグだらけ！？」 - 桜ねね"
                                     "「C++ を完全に理解してしまったかもしれない」 - 桜ねね"
                                     "「これでもデバッグはプロ級だし 今はプログラムの知識だってあるんだからまかせてよね！」 - 桜ねね"))
-  (setq dashboard-startup-banner (if (or (eq window-system 'x) (eq window-system 'ns) (eq window-system 'w32)) "~/.emacs.d/static/banner.png" "~/.emacs.d/static/banner.txt")))
+  (setq dashboard-startup-banner (if (or (eq window-system 'x) (eq window-system 'ns) (eq window-system 'w32)) "~/.emacs.d/static/banner.png" "~/.emacs.d/static/banner.txt"))
+  (open-dashboard)
+  (with-eval-after-load 'dashboard
+    (dashboard-setup-startup-hook)
+    (define-key dashboard-mode-map (kbd "<f3>") #'quit-dashboard)))
 
 (eval-when-compile
   (el-clone :repo "alexluigit/dirvish"
@@ -956,22 +1032,21 @@
         (dired-find-alternate-file)
       (dired-find-file))))
 
-(leaf dired-preview
-  :doc "Automatically preview file at point in Dired"
-  :req "emacs-27.1"
-  :tag "convenience" "files" "emacs>=27.1"
-  :url "https://git.sr.ht/~protesilaos/dired-preview"
-  :added "2023-07-30"
-  :after dired
-  :emacs>= 27.1
-  :ensure t)
+(eval-when-compile
+  (el-clone :repo "protesilaos/dired-preview"))
 
-(leaf dired-toggle-sudo
-  :doc "Browse directory with sudo privileges."
-  :tag "dired" "emacs"
-  :added "2023-07-21"
-  :after dired
-  :ensure t)
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/dired-preview"))
+  (autoload-if-found '(dired-preview-global-mode) "dired-preview" nil t)
+  ;; (dired-preview-global-mode t)
+  )
+
+(eval-when-compile
+  (el-clone :repo "renard/dired-toggle-sudo"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/dired-toggle-sudo"))
+  (require 'dired-toggle-sudo))
 
 (eval-when-compile
   (el-clone :repo "editorconfig/editorconfig-emacs"))
@@ -980,6 +1055,12 @@
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/editorconfig-emacs"))
   (autoload-if-found '(editorconfig-mode) "editorconfig")
   (editorconfig-mode t))
+
+(eval-when-compile
+  (el-clone :repo "kaz-yos/eval-in-repl"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/eval-in-repl")))
 
 (eval-when-compile
   (el-clone :repo "flycheck/flycheck"))
@@ -1006,6 +1087,12 @@
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/hydra")))
 
+(eval-when-compile
+  (el-clone :repo "bmag/imenu-list"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/imenu-list")))
+
 ;; ivy, counsel and swiper are managed as monorepo.
 (eval-when-compile
   (el-clone :repo "abo-abo/swiper"))
@@ -1030,7 +1117,7 @@
 (eval-when-compile
   (el-clone :repo "ericdanan/counsel-projectile"))
 
-(with-delayed-execution
+(with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/counsel-projectile"))
   (autoload-if-found '(counsel-projectile-mode) "counsel-projectile")
   (counsel-projectile-mode t))
@@ -1084,11 +1171,25 @@
     (setq lsp-prefer-capf t)
     (setq lsp-headerline-breadcrumb-mode t)))
 
-(leaf minimap
-  :doc "Sidebar showing a \"mini-map\" of a buffer"
-  :url "http://elpa.gnu.org/packages/minimap.html"
-  :added "2023-09-05"
-  :ensure t)
+(eval-when-compile
+  (el-clone :repo "emacs-lsp/dap-mode"))
+
+(with-delayed-execution
+  (message "Install dap-mode...")
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/dap-mode"))
+  (autoload-if-found '(dap-debug) "dap-mode"))
+
+(eval-when-compile
+  (el-clone :repo "dengste/minimap"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/minimap"))
+  (autoload-if-found '(minimap-mode) "minimap")
+  (with-eval-after-load 'minimap
+    (setq minimap-window-location 'right)
+    (setq minimap-update-delay 0.2)
+    (setq minimap-minimum-width 20)
+    (setq minimap-major-modes '(prog-mode org-mode))))
 
 (eval-when-compile
   (el-clone :repo "magnars/multiple-cursors.el"))
@@ -1101,15 +1202,17 @@
   (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this))
 
-(leaf neotree
-  :doc "A tree plugin like NerdTree for Vim"
-  :req "cl-lib-0.5"
-  :url "https://github.com/jaypei/emacs-neotree"
-  :ensure t :require t
-  :custom
-  (neo-smart-open . t)
-  (neo-create-file-auto-open . t)
-  (neo-theme . (if (display-graphic-p) 'icons 'arrow)))
+(eval-when-compile
+  (el-clone :repo "jaypei/emacs-neotree"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-neotree"))
+  (require 'neotree)
+  ;; (autoload-if-found '(neotree-hide neotree-dir neotree-make-executor neo-open-file neo-open-dir) "neotree")
+  (with-eval-after-load 'neotree
+    (setq neo-smart-open t)
+    (setq eo-create-file-auto-open t)
+    (setq neo-theme (if (display-graphic-p) 'icons 'arrow))))
 
 (eval-when-compile
   (el-clone :repo "ayanyan/nihongo-util"))
@@ -1120,39 +1223,37 @@
   (setq nu-my-toten "，")
   (setq nu-my-kuten "．"))
 
-(leaf popwin
-  :doc "Popup Window Manager"
-  :req "emacs-24.3"
-  :tag "convenience" "emacs>=24.3"
-  :url "https://github.com/emacsorphanage/popwin"
-  :emacs>= 24.3
-  :ensure t
-  :require t
-  :custom
-  (display-buffer-function . 'popwin:display-buffer)
-  (popwin:special-display-config  . t)
-  (popwin:popup-window-position . 'bottom))
+(eval-when-compile
+  (el-clone :repo "emacsmirror/paredit"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/paredit")))
 
 (eval-when-compile
-    (el-clone :repo "tumashu/posframe"))
+  (el-clone :repo "emacsorphanage/popwin"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/popwin"))
+  (autoload-if-found '(popwin-mode) "popwin")
+  (popwin-mode t)
+  (with-eval-after-load 'popwin
+    (setq display-buffer-function 'popwin:display-buffer)
+    (setq popwin:special-display-config t)
+    (setq popwin:popup-window-position 'bottom)))
+
+(eval-when-compile
+  (el-clone :repo "tumashu/posframe"))
 
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/posframe")))
 
 (eval-when-compile
-  (el-clone :repo "bbatsov/projectile"))
+  (el-clone :repo "skeeto/skewer-mode")
+  (el-clone :repo "mooz/js2-mode"))
 
 (with-delayed-execution
-  (add-to-list 'load-path (locate-user-emacs-file "el-clone/projectile")))
-
-(leaf skewer-mode
-  :doc "live browser JavaScript, CSS, and HTML interaction"
-  :req "simple-httpd-1.4.0" "js2-mode-20090723" "emacs-24"
-  :tag "emacs>=24"
-  :url "https://github.com/skeeto/skewer-mode"
-  :emacs>= 24
-  :ensure t :require t
-  :after js2-mode)
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/skewer"))
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/js2")))
 
 (eval-when-compile
   (el-clone :repo "Fuco1/smartparens"))
@@ -1198,12 +1299,6 @@
   (with-eval-after-load 'which-key
     (which-key-posframe-mode)))
 
-(leaf yafolding
-  :doc "Folding code blocks based on indentation"
-  :tag "folding"
-  :ensure t :require t
-  :hook (prog-mode-hook . yafolding-mode))
-
 (eval-when-compile
   (el-clone :repo "joaotavora/yasnippet")
   (el-clone :repo "mkcms/ivy-yasnippet"))
@@ -1226,25 +1321,18 @@
   (auto-insert-mode t)
   (yatemplate-fill-alist))
 
-(leaf docker
-  :doc "Interface to Docker"
-  :req "aio-1.0" "dash-2.19.1" "emacs-26.1" "s-1.13.0" "tablist-1.1" "transient-0.4.3"
-  :tag "convenience" "filename" "emacs>=26.1"
-  :url "https://github.com/Silex/docker.el"
-  :added "2024-01-08"
-  :emacs>= 26.1
-  :ensure t
-  :after aio tablist)
+(eval-when-compile
+  (el-clone :repo "Silex/docker.el"))
 
-(leaf elcord
-  :doc "Allows you to integrate Rich Presence from Discord"
-  :req "emacs-25.1"
-  :tag "games" "emacs>=25.1"
-  :url "https://github.com/Mstrodl/elcord"
-  :added "2023-08-13"
-  :emacs>= 25.1
-  :ensure t
-  :require t)
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/docker"))
+  (require 'docker))
+
+(eval-when-compile
+  (el-clone :repo "Mstrodl/elcord"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/elcord")))
 
 (eval-when-compile
   (el-clone :repo "Kyure-A/jobcan.el"))
@@ -1255,10 +1343,16 @@
 
 (eval-when-compile
   (el-clone :repo "magit/magit"
-            :load-paths `(,(locate-user-emacs-file "el-clone/magit/lisp"))))
+            :load-paths `(,(locate-user-emacs-file "el-clone/magit/lisp")))
+  (el-clone :repo "magit/transient"
+            :load-paths `(,(locate-user-emacs-file "el-clone/transient/lisp")))
+  (el-clone :repo "magit/with-editor"
+            :load-paths `(,(locate-user-emacs-file "el-clone/with-editor/lisp"))))
 
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/magit/lisp"))
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/transient/lisp"))
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/with-editor/lisp"))
   (autoload-if-found '(global-git-commit-mode) "git-commit")
   (autoload-if-found '(magit-status magit-blame) "magit")
   (global-git-commit-mode)
@@ -1266,57 +1360,44 @@
     (setq magit-repository-directories '(("~/ghq/" . 3)))
     (add-hook 'magit-status-mode-hook #'toggle-centaur-tabs-local-mode)))
 
-(leaf mozc
-  :doc "minor mode to input Japanese with Mozc"
-  :tag "input method" "multilingual" "mule"
-  :added "2023-07-20"
-  :ensure t
-  :require t
-  :config (setq mozc-candidate-style 'echo-area))
+(eval-when-compile
+  (el-clone :repo "abicky/nodejs-repl.el"))
 
-(leaf nodejs-repl
-  :doc "Run Node.js REPL"
-  :ensure t
-  :require t
-  :after prog)
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/nodejs-repl")))
 
-(leaf oj
-  :doc "Competitive programming tools client for AtCoder, Codeforces"
-  :req "emacs-26.1" "quickrun-2.2"
-  :tag "convenience" "emacs>=26.1"
-  :url "https://github.com/conao3/oj.el"
-  :emacs>= 26.1
-  :after prog
-  :ensure t :require t
-  :custom
-  (oj-shell-program . "zsh")
-  (oj-open-home-dir . "~/oj-files/")
-  (oj-default-online-judge . 'atcoder)
-  (oj-compiler-c . "gcc")
-  (oj-compiler-python . "cpython"))
+(eval-when-compile
+  (el-clone :repo "rejeep/nvm.el"))
 
-(leaf prettier
-  :doc "Code formatting with Prettier"
-  :req "emacs-26.1" "iter2-0.9" "nvm-0.2" "editorconfig-0.8"
-  :tag "files" "languages" "convenience" "emacs>=26.1"
-  :url "https://github.com/jscheid/prettier.el"
-  :added "2023-10-20"
-  :emacs>= 26.1
-  :ensure t
-  :after iter2 nvm editorconfig
-  :hook (after-init-hook . global-prettier-mode))
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/nvm")))
 
-(leaf quickrun
-  :doc "Run commands quickly"
-  :req "emacs-24.3"
-  :tag "emacs>=24.3"
-  :url "https://github.com/syohex/emacs-quickrun"
-  :emacs>= 24.3
-  :ensure t :require t
-  :after prog
-  :config
+(eval-when-compile
+  (el-clone :repo "conao3/oj.el"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/oj"))
+  (with-eval-after-load 'oj
+    (setq oj-shell-program "zsh")
+    (setq oj-open-home-dir "~/oj-files/")
+    (setq oj-default-online-judge 'atcoder)
+    (setq oj-compiler-c "gcc")
+    (setq oj-compiler-python "cpython")))
+
+(eval-when-compile
+  (el-clone :repo "jscheid/prettier.el"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/prettier"))
+  (add-hook 'after-init-hook #'global-prettier-mode))
+
+(eval-when-compile
+  (el-clone :repo "syohex/emacs-quickrun"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-quickrun"))
+  (autoload-if-found '(quickrun) "emacs-quickrun")
   (push '("*quickrun*") popwin:special-display-config)
-  :preface
   (defun quickrun-sc (start end)
     (interactive "r")
     (if mark-active
@@ -1376,46 +1457,19 @@
   (autoload-if-found '(global-emojify-mode) "emojify")
   (add-hook 'after-init-hook #'global-emojify-mode))
 
-(leaf fira-code-mode
-  :doc "Minor mode for Fira Code ligatures using prettify-symbols"
-  :req "emacs-24.4"
-  :tag "programming-ligatures" "fonts" "ligatures" "faces" "emacs>=24.4"
-  :url "https://github.com/jming422/fira-code-mode"
-  :emacs>= 24.4
-  :ensure t :require t
-  :hook ;; (prog-mode-hook . fira-code-mode) ;; wsl2 だとバグる
-  :custom (fira-code-mode-disabled-ligatures '("<>" "[]" "#{" "#(" "#_" "#_(" "x")))
+(eval-when-compile
+  (el-clone :repo "rainstormstudio/nerd-icons.el"))
 
-(leaf hide-mode-line
-  :doc "minor mode that hides/masks your modeline"
-  :req "emacs-24.4"
-  :tag "mode-line" "frames" "emacs>=24.4"
-  :url "https://github.com/hlissner/emacs-hide-mode-line"
-  :added "2023-09-05"
-  :emacs>= 24.4
-  :ensure t
-  :require t
-  :hook
-  (vterm-mode . hide-mode-line-mode)
-  (dashboard-mode . hide-mode-line-mode))
+(with-delayed-execution-priority-high
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons")))
 
-(leaf highlight-symbol
-  :doc "automatic and manual symbol highlighting"
-  :tag "matching" "faces"
-  :url "http://nschum.de/src/emacs/highlight-symbol/"
-  :ensure t :require t
-  :require t
-  :hook (prog-mode-hook . highlight-symbol-mode)
-  :custom (highlight-symbol-idle-delay . 0.1))
+(eval-when-compile
+  (el-clone :repo "purcell/page-break-lines"))
 
-(leaf page-break-lines
-  :doc "Display ^L page breaks as tidy horizontal lines"
-  :req "emacs-24.4"
-  :tag "faces" "convenience" "emacs>=24.4"
-  :url "https://github.com/purcell/page-break-lines"
-  :emacs>= 24.4
-  :ensure t :require t
-  :global-minor-mode global-page-break-lines-mode)
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/page-break-lines"))
+  (autoload-if-found '(page-break-lines-mode global-page-break-lines-mode) "page-break-lines")
+  (global-page-break-lines-mode t))
 
 (with-delayed-execution
   (show-paren-mode t)
@@ -1430,12 +1484,13 @@
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/powerline")))
 
-(leaf rainbow-mode
-  :doc "Colorize color names in buffers"
-  :tag "faces"
-  :url "https://elpa.gnu.org/packages/rainbow-mode.html"
-  :ensure t :require t
-  :hook (web-mode-hook))
+(eval-when-compile
+  (el-clone :repo "emacsmirror/rainbow-mode"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/rainbow"))
+  (autoload-if-found '(rainbow-mode) "rainbow")
+  (add-hook 'web-mode-hook #'rainbow-mode))
 
 (eval-when-compile
   (el-clone :repo "Fanael/rainbow-delimiters"))
@@ -1445,14 +1500,11 @@
   (autoload-if-found '(rainbow-delimiters-mode) "rainbow-delimiters")
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
-(leaf solaire-mode
-  :doc "make certain buffers grossly incandescent"
-  :req "emacs-25.1" "cl-lib-0.5"
-  :tag "faces" "buffer" "window" "bright" "dim" "emacs>=25.1"
-  :url "https://github.com/hlissner/emacs-solaire-mode"
-  :emacs>= 25.1
-  :ensure t :require t
-  :global-minor-mode solaire-global-mode)
+(eval-when-compile
+  (el-clone :repo "hlissner/emacs-solaire-mode"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-solaire")))
 
 (eval-when-compile
   (el-clone :repo "Malabarba/spinner.el"))
