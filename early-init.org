@@ -43,7 +43,6 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 
 ** other
 #+begin_src emacs-lisp
-  (add-to-list 'load-path "./elpa")
   (setq inhibit-startup-screen t)
   (setq initial-scratch-message nil)
   (setq inhibit-startup-buffer-menu t)
@@ -51,37 +50,10 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
   (setq ring-bell-function 'ignore)
 #+end_src
 
-** Setup package archive
-#+begin_src emacs-lisp
-  (eval-and-compile
-    (customize-set-variable 'package-archives
-                            '(("melpa" . "https://melpa.org/packages/")
-                              ("org"   . "https://orgmode.org/elpa/")
-                              ("gnu"   . "https://elpa.gnu.org/packages/")
-                              ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
-    (package-initialize))
-#+end_src
-
-** el-clone
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (unless (file-directory-p "~/.emacs.d/elpa/el-clone")
-      (package-vc-install "https://github.com/Kyure-A/el-clone.git")))
-
-  (eval-and-compile
-    (add-to-list 'load-path "~/.emacs.d/elpa/el-clone")
-    (require 'el-clone))
-#+end_src
-
 ** Color Scheme
 I love monokai!
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "Kyure_A/monokai-emacs"))
-
-  (add-to-list 'load-path (locate-user-emacs-file "el-clone/monokai-emacs"))
-  (require 'monokai-theme)
-  (load-theme 'monokai t)
+  (set-face-background 'default "#272822")
 #+end_src
 
 ** nano-emacs like style

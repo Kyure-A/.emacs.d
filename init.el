@@ -102,6 +102,18 @@
 (with-delayed-execution-priority-high
   (require 'cl-lib))
 
+(eval-when-compile
+  (unless (file-directory-p "~/.emacs.d/elpa/el-clone")
+    (if (fboundp 'package-vc-install)
+        (package-vc-install "https://github.com/Kyure-A/el-clone.git")
+      (customize-set-variable 'package-archives '(("kelpa" . "https://kelpa.kyre.moe/")))
+      (package-initialize)
+      (package-install 'el-clone))))
+
+(eval-and-compile
+  (add-to-list 'load-path "~/.emacs.d/elpa/el-clone")
+  (require 'el-clone))
+
 (global-set-key (kbd "<f2>") 'eat)
 (global-set-key (kbd "<f3>") 'dashboard-open)
 (global-set-key (kbd "RET") 'smart-newline)

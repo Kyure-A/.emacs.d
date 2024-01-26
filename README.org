@@ -139,6 +139,21 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
     (require 'cl-lib))
 #+end_src
 
+*** el-clone
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (unless (file-directory-p "~/.emacs.d/elpa/el-clone")
+      (if (fboundp 'package-vc-install)
+          (package-vc-install "https://github.com/Kyure-A/el-clone.git")
+        (customize-set-variable 'package-archives '(("kelpa" . "https://kelpa.kyre.moe/")))
+        (package-initialize)
+        (package-install 'el-clone))))
+
+  (eval-and-compile
+    (add-to-list 'load-path "~/.emacs.d/elpa/el-clone")
+    (require 'el-clone))
+#+end_src
+
 ** Keybindings
 *** global-set-key
 **** Special Keys
