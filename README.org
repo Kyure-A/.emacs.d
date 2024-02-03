@@ -43,6 +43,13 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
   (setq user-mail-address "k@kyre.moe")
 #+end_src
 
+*** Disable Magic File Name at startup
+#+begin_src emacs-lisp
+  (defconst init/saved-file-name-handler-alist file-name-handler-alist)
+  (setq file-name-handler-alist nil)
+  (add-hook 'emacs-startup-hook (lambda () (setq file-name-handler-alist init/saved-file-name-handler-alist)))
+#+end_src
+
 *** setup tracker
 #+begin_src emacs-lisp
   (defvar setup-tracker--level 0)
@@ -78,7 +85,7 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
             (setq setup-tracker--level (1+ setup-tracker--level))))))
 #+end_src
 
-** with-delayed-execution
+*** with-delayed-execution
 [[https://zenn.dev/takeokunn/articles/56010618502ccc#:~:text=%E5%85%83%E8%A8%98%E4%BA%8B%E3%82%92%E5%8F%82%E8%80%83%E3%81%AB%E5%84%AA%E5%85%88%E9%A0%86%E4%BD%8D%E9%AB%98%E3%81%84queue%E3%82%92%E5%87%A6%E7%90%86%E3%81%99%E3%82%8B%E6%A9%9F%E6%A7%8B%E3%82%82%E4%BD%9C%E3%82%8A%E3%81%BE%E3%81%97%E3%81%9F%E3%80%82][Source]]
 #+begin_src emacs-lisp 
   (defvar my/delayed-priority-high-configurations '())
@@ -405,6 +412,7 @@ cause bug?
 #+begin_src emacs-lisp
   (with-delayed-execution
     (recentf-mode t)
+    (setq recently-file (locate-user-emacs-file "recently"))
     (setq recentf-max-saved-items 150)
     (setq recentf-auto-cleanup 'never)
     (setq recentf-exclude '("/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.tmp/")))
@@ -448,6 +456,15 @@ cause bug?
   (setq auto-save-file-name-transforms '((".*" "~/.tmp/" t)))
   (setq auto-save-list-file-prefix nil)
   (setq auto-save-default nil)
+#+end_src
+
+*** native compile
+#+begin_src emacs-lisp
+  (custom-set-variables '(warning-suppress-types '((comp))))
+  (with-eval-after-load 'comp
+    (setq native-comp-async-jobs-number 8)
+    (setq native-comp-speed 3)
+    (setq native-comp-always-compile t))
 #+end_src
 
 ** Emacs Lisp Libraries
@@ -1425,7 +1442,8 @@ Disabled by default.
 
   (with-delayed-execution-priority-high
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/projectile"))
-    (require 'projectile))
+    (autoload-if-found '(projectile-mode) "projectile")
+    (projectile-mode t))
 #+end_src
 
 **** dashboard
@@ -1665,7 +1683,8 @@ GitHub Education License was expired
   (with-delayed-execution-priority-high
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/counsel-projectile"))
     (autoload-if-found '(counsel-projectile-mode) "counsel-projectile")
-    (counsel-projectile-mode t))
+    (with-eval-after-load 'counsel
+      (add-hook 'counsel-mode-hook #'counsel-projectile-mode)))
 #+end_src
 
 **** ivy
@@ -1771,7 +1790,7 @@ https://dev.classmethod.jp/articles/emacs-multiple-cursors/
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-neotree"))
-    (require 'neotree)
+    ;; (require 'neotree)
     ;; (autoload-if-found '(neotree-hide neotree-dir neotree-make-executor neo-open-file neo-open-dir) "neotree")
     (with-eval-after-load 'neotree
       (setq neo-smart-open t)
@@ -2133,7 +2152,7 @@ Allows you to integrate Rich Presence from Discord.
 #+end_src
 
 *** hide-mode-line
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp  :tangle no
   (leaf hide-mode-line
     :doc "minor mode that hides/masks your modeline"
     :req "emacs-24.4"
@@ -2146,6 +2165,43 @@ Allows you to integrate Rich Presence from Discord.
     :hook
     (vterm-mode . hide-mode-line-mode)
     (dashboard-mode . hide-mode-line-mode))
+#+end_src
+
+*** monokai
+#+begin_src emacs-lisp :tangle no
+  (eval-when-compile
+    (el-clone :repo "Kyure_A/monokai-emacs"))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/monokai-emacs"))
+    (require 'monokai-theme)
+     (with-eval-after-load 'monokai-theme
+       (load-theme 'monokai t)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "Kyure-A/themes"
+              :load-paths `(,(locate-user-emacs-file "el-clone/themes/extensions"))))
+
+  (with-delayed-execution-priority-high
+    (message "Install doom-themes...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/themes"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/themes/extensions"))
+
+    ;; (autoload-if-found '(doom-themes-enable-org-fontification) "doom-themes-ext-org" nil t)
+    (autoload-if-found '(doom-themes-neotree-config) "doom-themes-ext-neotree" nil t)
+
+    ;; (doom-themes-enable-org-fontification)
+    (doom-themes-neotree-config)
+
+    (when (require 'doom-themes)
+      (load-theme 'doom-monokai-textmate t))
+
+    (with-eval-after-load 'doom-themes
+      (setq doom-themes-padded-modeline t)
+      (setq doom-themes-enable-bold nil)
+      (setq doom-themes-enable-italic nil)))
 #+end_src
 
 *** nerd-icons
@@ -2195,7 +2251,8 @@ Allows you to integrate Rich Presence from Discord.
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/rainbow"))
     (autoload-if-found '(rainbow-mode) "rainbow")
-    (add-hook 'web-mode-hook #'rainbow-mode))
+    ;; (add-hook 'web-mode-hook #'rainbow-mode)
+    )
 #+end_src
 
 *** rainbow-delimiters
@@ -2336,6 +2393,6 @@ alternative highlight-symbol
 #+begin_src emacs-lisp 
   (provide 'init)
 
-  ;; End:
-  ;;; init.el ends here
+    ;; End:
+    ;;; init.el ends here
 #+end_src

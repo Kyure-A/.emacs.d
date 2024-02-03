@@ -12,33 +12,31 @@
 (setq gc-cons-threshold most-positive-fixnum)
 (add-hook 'emacs-startup-hook (lambda () (setq gc-cons-threshold 536870912)))
 
-(defconst init/saved-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
-(add-hook 'emacs-startup-hook (lambda () (setq file-name-handler-alist init/saved-file-name-handler-alist)))
-
+(defun display-startup-echo-area-message ())
+(setq inhibit-startup-message t)
 (setq inhibit-startup-screen t)
 (setq initial-scratch-message nil)
 (setq inhibit-startup-buffer-menu t)
 (setq message-log-max nil)
 (setq ring-bell-function 'ignore)
+(setq default-directory "~/")
+(setq command-line-default-directory "~/")
 
 (set-face-background 'default "#272822")
+(set-face-foreground 'default "#F8F8F0")
+(set-face-foreground 'font-lock-keyword-face "#F92672")
 
-(setq default-frame-alist
-        (append (list
-                 '(min-height . 1)
-                 '(height     . 45)
-                 '(min-width  . 1)
-                 '(width      . 81)
-                 '(vertical-scroll-bars . nil)
-                 '(internal-border-width . 24)
-                 '(left-fringe    . 1)
-                 '(right-fringe   . 1)
-                 '(fullscreen . maximized)
-                 '(tool-bar-lines . 0)
-                 '(menu-bar-lines . 0))))
-
-(scroll-bar-mode -1)
+(push '(min-height . 1) default-frame-alist)
+(push '(min-width . 1) default-frame-alist)
+(push '(height . 45) default-frame-alist)
+(push '(width . 81) default-frame-alist)
+(push '(vertical-scroll-bars . nil) default-frame-alist)
+(push '(internal-border-width . 24) default-frame-alist)
+(push '(left-fringe . 1) default-frame-alist)
+(push '(right-fringe . 1) default-frame-alist)
+(push '(fullscreen . maximized) default-frame-alist)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(menu-bar-lines . 0) default-frame-alist)
 
 (setq frame-inhibit-implied-resize t)
 

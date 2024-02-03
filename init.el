@@ -19,6 +19,10 @@
 (setq user-full-name "Kyure_A")
 (setq user-mail-address "k@kyre.moe")
 
+(defconst init/saved-file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+(add-hook 'emacs-startup-hook (lambda () (setq file-name-handler-alist init/saved-file-name-handler-alist)))
+
 (defvar setup-tracker--level 0)
 (defvar setup-tracker--parents nil)
 (defvar setup-tracker--times nil)
@@ -275,6 +279,7 @@
 
 (with-delayed-execution
   (recentf-mode t)
+  (setq recently-file (locate-user-emacs-file "recently"))
   (setq recentf-max-saved-items 150)
   (setq recentf-auto-cleanup 'never)
   (setq recentf-exclude '("/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.tmp/")))
@@ -300,6 +305,12 @@
 (setq auto-save-file-name-transforms '((".*" "~/.tmp/" t)))
 (setq auto-save-list-file-prefix nil)
 (setq auto-save-default nil)
+
+(custom-set-variables '(warning-suppress-types '((comp))))
+(with-eval-after-load 'comp
+  (setq native-comp-async-jobs-number 8)
+  (setq native-comp-speed 3)
+  (setq native-comp-always-compile t))
 
 (eval-when-compile
   (el-clone :repo "skeeto/emacs-aio"))
@@ -973,7 +984,8 @@
 
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/projectile"))
-  (require 'projectile))
+  (autoload-if-found '(projectile-mode) "projectile")
+  (projectile-mode t))
 
 (eval-when-compile
   (el-clone :repo "emacs-dashboard/emacs-dashboard"))
@@ -1132,7 +1144,8 @@
 (with-delayed-execution-priority-high
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/counsel-projectile"))
   (autoload-if-found '(counsel-projectile-mode) "counsel-projectile")
-  (counsel-projectile-mode t))
+  (with-eval-after-load 'counsel
+    (add-hook 'counsel-mode-hook #'counsel-projectile-mode)))
 
 (with-delayed-execution-priority-high
   (autoload-if-found '(ivy-mode ivy-read ivy-completion-read) "ivy")
@@ -1219,7 +1232,7 @@
 
 (with-delayed-execution
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-neotree"))
-  (require 'neotree)
+  ;; (require 'neotree)
   ;; (autoload-if-found '(neotree-hide neotree-dir neotree-make-executor neo-open-file neo-open-dir) "neotree")
   (with-eval-after-load 'neotree
     (setq neo-smart-open t)
@@ -1470,6 +1483,29 @@
   (add-hook 'after-init-hook #'global-emojify-mode))
 
 (eval-when-compile
+  (el-clone :repo "Kyure-A/themes"
+            :load-paths `(,(locate-user-emacs-file "el-clone/themes/extensions"))))
+
+(with-delayed-execution-priority-high
+  (message "Install doom-themes...")
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/themes"))
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/themes/extensions"))
+
+  ;; (autoload-if-found '(doom-themes-enable-org-fontification) "doom-themes-ext-org" nil t)
+  (autoload-if-found '(doom-themes-neotree-config) "doom-themes-ext-neotree" nil t)
+
+  ;; (doom-themes-enable-org-fontification)
+  (doom-themes-neotree-config)
+
+  (when (require 'doom-themes)
+    (load-theme 'doom-monokai-textmate t))
+
+  (with-eval-after-load 'doom-themes
+    (setq doom-themes-padded-modeline t)
+    (setq doom-themes-enable-bold nil)
+    (setq doom-themes-enable-italic nil)))
+
+(eval-when-compile
   (el-clone :repo "rainstormstudio/nerd-icons.el"))
 
 (with-delayed-execution-priority-high
@@ -1502,7 +1538,8 @@
 (with-delayed-execution
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/rainbow"))
   (autoload-if-found '(rainbow-mode) "rainbow")
-  (add-hook 'web-mode-hook #'rainbow-mode))
+  ;; (add-hook 'web-mode-hook #'rainbow-mode)
+  )
 
 (eval-when-compile
   (el-clone :repo "Fanael/rainbow-delimiters"))
@@ -1599,5 +1636,5 @@ With argument ARG, do this that many times."
 
 (provide 'init)
 
-;; End:
-;;; init.el ends here
+  ;; End:
+  ;;; init.el ends here
