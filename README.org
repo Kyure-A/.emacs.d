@@ -1009,6 +1009,18 @@ cause bug?
       (setq lsp-rust-server 'rust-analyzer)))
 #+end_src
 
+*** SATySFi
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "gfngfn/satysfi.el"))
+
+  (with-delayed-execution
+    (add-to-list 'auto-mode-alist '("\\.saty$" . satysfi-mode))
+    (add-to-list 'auto-mode-alist '("\\.satyh$" . satysfi-mode))
+    (autoload-if-found '(satysfi-mode) "satysfi-mode")
+    (setq satysfi-command "satysfi"))
+#+end_src
+
 *** Svelte
 #+begin_src emacs-lisp
   (eval-when-compile

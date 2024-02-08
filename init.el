@@ -698,6 +698,15 @@
     (setq lsp-rust-server 'rust-analyzer)))
 
 (eval-when-compile
+  (el-clone :repo "gfngfn/satysfi.el"))
+
+(with-delayed-execution
+  (add-to-list 'auto-mode-alist '("\\.saty$" . satysfi-mode))
+  (add-to-list 'auto-mode-alist '("\\.satyh$" . satysfi-mode))
+  (autoload-if-found '(satysfi-mode) "satysfi-mode")
+  (setq satysfi-command "satysfi"))
+
+(eval-when-compile
   (el-clone :repo "leafOfTree/svelte-mode"))
 
 (with-delayed-execution
