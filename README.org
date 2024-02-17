@@ -1231,63 +1231,6 @@ cause bug?
                                           "GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))))
 #+end_src
 
-*** Vterm
-Disabled by default.
-#+begin_src emacs-lisp :tangle no
-  (leaf vterm
-    :doc "Fully-featured terminal emulator"
-    :req "emacs-25.1"
-    :tag "terminals" "emacs>=25.1"
-    :url "https://github.com/akermu/emacs-libvterm"
-    :emacs>= 25.1
-    :ensure t :require nil
-    :custom
-    (vterm-buffer-name-string . t)
-    (vterm-clear-scrollback-when-clearing . t)
-    (vterm-keymap-exceptions . '("<f1>"
-                                 "<f2>"
-                                 "<f10>"
-                                 "C-<prior>"
-                                 "C-<next>"
-                                 "C-RET"
-                                 "C-SPC"
-                                 "C-c"
-                                 "C-g"
-                                 "C-l"
-                                 "C-s"
-                                 "C-u"
-                                 "C-v"
-                                 "C-w"
-                                 "C-x"
-                                 "C-y"
-                                 "M-v"
-                                 "M-w"
-                                 "M-x"
-                                 "M-y"))
-    (vterm-max-scrollback . 5000)
-    :config
-    (leaf multi-vterm
-      :doc "Like multi-term.el but for vterm"
-      :req "emacs-26.3" "vterm-0.0" "project-0.3.0"
-      :tag "processes" "terminals" "emacs>=26.3"
-      :url "https://github.com/suonlight/multi-libvterm"
-      :added "2023-07-10"
-      :emacs>= 26.3
-      :ensure t
-      :require nil
-      :after vterm project)
-    (leaf vterm-toggle
-      :doc "Toggles between the vterm buffer and other buffers."
-      :req "emacs-25.1" "vterm-0.0.1"
-      :tag "terminals" "vterm" "emacs>=25.1"
-      :url "https://github.com/jixiuf/vterm-toggle"
-      :emacs>= 25.1
-      :ensure t
-      :require nil
-      :after vterm)
-    (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
-#+end_src
-
 ** Extensions
 *** ace-window
 #+begin_src emacs-lisp
