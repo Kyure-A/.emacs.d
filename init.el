@@ -1479,7 +1479,7 @@
 (with-delayed-execution
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/doom-modeline"))
   (autoload-if-found '(doom-modeline-mode) "doom-modeline")
-  (doom-modeline-mode t)
+  ;; (doom-modeline-mode t)
   (with-eval-after-load 'doom-modeline
     (setq doom-modeline-icon t)))
 
@@ -1490,6 +1490,45 @@
   (add-to-list 'load-path (locate-user-emacs-file "el-clone/emojify"))
   (autoload-if-found '(global-emojify-mode) "emojify")
   (add-hook 'after-init-hook #'global-emojify-mode))
+
+(eval-when-compile
+  (el-clone :repo "liuyinz/mini-echo.el"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/mini-echo"))
+  (autoload-if-found '(mini-echo-mode) "mini-echo" nil t)
+  (mini-echo-mode))
+
+(eval-when-compile
+  (el-clone :repo "kiennq/emacs-mini-modeline"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-mini-modeline"))
+  (autoload-if-found '(mini-modeline-mode) "mini-modeline" nil t))
+
+(eval-when-compile
+  (el-clone :repo "Lambda-Emacs/lambda-line"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/lambda-line"))
+  (autoload-if-found '(lambda-line-mode) "lambda-line" nil t)
+  (lambda-line-mode)
+  (with-eval-after-load 'lambda-line-mode
+    (lambda-line-icon-time t) ;; requires ClockFace font (see below)
+    (lambda-line-clockface-update-fontset "ClockFaceRect") ;; set clock icon
+    (lambda-line-position 'top) ;; Set position of status-line 
+    (lambda-line-abbrev t) ;; abbreviate major modes
+    (lambda-line-hspace "  ")  ;; add some cushion
+    (lambda-line-prefix t) ;; use a prefix symbol
+    (lambda-line-prefix-padding nil) ;; no extra space for prefix 
+    (lambda-line-status-invert nil)  ;; no invert colors
+    (lambda-line-gui-ro-symbol  " ⨂") ;; symbols
+    (lambda-line-gui-mod-symbol " ⬤") 
+    (lambda-line-gui-rw-symbol  " ◯") 
+    (lambda-line-space-top +.30)  ;; padding on top and bottom of line
+    (lambda-line-space-bottom -.30)
+    (lambda-line-symbol-position 0.1) ;; adjust the vertical placement of symbol
+    ))
 
 (eval-when-compile
   (el-clone :repo "Kyure-A/themes"
@@ -1513,6 +1552,15 @@
     (setq doom-themes-padded-modeline t)
     (setq doom-themes-enable-bold nil)
     (setq doom-themes-enable-italic nil)))
+
+(eval-when-compile
+  (el-clone :repo "rougier/nano-modeline"))
+
+(with-delayed-execution
+  (add-to-list 'load-path (locate-user-emacs-file "el-clone/nano-modeline"))
+  (autoload-if-found '(nano-modeline-text-mode) "nano-modeline")
+  ;; (nano-modeline-text-mode t)
+  )
 
 (eval-when-compile
   (el-clone :repo "rainstormstudio/nerd-icons.el"))
