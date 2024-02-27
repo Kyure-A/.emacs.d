@@ -748,6 +748,15 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-web-server")))
 #+end_src
 
+*** spinner
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "Malabarba/spinner.el"))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/spinner")))
+#+end_src
+
 *** tablist
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2301,15 +2310,6 @@ Allows you to integrate Rich Presence from Discord.
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-solaire")))
-#+end_src
-
-*** spinner
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "Malabarba/spinner.el"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/spinner")))
 #+end_src
 
 *** symbol-overlay
