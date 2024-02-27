@@ -589,6 +589,7 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/flycheck-elsa"))
 
     (autoload-if-found '(flycheck-elsa-setup) "flycheck-elsa")
+    (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
 
     (with-eval-after-load 'elisp-mode
       (setq flycheck-elsa-backend 'eask)
