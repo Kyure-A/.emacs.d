@@ -549,6 +549,19 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/dotenv")))
 #+end_src
 
+*** eask
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacs-eask/eask")
+    (el-clone :repo "emacs-eask/eask-mode"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/eask"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/eask-mode"))
+    (autoload-if-found '(eask-mode) "eask-mode" nil t)
+    (add-to-list 'auto-mode-alist '("Eask" . eask-mode)))
+#+end_src
+
 *** el-project
 #+begin_src emacs-lisp
   (eval-when-compile
