@@ -2300,6 +2300,16 @@ Allows you to integrate Rich Presence from Discord.
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/powerline")))
 #+end_src
 
+*** power-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "elizagamedev/power-mode.el"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/power-mode"))
+    (require 'power-mode))
+#+end_src
+
 *** rainbow-mode
 #+begin_src emacs-lisp 
   (eval-when-compile
