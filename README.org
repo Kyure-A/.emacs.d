@@ -165,7 +165,7 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 *** global-set-key
 **** Special Keys
 #+begin_src emacs-lisp
-  (global-set-key (kbd "<f2>") 'eat)
+  (global-set-key (kbd "<f2>") 'toggle-eat)
   (global-set-key (kbd "<f3>") 'dashboard-open)
   (global-set-key (kbd "RET") 'smart-newline)
   (global-set-key (kbd "C-RET") 'newline)
@@ -1251,7 +1251,14 @@ cause bug?
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-eat"))
-    (autoload-if-found '(eat) "eat"))
+    (autoload-if-found '(eat) "eat")
+    (defun toggle-eat ()
+      (interactive)
+      (let ((kill-buffer-query-functions nil))
+        (if (get-buffer "*eat*")
+          (progn (kill-buffer "*eat*")
+                 (eat))
+        (eat)))))
 #+end_src
 
 *** exec-path-from-shell
