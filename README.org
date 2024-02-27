@@ -1034,12 +1034,17 @@ cause bug?
 *** SATySFi
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "gfngfn/satysfi.el"))
+    (el-clone :repo "gfngfn/satysfi.el")
+    (el-clone :repo "Kyure-A/satysfi-ts-mode"))
 
   (with-delayed-execution
-    (add-to-list 'auto-mode-alist '("\\.saty$" . satysfi-mode))
-    (add-to-list 'auto-mode-alist '("\\.satyh$" . satysfi-mode))
-    (autoload-if-found '(satysfi-mode) "satysfi-mode")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/satysfi"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/satysfi-ts-mode"))
+    (require 'satysfi)
+    ;; (autoload-if-found '(satysfi-mode) "satysfi")
+    (autoload-if-found '(satysfi-ts-mode) "satysfi-ts-mode")
+    (add-to-list 'auto-mode-alist '("\\.saty$" . satysfi-ts-mode))
+    (add-to-list 'auto-mode-alist '("\\.satyh$" . satysfi-ts-mode))
     (setq satysfi-command "satysfi"))
 #+end_src
 
@@ -1719,13 +1724,16 @@ GitHub Education License was expired
       (setq lsp-message-project-root-warning t)
       (setq create-lockfiles nil)
       (setq lsp-prefer-capf t)
-      (setq lsp-headerline-breadcrumb-mode t)))
-  
-  (eval-when-compile
-    (el-clone :repo "emacs-lsp/dap-mode"))
-
+      (setq lsp-headerline-breadcrumb-mode t)
+      (add-hook 'lsp-mode-hook #'flycheck-mode)
+      (with-eval-after-load 'satysfi-ts-mode
+        (add-to-list 'lsp-language-id-configuration '(satysfi-ts-mode . "satysfi-ls"))
+        (lsp-register-client (make-lsp-client :new-connection (lsp-stdio-connection '("~/.cargo/bin/satysfi-language-server"))
+                                              :major-modes '(satysfi-ts-mode)
+                                              :priority 0
+                                              :activation-fn (lsp-activate-on "satysfi-ls")
+                                              :server-id 'satysfi-ls)))))
   (with-delayed-execution
-    (message "Install dap-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/dap-mode"))
     (autoload-if-found '(dap-debug) "dap-mode"))
 #+end_src
