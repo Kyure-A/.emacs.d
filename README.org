@@ -1110,6 +1110,18 @@ cause bug?
       (setq markdown-command-needs-filename t)))
 #+end_src
 
+*** Mermaid
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "abrochard/mermaid-mode"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/mermaid-mode"))
+    (require 'mermaid-mode)
+    (add-to-list 'auto-mode-alist '("\\.mmd$" . mermaid-mode))
+    (add-to-list 'auto-mode-alist '("\\.mermaid$" . mermaid-mode)))
+#+end_src
+
 *** Org-mode
 **** org-mode
 #+begin_src emacs-lisp 
