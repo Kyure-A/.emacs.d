@@ -1307,7 +1307,7 @@ cause bug?
       (setq centaur-tabs-set-icons t)
       (setq centaur-tabs-set-bar 'under)
       (setq x-underline-at-descent-line t)
-      (setq centaur-tabs-style "bar")
+      (setq centaur-tabs-style "box")
       (setq centaur-tabs-set-modified-marker t)
       (setq centaur-tabs-show-navigation-buttons t)
       (setq centaur-tabs-adjust-buffer-order t)
