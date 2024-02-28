@@ -1945,6 +1945,19 @@ https://dev.classmethod.jp/articles/emacs-multiple-cursors/
       (setq yas-snippet-dirs '("~/.emacs.d/snippets"))))
 #+end_src
 
+*** yasnippet-org
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "takeokunn/yasnippet-org"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/yasnippet-org"))
+    (autoload-if-found '(yasnippet-org) "yasnippet-org")
+    (with-eval-after-load 'yasnippet-org
+      (setq yasnippet-org-verbose t)
+      (setq yasnippet-org-file (locate-user-emacs-file "snippets.org"))))
+#+end_src
+
 *** yatemplate
 #+begin_src emacs-lisp
   (eval-when-compile

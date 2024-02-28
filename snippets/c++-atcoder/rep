@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: rep
-# key: rep
-# --
-rep(i,${1:n}) $0

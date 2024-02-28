@@ -1,7 +1,6 @@
 # -*- mode: snippet -*-
 # name: src
-# key: <src
+# key: src
 # --
-#+begin_src $1
-  $0
-#+end_src
+#+begin_src !
+$0
