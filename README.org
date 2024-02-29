@@ -224,7 +224,7 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 
 **** M-* 
 #+begin_src emacs-lisp
-  (global-set-key (kbd "M-k") 'backward-kill-line)
+  (global-set-key (kbd "M-k") 'puni-backward-kill-line)
   (global-set-key (kbd "M-x") 'counsel-M-x)
 #+end_src
 
