@@ -1824,6 +1824,23 @@ https://dev.classmethod.jp/articles/emacs-multiple-cursors/
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/paredit")))
 #+end_src
 
+*** puni
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "AmaiKinono/puni"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/puni"))
+    (autoload-if-found '(puni-global-mode) "puni")
+    (puni-global-mode)
+    (with-eval-after-load 'lisp-mode
+      (add-hook 'lisp-mode-hook #'puni-disable-puni-mode))
+    (with-eval-after-load 'emacs-lisp-mode
+      (add-hook 'emacs-lisp-mode-hook #'puni-disable-puni-mode))
+    (with-eval-after-load 'lisp-interaction-mode
+      (add-hook 'lisp-interacton-mode-hook #'puni-disable-puni-mode)))
+#+end_src
+
 *** popwin
 #+begin_src emacs-lisp
   (eval-when-compile
