@@ -1898,7 +1898,7 @@ https://dev.classmethod.jp/articles/emacs-multiple-cursors/
 #+end_src
 
 *** smartparens
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (eval-when-compile
     (el-clone :repo "Fuco1/smartparens"))
 
