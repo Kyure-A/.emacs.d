@@ -1059,14 +1059,11 @@ cause bug?
 *** TypeScript
 #+begin_src emacs-lisp 
   (eval-when-compile
-    (el-clone :repo "ananthakumaran/typescript.el")
-    (el-clone :repo "ananthakumaran/tide"))
+    (el-clone :repo "ananthakumaran/typescript.el"))
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/typescript"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/tide"))
     (autoload-if-found '(typescript-mode) "typescript-mode")
-    (autoload-if-found '(tide-setup) "tide")
     (add-to-list 'auto-mode-alist '("\\.js$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.mjs$" . typescript-mode))
@@ -1075,9 +1072,8 @@ cause bug?
     (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.mts$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.cts$" . typescript-mode))
-    (add-hook 'typescript-mode-hook #'tide-setup)
-    (add-hook 'typescript-mode-hook #'flycheck-mode)
-    (setq tide-node-executable "~/.nix-profile/bin/node"))
+    (setq typescript-indent-level 2)
+    (add-hook 'typescript-mode-hook #'flycheck-mode))
 #+end_src
 
 ** Markup Languages
@@ -2077,9 +2073,38 @@ Allows you to integrate Rich Presence from Discord.
 *** eglot
 #+begin_src emacs-lisp
   (with-delayed-execution
-    (autoload-if-found '(eglot) "eglot")
-    (with-eval-after-load 'eglot
-      (add-to-list 'eglot-server-programs '(satysfi-ts-mode . ("satysfi-language-server")))))
+    (autoload-if-found '(eglot) "eglot"))
+#+end_src
+
+*** satysfi-language-server
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(satysfi-mode . ("satysfi-language-server")))
+    (add-to-list 'eglot-server-programs '(satysfi-ts-mode . ("satysfi-language-server"))))
+#+end_src
+
+*** typescript-language-server
+[[https://zenn.dev/hyakt/articles/5c947cc22c4bfa][Source]]
+#+begin_src emacs-lisp
+  (defun deno-project-p ()
+    "Predicate for determining if the open project is a Deno one."
+    (let ((p-root (cdr (project-current))))
+      (or (file-exists-p (concat p-root "deno.json"))
+          (file-exists-p (concat p-root "deno.jsonc")))))
+
+  (defun node-project-p ()
+    "Predicate for determining if the open project is a Node one."
+    (let ((p-root (cdr (project-current))))
+      (file-exists-p (concat p-root "package.json"))))
+
+  (defun es-server-program (_)
+    "Decide which server to use for ECMA Script based on project characteristics."
+    (cond ((deno-project-p) '("deno" "lsp" :initializationOptions (:enable t :lint t)))
+          ((node-project-p) '("typescript-language-server" "--stdio"))
+          (t nil)))
+
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '((js-mode typescript-mode) . es-server-program)))
 #+end_src
 
 ** Visual
