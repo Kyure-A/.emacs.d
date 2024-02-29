@@ -571,6 +571,16 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/el-project")))
 #+end_src
 
+*** eldoc
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (autoload-if-found '(turn-on-eldoc-mode) "eldoc" nil t)
+
+  (with-eval-after-load 'elisp-mode
+    (add-hook 'emacs-lisp-mode-hook #'turn-on-eldoc-mode)
+    (add-hook 'lisp-interaction-mode-hook #'turn-on-eldoc-mode)))
+#+end_src
+
 *** elsa
 #+begin_src emacs-lisp
   (eval-when-compile
