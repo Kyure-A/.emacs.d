@@ -200,10 +200,10 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
   (global-set-key (kbd "C-c r") 'vr/replace)
 #+end_src
 
-**** C-l (lsp-mode)
+**** C-l (eglot)
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-l") 'nil)
-  (global-set-key (kbd "C-l C-l") 'lsp)
+  (global-set-key (kbd "C-l C-l") 'eglot)
 #+end_src
 
 **** C-*
@@ -927,20 +927,6 @@ cause bug?
     (with-eval-after-load 'dart
       (add-hook 'dart-mode-hook #'flycheck-mode)
       (setq dart-enable-analysis-server t)))
-#+end_src
-
-**** lsp-dart
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "emacs-lsp/lsp-dart"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/lsp-dart"))
-    (add-hook 'dart-mode-hook #'lsp)
-    (with-eval-after-load 'lsp-dart
-      (dap-register-debug-template "Flutter :: Custom debug"
-                                 (list :flutterPlatform "x86_64" :program "lib/main_debug.dart" :args
-                                       '("--flavor" "customer_a")))))
 #+end_src
 
 **** flutter
@@ -1735,39 +1721,6 @@ GitHub Education License was expired
     (autoload-if-found '(swiper) "swiper"))
 #+end_src
 
-*** lsp
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "emacs-lsp/lsp-mode"
-              :load-paths `(,(locate-user-emacs-file "el-clone/lsp-mode/clients"))))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/lsp-mode"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/lsp-mode/clients"))
-    (autoload-if-found '(lsp lsp-deferred) "lsp-mode")
-    (with-eval-after-load 'lsp
-      (setq lsp-enable-snippet t)
-      (setq lsp-enable-indentation nil)
-      (setq lsp-prefer-flymake nil)
-      (setq lsp-document-sync-method 2)
-      (setq lsp-inhibit-message t)
-      (setq lsp-message-project-root-warning t)
-      (setq create-lockfiles nil)
-      (setq lsp-prefer-capf t)
-      (setq lsp-headerline-breadcrumb-mode t)
-      (add-hook 'lsp-mode-hook #'flycheck-mode)
-      (with-eval-after-load 'satysfi-ts-mode
-        (add-to-list 'lsp-language-id-configuration '(satysfi-ts-mode . "satysfi-ls"))
-        (lsp-register-client (make-lsp-client :new-connection (lsp-stdio-connection '("~/.cargo/bin/satysfi-language-server"))
-                                              :major-modes '(satysfi-ts-mode)
-                                              :priority 0
-                                              :activation-fn (lsp-activate-on "satysfi-ls")
-                                              :server-id 'satysfi-ls)))))
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/dap-mode"))
-    (autoload-if-found '(dap-debug) "dap-mode"))
-#+end_src
-
 *** minimap
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2120,6 +2073,14 @@ Allows you to integrate Rich Presence from Discord.
         (quickrun))))
 #+end_src
 
+** Language Server
+*** eglot
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (autoload-if-found '(eglot) "eglot")
+    (with-eval-after-load 'eglot
+      (add-to-list 'eglot-server-programs '(satysfi-ts-mode . ("satysfi-language-server")))))
+#+end_src
 
 ** Visual
 *** all-the-icons
