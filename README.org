@@ -2343,13 +2343,15 @@ Allows you to integrate Rich Presence from Discord.
 ** Functions
 *** toggle-centaur-tabs-local-mode
 #+begin_src emacs-lisp
-  (defun toggle-centaur-tabs-local-mode()
-    (interactive)
-    (call-interactively 'centaur-tabs-local-mode)
-    (call-interactively 'centaur-tabs-local-mode))
+  (with-eval-after-load 'centaur-tabs
+    (defun toggle-centaur-tabs-local-mode()
+      (interactive)
+      (call-interactively 'centaur-tabs-local-mode)
+      (call-interactively 'centaur-tabs-local-mode)))
 #+end_src
+
 *** backward-kill-line
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun backward-kill-line (arg)
     "Kill ARG lines backward."
     (interactive "p")
@@ -2375,10 +2377,8 @@ Allows you to integrate Rich Presence from Discord.
     (delete-word (- arg)))
 #+end_src
 
-*** eat-toggle
-
 *** others
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp :tangle no 
   (defun Kyure_A/echo-choices (list message-str)
     "Displays choices in the echo area and evaluates the choice"
     (setq chosen (completing-read "Choose an option: " list))
@@ -2426,7 +2426,7 @@ Allows you to integrate Rich Presence from Discord.
 ** Footer
 #+begin_src emacs-lisp 
   (provide 'init)
-
-    ;; End:
-    ;;; init.el ends here
+  
+  ;; End:
+  ;;; init.el ends here
 #+end_src
