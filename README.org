@@ -1548,37 +1548,6 @@ cause bug?
       (setq flycheck-idle-change-delay 0)))
 #+end_src
 
-*** GitHub Copilot
-GitHub Education License was expired
-#+begin_src emacs-lisp :tangle no
-  (leaf copilot
-    :doc "An unofficial Copilot plugin for Emacs"
-    :req "emacs-27.2" "s-1.12.0" "dash-2.19.1" "editorconfig-0.8.2" "jsonrpc-1.0.14"
-    :tag "out-of-MELPA" "emacs>=27.2"
-    :emacs>= 27.2
-    :quelpa (copilot :repo "zerolfx/copilot.el"
-                  :fetcher github
-                  :upgrade t)
-    :after editorconfig jsonrpc
-    :require t
-    :hook (prog-mode . copilot-mode)
-    ;;:custom (copilot-node-executable . "~/.nix-profile/bin/node")
-    :config
-
-    (delq 'company-preview-if-just-one-frontend company-frontends)
-
-    (leaf company-copilot-tab
-      :url "https://github.com/zerolfx/copilot.el/blob/9b13478720581580a045ac76ad68be075466a963/readme.md?plain=1#L152"
-      :after company
-      :bind ;; (:company-active-map ( "<tab>" . company-copilot-tab))
-      :preface
-      (defun company-copilot-tab ()
-     (interactive)
-     (or (copilot-accept-completion)
-         (company-indent-or-complete-common nil)))))
-
-#+end_src
-
 *** gcmh
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1808,17 +1777,6 @@ https://dev.classmethod.jp/articles/emacs-multiple-cursors/
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/posframe")))
 #+end_src
 
-*** restart-emacs
-#+begin_src emacs-lisp :tangle no
-  (eval-when-compile
-    (el-clone :repo "iqbalansari/restart-emacs"))
-
-  (when (string> "29.0" emacs-version)
-    (with-delayed-execution
-      (add-to-list 'load-path (locate-user-emacs-file "el-clone/restart-emacs"))
-      (require 'restart-emacs)))
-#+end_src
-
 *** skewer-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1980,17 +1938,6 @@ Allows you to integrate Rich Presence from Discord.
     (with-eval-after-load 'magit
       (setq magit-repository-directories '(("~/ghq/" . 3)))
       (add-hook 'magit-status-mode-hook #'toggle-centaur-tabs-local-mode)))
-#+end_src
-
-*** mozc
-#+begin_src emacs-lisp :tangle no
-  (leaf mozc
-    :doc "minor mode to input Japanese with Mozc"
-    :tag "input method" "multilingual" "mule"
-    :added "2023-07-20"
-    :ensure t
-    :require t
-    :config (setq mozc-candidate-style 'echo-area))
 #+end_src
 
 *** Node.js
@@ -2182,22 +2129,6 @@ Allows you to integrate Rich Presence from Discord.
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emojify"))
     (autoload-if-found '(global-emojify-mode) "emojify")
     (add-hook 'after-init-hook #'global-emojify-mode))
-#+end_src
-
-*** hide-mode-line
-#+begin_src emacs-lisp  :tangle no
-  (leaf hide-mode-line
-    :doc "minor mode that hides/masks your modeline"
-    :req "emacs-24.4"
-    :tag "mode-line" "frames" "emacs>=24.4"
-    :url "https://github.com/hlissner/emacs-hide-mode-line"
-    :added "2023-09-05"
-    :emacs>= 24.4
-    :ensure t
-    :require t
-    :hook
-    (vterm-mode . hide-mode-line-mode)
-    (dashboard-mode . hide-mode-line-mode))
 #+end_src
 
 *** lambda-line
@@ -2396,18 +2327,6 @@ Allows you to integrate Rich Presence from Discord.
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-solaire")))
-#+end_src
-
-*** symbol-overlay
-alternative highlight-symbol
-#+begin_src emacs-lisp :tangle no
-  (eval-when-compile
-    (el-clone :repo "wolray/symbol-overlay"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/symbol-overlay"))
-    (autoload-if-found '(symbol-overlay-mode) "symbol-over-lay")
-    (add-hook 'prog-mode-hook #'symbol-overlay-mode))
 #+end_src
 
 *** yascroll
