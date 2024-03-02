@@ -1018,18 +1018,14 @@ cause bug?
 *** Rust
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "rust-lang/rust-mode")
-    (el-clone :repo "kwrooijen/cargo.el"))
+    (el-clone :repo "rust-lang/rust-mode"))
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/rust-mode"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/cargo"))
     (autoload-if-found '(rust-mode) "rust-mode")
     (add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
     (with-eval-after-load 'rust-mode
-      (setq rust-format-on-save t)
-      (add-hook 'rust-mode-hook #'lsp)
-      (add-hook 'rust-mode-hook 'cargo-minor-mode)
+      (setq rust-format-on-save nil)
       (add-to-list 'exec-path (expand-file-name "~/.cargo/bin"))
       (setq lsp-rust-server 'rust-analyzer)))
 #+end_src
@@ -2109,17 +2105,31 @@ Allows you to integrate Rich Presence from Discord.
 *** eglot
 #+begin_src emacs-lisp
   (with-delayed-execution
-    (autoload-if-found '(eglot) "eglot"))
+    (autoload-if-found '(eglot eglot-ensure) "eglot"))
 #+end_src
 
-*** satysfi-language-server
+*** Rust
+[[https://gist.github.com/casouri/0ad2c6e58965f6fd2498a91fc9c66501?permalink_comment_id=4645337#gistcomment-4645337][Source]]
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 `(rust-mode . ("rust-analyzer" :initializationOptions
+                                ( :procMacro (:enable t)
+                                  :cargo ( :buildScripts (:enable t)
+                                           :features "all")))))
+    (add-hook 'rust-mode-hook #'eglot-ensure))
+#+end_src
+
+*** SATySFi
 #+begin_src emacs-lisp
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(satysfi-mode . ("satysfi-language-server")))
-    (add-to-list 'eglot-server-programs '(satysfi-ts-mode . ("satysfi-language-server"))))
+    (add-to-list 'eglot-server-programs '(satysfi-ts-mode . ("satysfi-language-server")))
+    (add-hook 'satysfi-mode-hook #'eglot-ensure)
+    (add-hook 'satysfi-ts-mode-hook #'eglot-ensure))
 #+end_src
 
-*** typescript-language-server
+*** TypeScript
 [[https://zenn.dev/hyakt/articles/5c947cc22c4bfa][Source]]
 #+begin_src emacs-lisp
   (defun deno-project-p ()
@@ -2140,7 +2150,9 @@ Allows you to integrate Rich Presence from Discord.
           (t nil)))
 
   (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '((js-mode typescript-mode) . es-server-program)))
+    (add-to-list 'eglot-server-programs '((js-mode typescript-mode) . es-server-program))
+    (add-hook 'typescript-mode-hook #'eglot-ensure)
+    (add-hook 'js-mode-hook #'eglot-ensure))
 #+end_src
 
 ** Visual
