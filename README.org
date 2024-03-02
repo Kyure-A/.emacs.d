@@ -330,6 +330,12 @@ cause bug?
     (save-place-mode t))
 #+end_src
 
+*** electric-pair-mode
+#+begin_src emacs-lisp 
+  (with-delayed-execution
+    (electric-pair-mode t))
+#+end_src
+
 *** System Language Setting
 #+begin_src emacs-lisp 
   (set-language-environment "Japanese")
