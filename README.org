@@ -1434,10 +1434,22 @@ cause bug?
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/dirvish"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/dirvish/extensions"))
+
     (autoload-if-found '(dirvish-override-dired-mode) "dirvish")
     (dirvish-override-dired-mode)
+    ;; (autoload-if-found '(dirvish-peek-mode) "dirvish-peek")
+    ;; (dirvish-peek-mode)
+    ;; (autoload-if-found '(dirvish-side-follow-mode) "dirvish-side")
+    ;; (dirvish-side-follow-mode)
+
     (with-eval-after-load 'dirvish
-      (setq dirvish-attributes '(vc-state subtree-state all-the-icons collapse git-msg file-time file-size))
+      (with-eval-after-load 'nerd-icons
+        (setq dirvish-attributes '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size))
+        (setq dirvish-subtree-state-style 'nerd)
+        (setq dirvish-path-separators (list
+                                       (format "  %s " (nerd-icons-codicon "nf-cod-home"))
+                                       (format "  %s " (nerd-icons-codicon "nf-cod-root_folder"))
+                                       (format " %s " (nerd-icons-faicon "nf-fa-angle_right")))))
       (setq dirvish-preview-dispatchers (cl-substitute 'pdf-preface 'pdf dirvish-preview-dispatchers))))
 #+end_src
 **** dired
@@ -2292,7 +2304,8 @@ Allows you to integrate Rich Presence from Discord.
     (el-clone :repo "rainstormstudio/nerd-icons.el"))
 
   (with-delayed-execution-priority-high
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons"))
+    (require 'nerd-icons))
 #+end_src
 
 **** nerd-icons-corfu
