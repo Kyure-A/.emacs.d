@@ -574,7 +574,8 @@ cause bug?
     (el-clone :repo "Kyure-A/el-project"))
 
   (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/el-project")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/el-project"))
+    (require 'el-project))
 #+end_src
 
 *** eldoc
@@ -717,7 +718,8 @@ cause bug?
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/package-lint"))
-    (autoload-if-found '(package-lint-current-buffer) "package-lint"))
+    (autoload-if-found '(package-lint-current-buffer) "package-lint")
+    (require 'package-lint))
 #+end_src
 
 *** pos-tip
@@ -1097,6 +1099,7 @@ cause bug?
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/markdown-mode"))
+    (require 'markdown-mode)
     (autoload-if-found '(markdown-mode gfm-mode) "markdown-mode")
     (add-to-list 'auto-mode-alist '("\\.md$" . gfm-mode))
     (add-to-list 'auto-mode-alist '("\\.markdown$" . gfm-mode))
@@ -1925,7 +1928,7 @@ https://dev.classmethod.jp/articles/emacs-multiple-cursors/
     (which-key-mode))
 #+end_src
 
-**** which-key-posframe
+*** which-key-posframe
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-clone :repo "yanghaoxie/which-key-posframe"))
@@ -2059,6 +2062,7 @@ Allows you to integrate Rich Presence from Discord.
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/nvm")))
 #+end_src
+
 
 *** oj
 #+begin_src emacs-lisp
@@ -2462,6 +2466,7 @@ alternative highlight-symbol
     (interactive "p")
     (kill-line (- 1 arg)))
 #+end_src
+
 *** delete-word
 [[https://qiita.com/ballforest/items/5a76f284af254724144a][Source]]
 #+begin_src emacs-lisp
