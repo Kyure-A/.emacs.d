@@ -2,5 +2,6 @@
 # name: src
 # key: src
 # --
-#+begin_src !
+#+begin_src
 $0
+#+end_src
