@@ -1774,6 +1774,24 @@ https://dev.classmethod.jp/articles/emacs-multiple-cursors/
     (setq nu-my-kuten "．"))
 #+end_src
 
+*** orderless
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "oantolin/orderless"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/orderless"))
+    (autoload-if-found '(orderless orderless-try-completion orderless-all-completions) "orderless")
+
+    (with-eval-after-load 'minibuffer
+      (setq completion-styles '(orderless basic))
+      (setq completion-category-overrides '((file (styles basic partial-completion))))
+      (add-to-list 'completion-styles-alist
+             '(orderless
+               orderless-try-completion orderless-all-completions
+               "Completion of multiple components, in any order."))))
+#+end_src
+
 *** paredit
 #+begin_src emacs-lisp
   (eval-when-compile
