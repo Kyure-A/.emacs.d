@@ -1323,6 +1323,7 @@ cause bug?
 #+end_src
 
 *** corfu
+**** corfu
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-clone :repo "minad/corfu"))
@@ -1340,8 +1341,6 @@ cause bug?
     (with-eval-after-load 'indent
       (setq tab-always-indent 'complete)))
 #+end_src
-
-**** corfu
 
 *** Dashboard
 **** dashboard-recover-layout-p
@@ -2287,12 +2286,31 @@ Allows you to integrate Rich Presence from Discord.
 #+end_src
 
 *** nerd-icons
+**** nerd-icons
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-clone :repo "rainstormstudio/nerd-icons.el"))
 
   (with-delayed-execution-priority-high
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons")))
+#+end_src
+
+**** nerd-icons-corfu
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "LuigiPiucco/nerd-icons-corfu"))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons-corfu"))
+    (autoload-if-found '(nerd-icons-corfu-formatter) "nerd-icons-corfu")
+    (with-eval-after-load 'nerd-icons-corfu
+      (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+      ;; (setq nerd-icons-corfu-mapping
+      ;;       '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
+      ;;         (boolean :style "cod" :icon "symbol_boolean" :face font-lock-builtin-face)
+      ;;         ;; ...
+      ;;         (t :style "cod" :icon "code" :face font-lock-warning-face)))
+      ))
 #+end_src
 
 *** page-break-lines
