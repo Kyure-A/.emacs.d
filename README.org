@@ -885,7 +885,6 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/yaml")))
 #+end_src
 
-
 ** Programming Languages
 *** Arduino Style C
 #+begin_src emacs-lisp
@@ -1064,7 +1063,7 @@ cause bug?
 #+begin_src emacs-lisp 
   (eval-when-compile
     (el-clone :repo "ananthakumaran/typescript.el"))
-
+  
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/typescript"))
     (autoload-if-found '(typescript-mode) "typescript-mode")
@@ -1485,7 +1484,6 @@ cause bug?
       (dashboard-setup-startup-hook)
       (define-key dashboard-mode-map (kbd "<f3>") #'quit-dashboard)))
 #+end_src
-
 
 *** dirvish/dired
 **** dirvish
