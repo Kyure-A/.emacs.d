@@ -1341,6 +1341,8 @@ cause bug?
       (setq tab-always-indent 'complete)))
 #+end_src
 
+**** corfu
+
 *** Dashboard
 **** dashboard-recover-layout-p
 #+begin_src emacs-lisp
@@ -2097,6 +2099,7 @@ Allows you to integrate Rich Presence from Discord.
 
 ** Visual
 *** all-the-icons
+**** all-the-icons
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-clone :repo "domtronn/all-the-icons.el"))
@@ -2105,7 +2108,7 @@ Allows you to integrate Rich Presence from Discord.
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons")))
 #+end_src
 
-*** all-the-icons-dired
+**** all-the-icons-dired
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-clone :repo "wyuenho/all-the-icons-dired"))
@@ -2116,7 +2119,7 @@ Allows you to integrate Rich Presence from Discord.
     (add-hook 'dired-mode #'all-the-icons-dired-mode))
 #+end_src
 
-*** all-the-icons-ivy-rich
+**** all-the-icons-ivy-rich
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-clone :repo "seagle0128/all-the-icons-ivy-rich"))
@@ -2186,27 +2189,6 @@ Allows you to integrate Rich Presence from Discord.
     (dashboard-mode . hide-mode-line-mode))
 #+end_src
 
-*** mini-echo
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "liuyinz/mini-echo.el"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/mini-echo"))
-    (autoload-if-found '(mini-echo-mode) "mini-echo" nil t)
-    (mini-echo-mode))
-#+end_src
-
-*** mini-modeline
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "kiennq/emacs-mini-modeline"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-mini-modeline"))
-    (autoload-if-found '(mini-modeline-mode) "mini-modeline" nil t))
-#+end_src
-
 *** lambda-line
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2232,6 +2214,27 @@ Allows you to integrate Rich Presence from Discord.
       (lambda-line-space-bottom -.30)
       (lambda-line-symbol-position 0.1) ;; adjust the vertical placement of symbol
       ))
+#+end_src
+
+*** mini-echo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "liuyinz/mini-echo.el"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/mini-echo"))
+    (autoload-if-found '(mini-echo-mode) "mini-echo" nil t)
+    (mini-echo-mode))
+#+end_src
+
+*** mini-modeline
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "kiennq/emacs-mini-modeline"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-mini-modeline"))
+    (autoload-if-found '(mini-modeline-mode) "mini-modeline" nil t))
 #+end_src
 
 *** monokai
