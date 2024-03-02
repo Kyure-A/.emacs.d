@@ -1286,6 +1286,18 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ace-window")))
 #+end_src
 
+*** aggressive-indent
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "Malabarba/aggressive-indent-mode"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/aggressive-indent-mode"))
+    (autoload-if-found '(aggressive-indent-mode global-aggressive-indent-mode) "aggressive-indent-mode")
+    (require 'aggressive-indent)
+    (global-aggressive-indent-mode t))
+#+end_src
+
 *** Centaur-tabs
 #+begin_src emacs-lisp 
   (eval-when-compile
