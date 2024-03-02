@@ -1510,7 +1510,7 @@ cause bug?
     (define-key dired-mode-map (kbd "<right>") #'dired-open-in-accordance-with-situation))
 #+end_src
 **** dired-async
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (eval-when-compile
     (el-clone :repo "jwiegley/emacs-async"))
 
