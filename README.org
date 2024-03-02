@@ -1322,85 +1322,23 @@ cause bug?
       (setq centaur-tabs-cycle-scope 'groups)))
 #+end_src
 
-*** company
-**** company
+*** corfu
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "company-mode/company-mode"))
+    (el-clone :repo "minad/corfu"))
 
   (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-mode"))
-    (autoload-if-found '(global-company-mode) "company")
-    (global-company-mode)
-    (with-eval-after-load 'company
-      (define-key company-active-map (kbd "<tab>") #'company-complete-common-or-cycle)
-      (setq company-idle-delay 0)
-      (setq company-minimum-prefix-length 2)
-      (setq company-selection-wrap-around t)
-      (setq company-tooltip-align-annotations t)
-      (setq company-require-match 'never)
-      (setq company-transformers '(company-sort-by-statistics company-sort-by-backend-importance))))
-#+end_src
-
-**** company-box
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "sebastiencs/company-box"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-box"))
-    (autoload-if-found '(company-box-mode) "company-box")
-    (with-eval-after-load 'company-mode
-      (when window-system
-        (add-hook 'company-mode-hook #'company-box-mode)))
-    (with-eval-after-load 'company-box
-      (setq company-box-icons-alist 'company-box-icons-all-the-icons))
-    (with-eval-after-load 'company-box-doc
-      (setq company-box-doc-enable nil)))
-#+end_src
-
-**** company-posframe
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "tumashu/company-posframe"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-posframe"))
-    (autoload-if-found '(company-posframe-mode) "company-posframe")
-    (company-posframe-mode t))
-#+end_src
-
-**** company-quickhelp
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "expez/company-quickhelp"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-quickhelp"))
-    (autoload-if-found '(company-quickhelp-mode) "company-quickhelp")
-    (company-quickhelp-mode t))
-#+end_src
-
-**** company-shell
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "Alexander-Miller/company-shell"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-shell"))
-    (autoload-if-found '(company-shell) "company-shell")
-    (add-to-list 'company-backends 'company-shell))
-#+end_src
-
-**** company-statistics
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "company-mode/company-statistics"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-statistics"))
-    (autoload-if-found '(company-statistics-mode) "company-statistics")
-    (company-statistics-mode t))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/corfu"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/corfu/extensions"))
+    (autoload-if-found '(global-corfu-mode) "corfu")
+    (global-corfu-mode)
+    (with-eval-after-load 'corfu
+      (setq corfu-auto t)
+      (setq corfu-auto-delay 0)
+      (setq corfu-cycle t)
+      (setq corfu-on-exact-match nil))
+    (with-eval-after-load 'indent
+      (setq tab-always-indent 'complete)))
 #+end_src
 
 *** Dashboard
