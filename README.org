@@ -1157,7 +1157,10 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-roam"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-roam/extensions"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-roam-ui"))
+    (autoload-if-found '(org-roam-mode) "org-roam")
     (autoload-if-found '(org-roam-ui-mode) "org-roam-ui")
+    (with-eval-after-load 'org
+      (require 'org-roam))
     (with-eval-after-load 'org-roam-mode
       (add-hook 'org-roam-mode-hook #'org-roam-ui-mode)))
 #+end_src
@@ -1167,6 +1170,18 @@ cause bug?
   (with-delayed-execution
     (with-eval-after-load 'org
       (require 'org-tempo)))
+#+end_src
+
+**** org-ai
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "rksm/org-ai"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-ai"))
+    (autoload-if-found '(org-ai-mode) "org-ai")
+    (with-eval-after-load 'org
+      (add-hook 'org-mode-hook #'org-ai-mode)))
 #+end_src
 
 *** VHDL
