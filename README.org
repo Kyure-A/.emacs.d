@@ -2131,6 +2131,15 @@ Allows you to integrate Rich Presence from Discord.
     (add-hook 'after-init-hook #'global-emojify-mode))
 #+end_src
 
+*** hide-modeline
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "hlissner/emacs-hide-mode-line"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-hide-mode-line")))
+#+end_src
+
 *** lambda-line
 #+begin_src emacs-lisp
   (eval-when-compile
