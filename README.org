@@ -165,7 +165,7 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 *** global-set-key
 **** Special Keys
 #+begin_src emacs-lisp
-  (global-set-key (kbd "<f2>") 'toggle-eat)
+  (global-set-key (kbd "<f2>") 'mistty)
   (global-set-key (kbd "<f3>") 'dashboard-open)
   (global-set-key (kbd "RET") 'smart-newline)
   (global-set-key (kbd "C-RET") 'newline)
@@ -1287,6 +1287,16 @@ cause bug?
       (setq exec-path-from-shell-arguments nil)
       (setq exec-path-from-shell-variables '("ASDF_CONFIG_FILE" "ASDF_DATA_DIR" "ASDF_DEFAULT_TOOL_VERSIONS_FILENAME" "ASDF_DIR"
                                           "GPG_AGENT_INFO" "GPG_KEY_ID" "PATH" "SHELL" "TEXMFHOME" "WSL_DISTRO_NAME" "http_proxy"))))
+#+end_src
+
+*** mistty
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "szermatt/mistty"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/mistty"))
+    (autoload-if-found '(mistty) "mistty"))
 #+end_src
 
 ** Extensions
