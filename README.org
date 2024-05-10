@@ -1063,16 +1063,14 @@ cause bug?
 #+begin_src emacs-lisp 
   (eval-when-compile
     (el-clone :repo "ananthakumaran/typescript.el"))
-  
+
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/typescript"))
     (autoload-if-found '(typescript-mode) "typescript-mode")
     (add-to-list 'auto-mode-alist '("\\.js$" . typescript-mode))
-    (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.mjs$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.cjs$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
-    (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.mts$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.cts$" . typescript-mode))
     (setq typescript-indent-level 2)
@@ -1203,9 +1201,11 @@ cause bug?
     (add-to-list 'auto-mode-alist '("\\.erb$" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.gsp$" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.liquid$" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.mustache" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.svg$" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.tpl$" . web-mode))
 
     (with-eval-after-load 'web-mode
@@ -2075,7 +2075,7 @@ Allows you to integrate Rich Presence from Discord.
           (t nil)))
 
   (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '((js-mode typescript-mode) . es-server-program))
+    (add-to-list 'eglot-server-programs '((js-mode typescript-mode web-mode) . es-server-program))
     (add-hook 'typescript-mode-hook #'eglot-ensure)
     (add-hook 'js-mode-hook #'eglot-ensure))
 #+end_src
