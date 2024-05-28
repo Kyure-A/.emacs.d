@@ -1208,6 +1208,13 @@ cause bug?
     (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.tpl$" . web-mode))
 
+    (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.mjs$" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.cjs$" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.ts$" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.mts$" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.cts$" . web-mode))
+
     (with-eval-after-load 'web-mode
       (setq web-mode-markup-indent-offset 2)
       (setq web-mode-enable-auto-pairing t)
