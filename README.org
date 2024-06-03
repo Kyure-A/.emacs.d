@@ -165,7 +165,7 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 *** global-set-key
 **** Special Keys
 #+begin_src emacs-lisp
-  (global-set-key (kbd "<f2>") 'mistty)
+  (global-set-key (kbd "<f2>") 'toggle-eat)
   (global-set-key (kbd "<f3>") 'dashboard-open)
   (global-set-key (kbd "RET") 'smart-newline)
   (global-set-key (kbd "C-RET") 'newline)
