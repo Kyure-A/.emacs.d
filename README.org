@@ -1453,7 +1453,11 @@ cause bug?
     (open-dashboard)
     (with-eval-after-load 'dashboard
       (dashboard-setup-startup-hook)
-      (define-key dashboard-mode-map (kbd "<f3>") #'quit-dashboard)))
+      (define-key dashboard-mode-map (kbd "<f3>") #'quit-dashboard)
+      (define-key dashboard-mode-map (kbd "p") #'previous-line)
+      (define-key dashboard-mode-map (kbd "n") #'next-line)
+      (define-key dashboard-mode-map (kbd "b") #'backward-char)
+      (define-key dashboard-mode-map (kbd "f") #'forward-char)))
 #+end_src
 
 *** dirvish/dired
