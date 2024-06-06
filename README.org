@@ -1,7 +1,7 @@
 #+title: init.org
 #+description: Kyure_A's Emacs config
 #+author: Kyure_A
-
+ 
 * Introduction
 
 ** Author
@@ -187,7 +187,7 @@ https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
   (global-set-key (kbd "C-x u") 'undo-tree-visualize)
   (global-set-key (kbd "C-x C-z") 'nil)
   (global-set-key (kbd "C-x C-c") 'nil)
-#+end_src
+  #+end_src
 
 **** C-c
 #+begin_src emacs-lisp
@@ -1576,6 +1576,7 @@ cause bug?
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/flycheck"))
     (autoload-if-found '(flycheck-mode flycheck-define-checker) "flycheck")
+
     (with-eval-after-load 'flycheck
       (setq flycheck-idle-change-delay 0)))
 #+end_src
@@ -2031,6 +2032,15 @@ Allows you to integrate Rich Presence from Discord.
       (if mark-active
           (quickrun :start start :end end)
         (quickrun))))
+#+end_src
+
+*** swagg
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "isamert/swagg.el"))
+  
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/swagg")))
 #+end_src
 
 ** Language Server
