@@ -985,6 +985,16 @@ cause bug?
                                       hy-shell-interpreter-args)))))
 #+end_src
 
+*** mcfunction
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "rasensuihei/mcf"))
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/mcf"))
+    (autoload-if-found '(mcf-mode) "mcf")
+    (add-to-list 'auto-mode-alist '("\\.mcfunction$" . mcf-mode)))
+#+end_src
+
 *** Nix
 #+begin_src emacs-lisp
   (eval-when-compile
