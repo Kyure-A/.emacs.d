@@ -867,6 +867,14 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/undercover")))
 #+end_src
 
+*** validate
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "Malabarba/validate.el"))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/validate")))
+#+end_src
 *** websocket
 #+begin_src emacs-lisp
   (eval-when-compile
