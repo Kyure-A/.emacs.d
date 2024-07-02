@@ -2173,7 +2173,8 @@ Allows you to integrate Rich Presence from Discord.
 *** display-line-numbers
 #+begin_src emacs-lisp
   (with-delayed-execution
-    (custom-set-variables '(display-line-numbers-width-start t)))
+    (custom-set-variables '(display-line-numbers-width-start t))
+    (defalias 'linum-mode 'display-line-numbers-mode))
 #+end_src
 
 *** doom-modeline
