@@ -1044,14 +1044,14 @@ cause bug?
 *** SATySFi
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "gfngfn/satysfi.el")
+    (el-clone :repo "hanazuki/satysfi.el")
     (el-clone :repo "Kyure-A/satysfi-ts-mode"))
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/satysfi"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/satysfi-ts-mode"))
-    (require 'satysfi)
-    ;; (autoload-if-found '(satysfi-mode) "satysfi")
+    (require 'satysfi-mode)
+    (autoload-if-found '(satysfi-mode) "satysfi")
     (autoload-if-found '(satysfi-ts-mode) "satysfi-ts-mode")
     (add-to-list 'auto-mode-alist '("\\.saty$" . satysfi-ts-mode))
     (add-to-list 'auto-mode-alist '("\\.satyh$" . satysfi-ts-mode))
