@@ -11,7 +11,7 @@ Kyure_A
 https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
 
 ** Screen shot
-[[file:../assets/emacs_screenshot.png]]
+[[file:./assets/emacs_screenshot.png]]
 
 * Configurations
 
@@ -1460,7 +1460,7 @@ cause bug?
                                       "「えーー！なるっちの担当箇所がバグだらけ！？」 - 桜ねね"
                                       "「C++ を完全に理解してしまったかもしれない」 - 桜ねね"
                                       "「これでもデバッグはプロ級だし 今はプログラムの知識だってあるんだからまかせてよね！」 - 桜ねね"))
-    (setq dashboard-startup-banner (if (or (eq window-system 'x) (eq window-system 'ns) (eq window-system 'w32)) "~/.emacs.d/static/banner.png" "~/.emacs.d/static/banner.txt"))
+    (setq dashboard-startup-banner (if (or (eq window-system 'x) (eq window-system 'ns) (eq window-system 'w32)) "~/.emacs.d/assets/banner.png" "~/.emacs.d/assets/banner.txt"))
     (open-dashboard)
     (with-eval-after-load 'dashboard
       (dashboard-setup-startup-hook)
