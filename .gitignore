@@ -1,0 +1,16 @@
+/*
+/.**
+!/assets/
+!/assets/**
+!/.gitattributes
+!/early-init.org
+!/README.org
+!/snippets/
+!/snippets/.keep
+!/snippets/org-mode/emacs-lisp
+!/snippets/org-mode/src
+!/templates/
+!/templates/**
+!/.gitignore
+!/LICENSE.md
+!/Makefile
