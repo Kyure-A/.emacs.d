@@ -1016,9 +1016,6 @@ cause bug?
     (autoload-if-found '(company-nix) "nix-company")
     (add-to-list 'auto-mode-alist '("\\.nix$" . nix-mode))
 
-    (with-eval-after-load 'nix-mode
-      (add-hook 'nix-mode-hook #'lsp))
-
     (with-eval-after-load 'company
       (push 'company-nix company-backends)))
 #+end_src
