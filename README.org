@@ -2077,6 +2077,13 @@ Allows you to integrate Rich Presence from Discord.
       (eglot-lens-mode)))
 #+end_src
 
+*** Nix
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(nix-mode . ("nixd")))
+    (add-hook 'nix-mode-hook #'eglot-ensure))
+#+end_src
+
 *** Rust
 [[https://gist.github.com/casouri/0ad2c6e58965f6fd2498a91fc9c66501?permalink_comment_id=4645337#gistcomment-4645337][Source]]
 #+begin_src emacs-lisp
