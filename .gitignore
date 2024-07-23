@@ -12,5 +12,5 @@
 !/templates/
 !/templates/**
 !/.gitignore
-!/LICENSE.md
+!/LICENSE
 !/Makefile
