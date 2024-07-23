@@ -1,2 +1,2 @@
-./snippets/* linguist-vendored
-./templates/* linguist-vendored
+*.org linguist-detectable=true
+*.org linguist-documentation=false
