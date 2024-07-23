@@ -1588,7 +1588,7 @@ cause bug?
 *** Flycheck
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "flycheck/flycheck"))
+    (el-clone :repo "Kyure-A/flycheck"))
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/flycheck"))
