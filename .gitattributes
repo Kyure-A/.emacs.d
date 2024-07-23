@@ -1,2 +1,2 @@
-./snippets linguist-vendored
-./templates linguist-vendored
+./snippets/* linguist-vendored
+./templates/* linguist-vendored
