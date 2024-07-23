@@ -1345,8 +1345,9 @@ cause bug?
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/centaur-tabs"))
-    (autoload-if-found '(centaur-tabs-mode) "centaur-tabs")
-    (centaur-tabs-mode t)
+    ;; (autoload-if-found '(centaur-tabs-mode) "centaur-tabs")
+    (require 'centaur-tabs)
+    (centaur-tabs-mode)
     (with-eval-after-load 'centaur-tabs
       (centaur-tabs-group-by-projectile-project)
       (centaur-tabs-headline-match)
