@@ -1010,14 +1010,11 @@ cause bug?
 
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/nix-mode"))
-
+    (require 'nix-mode)
     (autoload-if-found '(nix-mode) "nix-mode")
     (autoload-if-found '(nix-drv-mode) "nix-drv-mode")
     (autoload-if-found '(company-nix) "nix-company")
-    (add-to-list 'auto-mode-alist '("\\.nix$" . nix-mode))
-
-    (with-eval-after-load 'company
-      (push 'company-nix company-backends)))
+    (add-to-list 'auto-mode-alist '("\\.nix$" . nix-mode)))
 #+end_src
 
 *** pwsh
