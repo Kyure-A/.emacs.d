@@ -1037,6 +1037,7 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/rust-mode"))
     (autoload-if-found '(rust-mode) "rust-mode")
     (add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
+    (require 'rust-mode)
     (with-eval-after-load 'rust-mode
       (setq rust-format-on-save nil)
       (add-to-list 'exec-path (expand-file-name "~/.cargo/bin"))
