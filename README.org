@@ -690,6 +690,15 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-lgr")))
 #+end_src
 
+*** llm
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "ahyatt/llm"))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/llm")))
+#+end_src
+
 *** lisp-interaction-mode
 #+begin_src emacs-lisp
   (with-delayed-execution
