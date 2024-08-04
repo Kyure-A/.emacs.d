@@ -1469,6 +1469,15 @@ cause bug?
       (define-key dashboard-mode-map (kbd "f") #'forward-char)))
 #+end_src
 
+*** Daredevil SKK
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "skk-dev/ddskk"))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ddskk"))
+    (autoload-if-found '(skk-mode) "skk-autoloads"))
+#+end_src
 *** dirvish/dired
 **** dirvish
 #+begin_src emacs-lisp
