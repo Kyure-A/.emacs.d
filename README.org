@@ -451,11 +451,6 @@ cause bug?
     (recently-mode t))
 #+end_src
 
-*** suppress window splitting
-#+begin_src emacs-lisp
-  (set-frame-parameter nil 'unsplittable t)
-#+end_src
-
 *** load custom.el
 #+begin_src emacs-lisp
   (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -712,6 +707,15 @@ cause bug?
 
   (with-delayed-execution-priority-high
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-lgr")))
+#+end_src
+
+*** llm
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "ahyatt/llm"))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/llm")))
 #+end_src
 
 *** lisp-interaction-mode
@@ -1355,6 +1359,21 @@ cause bug?
     (global-aggressive-indent-mode t))
 #+end_src
 
+*** cape
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "minad/cape"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/cape"))
+    (autoload-if-found '(cape-file cape-dabbrev cape-elisp-block cape-history cape-keyword) "cape")
+    (with-eval-after-load 'minibuffer
+      (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+      (add-to-list 'completion-at-point-functions #'cape-file)
+      (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+      (add-to-list 'completion-at-point-functions #'cape-history)))
+    #+end_src
+
 *** Centaur-tabs
 #+begin_src emacs-lisp 
   (eval-when-compile
@@ -1488,6 +1507,15 @@ cause bug?
       (define-key dashboard-mode-map (kbd "f") #'forward-char)))
 #+end_src
 
+*** Daredevil SKK
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "skk-dev/ddskk"))
+
+  (with-delayed-execution-priority-high
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ddskk"))
+    (autoload-if-found '(skk-mode) "skk-autoloads"))
+#+end_src
 *** dirvish/dired
 **** dirvish
 #+begin_src emacs-lisp
@@ -1590,6 +1618,19 @@ cause bug?
     (editorconfig-mode t))
 #+end_src
 
+*** embark
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "oantolin/embark"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/embark"))
+
+    (autoload-if-found '(embark-act embark-dwim embark-prefix-help-command) "embark")
+    (global-set-key (kbd "C-.") #'embark-act)
+    ;; (global-set-key (kbd "C-h B") #'embark-prefix-help-command)
+    )
+#+end_src
 *** eval-in-repl
 #+begin_src emacs-lisp
   (eval-when-compile
