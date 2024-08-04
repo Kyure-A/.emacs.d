@@ -432,11 +432,6 @@ cause bug?
     (recently-mode t))
 #+end_src
 
-*** suppress window splitting
-#+begin_src emacs-lisp
-  (set-frame-parameter nil 'unsplittable t)
-#+end_src
-
 *** load custom.el
 #+begin_src emacs-lisp
   (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -1595,6 +1590,19 @@ cause bug?
     (editorconfig-mode t))
 #+end_src
 
+*** embark
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "oantolin/embark"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/embark"))
+
+    (autoload-if-found '(embark-act embark-dwim embark-prefix-help-command) "embark")
+    (global-set-key (kbd "C-.") #'embark-act)
+    ;; (global-set-key (kbd "C-h B") #'embark-prefix-help-command)
+    )
+#+end_src
 *** eval-in-repl
 #+begin_src emacs-lisp
   (eval-when-compile
