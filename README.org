@@ -2100,12 +2100,19 @@ Allows you to integrate Rich Presence from Discord.
 ** Language Server
 *** eglot
 #+begin_src emacs-lisp
-  (with-delayed-execution
+  (with-delayed-execution-priority-high
     (autoload-if-found '(eglot eglot-ensure) "eglot"))
 
   (eval-when-compile
     (el-clone :url "https://gist.github.com/ee156d1a3574442ac1d8a357834cf17e.git"
-              :repo "eglot-codelens"))
+              :repo "eglot-codelens")
+    (el-clone :repo "jdtsmith/eglot-booster"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/eglot-booster"))
+    (autoload-if-found '(eglot-booster-mode) "eglot-booster")
+    (with-eval-after-load 'eglot
+      (eglot-booster-mode)))
 
   ;; (with-delayed-execution
   ;;    (add-to-list 'load-path (locate-user-emacs-file "el-clone/eglot-codelens"))
