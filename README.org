@@ -1336,6 +1336,21 @@ cause bug?
     (global-aggressive-indent-mode t))
 #+end_src
 
+*** cape
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "minad/cape"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/cape"))
+    (autoload-if-found '(cape-file cape-dabbrev cape-elisp-block cape-history cape-keyword) "cape")
+    (with-eval-after-load 'minibuffer
+      (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+      (add-to-list 'completion-at-point-functions #'cape-file)
+      (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+      (add-to-list 'completion-at-point-functions #'cape-history)))
+    #+end_src
+
 *** Centaur-tabs
 #+begin_src emacs-lisp 
   (eval-when-compile
