@@ -996,6 +996,17 @@ cause bug?
     (add-to-list 'auto-mode-alist '("\\.ino$" . arduino-mode)))
 #+end_src
 
+*** astro
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "Sorixelle/astro-ts-mode"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/astro-ts-mode"))
+    (autoload-if-found '(astro-ts-mode) "astro-ts-mode")
+    (add-to-list 'auto-mode-alist '("\\.astro$" . astro-ts-mode)))
+#+end_src
+
 *** Common Lisp
 #+begin_src emacs-lisp 
   (with-delayed-execution
