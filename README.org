@@ -897,6 +897,92 @@ cause bug?
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/yaml")))
 #+end_src
 
+** Language Server
+*** eglot
+#+begin_src emacs-lisp
+  (with-delayed-execution-priority-high
+    (autoload-if-found '(eglot eglot-ensure) "eglot"))
+
+  (eval-when-compile
+    (el-clone :url "https://gist.github.com/ee156d1a3574442ac1d8a357834cf17e.git"
+              :repo "eglot-codelens")
+    (el-clone :repo "jdtsmith/eglot-booster"))
+
+  (with-delayed-execution
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/eglot-booster"))
+    (autoload-if-found '(eglot-booster-mode) "eglot-booster")
+    (with-eval-after-load 'eglot
+      (eglot-booster-mode)))
+
+  ;; (with-delayed-execution
+  ;;    (add-to-list 'load-path (locate-user-emacs-file "el-clone/eglot-codelens"))
+  ;;    (autoload-if-found '(eglot-lens-mode) "eglot-codelens")
+  ;;    (with-eval-after-load 'eglot
+  ;;      (eglot-lens-mode)))
+#+end_src
+
+*** Nix
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(nix-mode . ("nixd")))
+    (add-hook 'nix-mode-hook #'eglot-ensure))
+#+end_src
+
+*** Rust
+[[https://gist.github.com/casouri/0ad2c6e58965f6fd2498a91fc9c66501?permalink_comment_id=4645337#gistcomment-4645337][Source]]
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 `(rust-mode . ("rust-analyzer" :initializationOptions
+                                ( :procMacro (:enable t)
+                                  :cargo ( :buildScripts (:enable t)
+                                           :features "all")))))
+    (add-hook 'rust-mode-hook #'eglot-ensure))
+#+end_src
+
+*** SATySFi
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(satysfi-mode . ("satysfi-language-server")))
+    (add-to-list 'eglot-server-programs '(satysfi-ts-mode . ("satysfi-language-server")))
+    (add-hook 'satysfi-mode-hook #'eglot-ensure)
+    (add-hook 'satysfi-ts-mode-hook #'eglot-ensure))
+#+end_src
+
+*** TypeScript
+[[https://zenn.dev/hyakt/articles/5c947cc22c4bfa][Source]]
+#+begin_src emacs-lisp
+  (defun deno-project-p ()
+    "Predicate for determining if the open project is a Deno one."
+    (let ((p-root (cdr (project-current))))
+      (or (file-exists-p (concat p-root "deno.json"))
+          (file-exists-p (concat p-root "deno.jsonc")))))
+
+  (defun node-project-p ()
+    "Predicate for determining if the open project is a Node one."
+    (let ((p-root (cdr (project-current))))
+      (file-exists-p (concat p-root "package.json"))))
+
+  (defun es-server-program (_)
+    "Decide which server to use for ECMA Script based on project characteristics."
+    (cond ((deno-project-p) '("deno" "lsp" :initializationOptions (:enable t :lint t)))
+          ((node-project-p) '("typescript-language-server" "--stdio"))
+          (t nil)))
+
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '((js-mode web-mode) . es-server-program))
+    (add-hook 'web-mode-hook #'eglot-ensure)
+    (add-hook 'js-mode-hook #'eglot-ensure))
+#+end_src
+
+** Treesitter
+#+begin_src emacs-lisp
+  (setopt treesit-language-source-alist
+        '((astro "https://github.com/virchau13/tree-sitter-astro")
+          (css "https://github.com/tree-sitter/tree-sitter-css")
+          (satysfi "https://github.com/monaqa/tree-sitter-satysfi")
+          (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")))
+#+end_src
 ** Programming Languages
 *** Arduino Style C
 #+begin_src emacs-lisp
@@ -2083,85 +2169,6 @@ Allows you to integrate Rich Presence from Discord.
   (with-delayed-execution
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/swagg")))
 #+end_src
-
-** Language Server
-*** eglot
-#+begin_src emacs-lisp
-  (with-delayed-execution-priority-high
-    (autoload-if-found '(eglot eglot-ensure) "eglot"))
-
-  (eval-when-compile
-    (el-clone :url "https://gist.github.com/ee156d1a3574442ac1d8a357834cf17e.git"
-              :repo "eglot-codelens")
-    (el-clone :repo "jdtsmith/eglot-booster"))
-
-  (with-delayed-execution
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/eglot-booster"))
-    (autoload-if-found '(eglot-booster-mode) "eglot-booster")
-    (with-eval-after-load 'eglot
-      (eglot-booster-mode)))
-
-  ;; (with-delayed-execution
-  ;;    (add-to-list 'load-path (locate-user-emacs-file "el-clone/eglot-codelens"))
-  ;;    (autoload-if-found '(eglot-lens-mode) "eglot-codelens")
-  ;;    (with-eval-after-load 'eglot
-  ;;      (eglot-lens-mode)))
-#+end_src
-
-*** Nix
-#+begin_src emacs-lisp
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '(nix-mode . ("nixd")))
-    (add-hook 'nix-mode-hook #'eglot-ensure))
-#+end_src
-
-*** Rust
-[[https://gist.github.com/casouri/0ad2c6e58965f6fd2498a91fc9c66501?permalink_comment_id=4645337#gistcomment-4645337][Source]]
-#+begin_src emacs-lisp
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs
-                 `(rust-mode . ("rust-analyzer" :initializationOptions
-                                ( :procMacro (:enable t)
-                                  :cargo ( :buildScripts (:enable t)
-                                           :features "all")))))
-    (add-hook 'rust-mode-hook #'eglot-ensure))
-#+end_src
-
-*** SATySFi
-#+begin_src emacs-lisp
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '(satysfi-mode . ("satysfi-language-server")))
-    (add-to-list 'eglot-server-programs '(satysfi-ts-mode . ("satysfi-language-server")))
-    (add-hook 'satysfi-mode-hook #'eglot-ensure)
-    (add-hook 'satysfi-ts-mode-hook #'eglot-ensure))
-#+end_src
-
-*** TypeScript
-[[https://zenn.dev/hyakt/articles/5c947cc22c4bfa][Source]]
-#+begin_src emacs-lisp
-  (defun deno-project-p ()
-    "Predicate for determining if the open project is a Deno one."
-    (let ((p-root (cdr (project-current))))
-      (or (file-exists-p (concat p-root "deno.json"))
-          (file-exists-p (concat p-root "deno.jsonc")))))
-
-  (defun node-project-p ()
-    "Predicate for determining if the open project is a Node one."
-    (let ((p-root (cdr (project-current))))
-      (file-exists-p (concat p-root "package.json"))))
-
-  (defun es-server-program (_)
-    "Decide which server to use for ECMA Script based on project characteristics."
-    (cond ((deno-project-p) '("deno" "lsp" :initializationOptions (:enable t :lint t)))
-          ((node-project-p) '("typescript-language-server" "--stdio"))
-          (t nil)))
-
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '((js-mode web-mode) . es-server-program))
-    (add-hook 'web-mode-hook #'eglot-ensure)
-    (add-hook 'js-mode-hook #'eglot-ensure))
-#+end_src
-
 ** Visual
 *** all-the-icons
 **** all-the-icons
