@@ -8,7 +8,7 @@
 Kyure_A
 
 ** Repository
-https://github.com/Kyure-A/dotfiles/tree/master/.emacs.d
+https://github.com/Kyure-A/.emacs.d
 
 ** Screen shot
 [[file:./assets/emacs_screenshot.png]]
