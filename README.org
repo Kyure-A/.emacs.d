@@ -921,6 +921,15 @@ cause bug?
   ;;      (eglot-lens-mode)))
 #+end_src
 
+*** C#
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(csharp-mode . ("OmniSharp")))
+    (add-to-list 'eglot-server-programs '(csharp-ts-mode . ("OmniSharp")))
+    (add-hook 'csharp-mode-hook #'eglot-ensure)
+    (add-hook 'csharp-ts-mode-hook #'eglot-ensure))
+#+end_src
+
 *** Nix
 #+begin_src emacs-lisp
   (with-eval-after-load 'eglot
