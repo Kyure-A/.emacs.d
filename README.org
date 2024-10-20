@@ -972,10 +972,16 @@ cause bug?
     (let ((p-root (cdr (project-current))))
       (file-exists-p (concat p-root "package.json"))))
 
+  (defun bun-project-p ()
+    "Predicate for determining if the open project is a Bun one."
+    (let ((p-root (cdr (project-current))))
+      (file-exists-p (concat p-root "bun.lockb"))))
+
   (defun es-server-program (_)
     "Decide which server to use for ECMA Script based on project characteristics."
+    (interactive)
     (cond ((deno-project-p) '("deno" "lsp" :initializationOptions (:enable t :lint t)))
-          ((node-project-p) '("typescript-language-server" "--stdio"))
+          ((or (node-project-p) (bun-project-p)) '("typescript-language-server" "--stdio"))
           (t nil)))
 
   (with-eval-after-load 'eglot
