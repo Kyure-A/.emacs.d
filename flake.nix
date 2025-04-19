@@ -106,4 +106,4 @@
             lib.listToAttrs
           ];
         });
-  }
+}

@@ -8,6 +8,7 @@
   extraPackages,
   extraRecipeDir,
   extraInputOverrides,
+  ...
 }:
 with builtins; let
   package =
@@ -27,8 +28,8 @@ with builtins; let
         ++ inventories;
       inputOverrides = (import ./inputs.nix {inherit lib;}) // extraInputOverrides;
     })
-      .overrideScope' (self: super: {
-        elispPackages = super.elispPackages.overrideScope' (eself: esuper: { });
+      .overrideScope (self: super: {
+        elispPackages = super.elispPackages.overrideScope (eself: esuper: { });
       });
 in
   package
