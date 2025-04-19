@@ -68,15 +68,20 @@
           packages =
             lib.mapAttrs (
               _: attrs:
-              pkgs.callPackage ./nix/profile.nix ({
+              pkgs.callPackage ./nix/profile.nix (attrs // {
                 inherit inventories;
-                emacsPackage = emacs-git;
-                } // attrs)
+                initFiles = attrs.initFiles;
+                lockDir = attrs.lockDir;
+                emacsPackage = attrs.emacsPackage;
+                extraPackages = attrs.extraPackages;
+                extraInputOverrides = attrs.extraInputOverrides;
+                extraRecipeDir = attrs.extraRecipeDir;
+              })
             )
               profile;
         in {
           inherit packages;
-          defaultPackage.${system} = packages.default;
+          # defaultPackage.${system} = packages.default;
 
           homeManagerModules = {
             emacsConfig = import ./nix/home-manager.nix {
