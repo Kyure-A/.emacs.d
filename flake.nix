@@ -52,7 +52,6 @@
             inherit system;
             overlays = [
               inputs.org-babel.overlays.default
-              inputs.twist.overlays.default
             ];
           };
 
@@ -69,7 +68,7 @@
             lib.mapAttrs (
               _: attrs:
               pkgs.callPackage ./nix/profile.nix (attrs // {
-                inherit inventories;
+                inherit inputs pkgs inventories;
                 initFiles = attrs.initFiles;
                 lockDir = attrs.lockDir;
                 emacsPackage = attrs.emacsPackage;

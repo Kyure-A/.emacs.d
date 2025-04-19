@@ -1,5 +1,6 @@
 {
-  emacsTwist,
+  inputs,
+  pkgs,
   lib,
   inventories,
   emacsPackage,
@@ -10,13 +11,10 @@
   extraInputOverrides,
   ...
 }:
-with builtins; let
+let
   package =
-    (emacsTwist {
-      inherit initFiles;
-      inherit emacsPackage;
-      inherit lockDir;
-      inherit extraPackages;
+    (inputs.twist.lib.makeEnv {
+      inherit pkgs initFiles emacsPackage lockDir extraPackages;
       nativeCompileAheadDefault = false;
       inventories =
         [
@@ -27,9 +25,8 @@ with builtins; let
         ]
         ++ inventories;
       inputOverrides = (import ./inputs.nix {inherit lib;}) // extraInputOverrides;
-    })
-      .overrideScope (self: super: {
-        elispPackages = super.elispPackages.overrideScope (eself: esuper: { });
-      });
+    }).overrideScope (self: super: {
+      elispPackages = super.elispPackages.overrideScope (eself: esuper: { });
+    });
 in
   package
