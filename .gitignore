@@ -5,6 +5,11 @@
 !/.gitattributes
 !/early-init.org
 !/README.org
+!/default.nix
+!/flake.nix
+!/lock/
+!/nix/
+!/recipes/
 !/snippets/
 !/snippets/.keep
 !/snippets/org-mode/emacs-lisp

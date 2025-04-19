@@ -1,0 +1,2 @@
+(rustowl :fetcher github
+         :repo "cordx56/rustowl/emacs")
