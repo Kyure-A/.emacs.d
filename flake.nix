@@ -81,7 +81,7 @@
               profile;
         in {
           inherit packages;
-          # defaultPackage.${system} = packages.default;
+          defaultPackage.${system} = packages.emacs-git;
 
           homeManagerModules = {
             emacsConfig = import ./nix/home-manager.nix {
