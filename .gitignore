@@ -3,6 +3,8 @@
 !/assets/
 !/assets/**
 !/.gitattributes
+!/.github/
+!/.github/**
 !/early-init.org
 !/README.org
 !/default.nix
