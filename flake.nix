@@ -37,63 +37,68 @@
     self,
       nixpkgs,
       flake-utils,
+      systems,
       twist,
       ...
   } @ inputs:
-    flake-utils.lib.eachDefaultSystem
-      (system: let
-        inherit (nixpkgs) lib;
+    let
+      supportedSystems = import systems;
+    in    
+      flake-utils.lib.eachSystem supportedSystems
+        (system: let
+          inherit (nixpkgs) lib;
 
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [
-            inputs.org-babel.overlays.default
-            inputs.twist.overlays.default
-          ];
-        };
-
-        inventories = import ./nix/inventories.nix inputs;
-
-        inherit (inputs.emacs.packages.${system}) emacs emacs-git;
-
-        profile = import ./default.nix {
-          inherit pkgs;
-          emacsPackage = emacs-git;
-        };
-
-        packages =
-          lib.mapAttrs (
-            _: attrs:
-            pkgs.callPackage ./nix/profile.nix ({
-              inherit inventories;
-            }
-            // attrs)
-          )
-            profile;
-      in {
-        inherit packages;
-
-        homeManagerModules = {
-          emacsConfig = import ./nix/home-manager.nix {
-            inherit pkgs lib twist profile;
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              inputs.org-babel.overlays.default
+              inputs.twist.overlays.default
+            ];
           };
-        };
-        
-        apps = lib.pipe packages [
-          (lib.mapAttrsToList (
-            name: package: let
-              apps = package.makeApps {
-                lockDirName = ./lock;
-              };
-            in
-              lib.mapAttrsToList (appName: app: {
-                name = "${appName}-${name}";
-                value = app;
-              })
-                apps
-          ))
-          lib.concatLists
-          lib.listToAttrs
-        ];
-      });
+
+          inventories = import ./nix/inventories.nix inputs;
+
+          inherit (inputs.emacs.packages.${system}) emacs emacs-git;
+
+          profile = import ./default.nix {
+            inherit pkgs;
+            emacsPackage = emacs-git;
+          };
+
+          packages =
+            lib.mapAttrs (
+              _: attrs:
+              pkgs.callPackage ./nix/profile.nix ({
+                inherit inventories;
+              }
+              // attrs)
+            )
+              profile;
+        in {
+          inherit packages;
+          defaultPackage.${system} = packages.default;
+
+          homeManagerModules = {
+            emacsConfig = import ./nix/home-manager.nix {
+              inherit pkgs lib twist profile;
+            };
+          };
+          
+          apps = lib.pipe packages [
+            (lib.mapAttrsToList (
+              name: package: let
+                apps = package.makeApps {
+                  lockDirName = ./lock;
+                };
+              in
+                lib.mapAttrsToList (appName: app: {
+                  name = "${appName}-${name}";
+                  value = app;
+                })
+                  apps
+            ))
+            lib.concatLists
+            lib.listToAttrs
+          ];
+        });
   }
