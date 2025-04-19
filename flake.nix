@@ -70,8 +70,8 @@
               _: attrs:
               pkgs.callPackage ./nix/profile.nix ({
                 inherit inventories;
-              }
-              // attrs)
+                emacsPackage = emacs-git;
+                } // attrs)
             )
               profile;
         in {
