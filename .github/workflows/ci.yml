@@ -59,14 +59,6 @@ jobs:
             max-jobs = auto
           diagnostic-endpoint: ''
 
-      - name: Nix cache (cachix)
-        uses: cachix/cachix-action@ad2ddac53f961de1989924296a1f236fcfbaa4fc # v15
-        with:
-          useDaemon: true
-          name: terlar
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-          extraPullNames: nix-community
-
       - name: Run check
         run: nix build .#checks.x86_64-linux.${{ matrix.check }}
 
@@ -88,14 +80,6 @@ jobs:
             http-connections = 50
             max-jobs = auto
           diagnostic-endpoint: ''
-
-      - name: Nix cache (cachix)
-        uses: cachix/cachix-action@ad2ddac53f961de1989924296a1f236fcfbaa4fc # v15
-        with:
-          useDaemon: true
-          name: terlar
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-          extraPullNames: nix-community
 
       - name: Build default package
         run: nix build --print-build-logs
