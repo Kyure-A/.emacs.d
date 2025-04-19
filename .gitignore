@@ -8,6 +8,7 @@
 !/early-init.org
 !/README.org
 !/default.nix
+!/flake.lock
 !/flake.nix
 !/lock/
 !/nix/
