@@ -64,20 +64,18 @@
             emacsPackage = emacs-git;
           };
 
-          package =
-            lib.mapAttrs (
-              _: attrs:
-              pkgs.callPackage ./nix/profile.nix (attrs // {
-                inherit inputs pkgs inventories;
-                initFiles = attrs.initFiles;
-                lockDir = attrs.lockDir;
-                emacsPackage = attrs.emacsPackage;
-                extraPackages = attrs.extraPackages;
-                extraInputOverrides = attrs.extraInputOverrides;
-                extraRecipeDir = attrs.extraRecipeDir;
-              })
-            )
-              profile;
+          package = (inputs.twist.lib.makeEnv {
+            inherit pkgs;
+            inherit (profile) emacsPackage lockDir initFiles extraPackages;
+            inputOverrides = (import ./inputs.nix {inherit lib;}) // profile.extraInputOverrides;
+            inventories = inventories ++ [
+              {
+                type = "melpa";
+                path = profile.extraRecipeDir;
+              }
+            ];
+          });
+          
         in {
           inherit package;
           defaultPackage.${system} = package.default;
@@ -91,22 +89,5 @@
           apps = package.makeApps {
             lockDirName = ./lock;
           };
-          
-          # apps = lib.pipe package [
-          #   (lib.mapAttrsToList (
-          #     name: package: let
-          #       apps = package.makeApps {
-          #         lockDirName = ./lock;
-          #       };
-          #     in
-          #       lib.mapAttrsToList (appName: app: {
-          #         name = "${appName}-${name}";
-          #         value = app;
-          #       })
-          #         apps
-          #   ))
-          #   lib.concatLists
-          #   lib.listToAttrs
-          # ];
         });
 }
