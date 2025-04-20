@@ -67,8 +67,8 @@
           package = (inputs.twist.lib.makeEnv {
             inherit pkgs;
             inherit (profile) emacsPackage lockDir initFiles extraPackages;
-            inputOverrides = (import ./inputs.nix {inherit lib;}) // profile.extraInputOverrides;
-            inventories = inventories ++ [
+            inputOverrides = (import ./nix/inputs.nix {inherit lib;}) // profile.extraInputOverrides;
+            registries = inventories ++ [
               {
                 type = "melpa";
                 path = profile.extraRecipeDir;
