@@ -64,7 +64,7 @@
             emacsPackage = emacs-git;
           };
 
-          packages =
+          package =
             lib.mapAttrs (
               _: attrs:
               pkgs.callPackage ./nix/profile.nix (attrs // {
@@ -79,30 +79,34 @@
             )
               profile;
         in {
-          inherit packages;
-          defaultPackage.${system} = packages.default;
+          inherit package;
+          defaultPackage.${system} = package.default;
 
           homeManagerModules = {
             emacsConfig = import ./nix/home-manager.nix {
               inherit pkgs lib twist profile;
             };
           };
+
+          apps = package.makeApps {
+            lockDirName = ./lock;
+          };
           
-          apps = lib.pipe packages [
-            (lib.mapAttrsToList (
-              name: package: let
-                apps = package.makeApps {
-                  lockDirName = ./lock;
-                };
-              in
-                lib.mapAttrsToList (appName: app: {
-                  name = "${appName}-${name}";
-                  value = app;
-                })
-                  apps
-            ))
-            lib.concatLists
-            lib.listToAttrs
-          ];
+          # apps = lib.pipe package [
+          #   (lib.mapAttrsToList (
+          #     name: package: let
+          #       apps = package.makeApps {
+          #         lockDirName = ./lock;
+          #       };
+          #     in
+          #       lib.mapAttrsToList (appName: app: {
+          #         name = "${appName}-${name}";
+          #         value = app;
+          #       })
+          #         apps
+          #   ))
+          #   lib.concatLists
+          #   lib.listToAttrs
+          # ];
         });
 }
