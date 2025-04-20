@@ -77,9 +77,8 @@
           });
           
         in {
-          inherit package;
-          defaultPackage.${system} = package.default;
-
+          packages.default = package;
+          
           homeManagerModules = {
             emacsConfig = import ./nix/home-manager.nix {
               inherit pkgs lib twist profile;
