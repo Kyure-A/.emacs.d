@@ -1627,7 +1627,10 @@ https://dev.classmethod.jp/articles/emacs-multiple-cursors/
 #+begin_src emacs-lisp
   (use-package agent-shell
     :ensure t
-    :commands (agent-shell agent-shell-openai-start-codex)
+    :commands (agent-shell
+               agent-shell-anthropic-start-claude-code
+               agent-shell-openai-start-codex
+               agent-shell-pi-start-agent)
     :custom
     (agent-shell-openai-default-session-mode-id "full-access"))
 #+end_src

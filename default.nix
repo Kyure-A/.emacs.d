@@ -18,8 +18,10 @@ in
     (let ((extra-bin "${
       pkgs.lib.makeBinPath [
         pkgs.clang-tools
+        pkgs.claude-agent-acp
         pkgs.gcc
         pkgs.codex-acp
+        pkgs.pi-acp
         pkgs.ruby
         pkgs.rubyPackages.ruby-lsp
         pkgs.rubyPackages.rubocop

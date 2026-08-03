@@ -75,6 +75,48 @@ in
           })
         else
           prev.codex-acp;
+      claude-agent-acp = prev.buildNpmPackage (finalAttrs: {
+        pname = "claude-agent-acp";
+        version = "0.64.2";
+
+        src = prev.fetchFromGitHub {
+          owner = "agentclientprotocol";
+          repo = "claude-agent-acp";
+          tag = "v${finalAttrs.version}";
+          hash = "sha256-EVFfQrUeAyG4NjJDqaebhc4E6LEoHFySwkvEhkdYq00=";
+        };
+
+        npmDepsHash = "sha256-gFBPyxtv7u4sa44XXJqdUBZPA1wG2kErO9wNLFjPzmQ=";
+
+        meta = {
+          description = "ACP adapter for the Claude Agent SDK";
+          homepage = "https://github.com/agentclientprotocol/claude-agent-acp";
+          changelog = "https://github.com/agentclientprotocol/claude-agent-acp/releases/tag/v${finalAttrs.version}";
+          license = prev.lib.licenses.asl20;
+          mainProgram = "claude-agent-acp";
+        };
+      });
+      pi-acp = prev.buildNpmPackage (finalAttrs: {
+        pname = "pi-acp";
+        version = "0.0.33";
+
+        src = prev.fetchFromGitHub {
+          owner = "svkozak";
+          repo = "pi-acp";
+          tag = "v${finalAttrs.version}";
+          hash = "sha256-fENOOdooi4XbIDjcr02q8qzUCzdo2IW/Bca43SawZ44=";
+        };
+
+        npmDepsHash = "sha256-/fX79XucKojL/6gZbK5eizEfrXso8rlTgiHfJffmDuY=";
+
+        meta = {
+          description = "ACP adapter for the Pi coding agent";
+          homepage = "https://github.com/svkozak/pi-acp";
+          changelog = "https://github.com/svkozak/pi-acp/releases/tag/v${finalAttrs.version}";
+          license = prev.lib.licenses.mit;
+          mainProgram = "pi-acp";
+        };
+      });
     }
   );
 }
