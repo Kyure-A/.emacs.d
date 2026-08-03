@@ -72,6 +72,12 @@
       repo = "centaur-tabs";
       type = "github";
     };
+    centaur-tabs-vertical = {
+      flake = false;
+      owner = "Kyure-A";
+      repo = "centaur-tabs-vertical";
+      type = "github";
+    };
     closql = {
       flake = false;
       owner = "magit";

@@ -192,6 +192,22 @@
         "type": "github"
       }
     },
+    "centaur-tabs-vertical": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785752805,
+        "narHash": "sha256-3yKUQh9XpiMlLbV5Z+Fe4cyw2/yOkXyhTvdYQaMV1zc=",
+        "owner": "Kyure-A",
+        "repo": "centaur-tabs-vertical",
+        "rev": "297df534548cd084899db9e6e58e3c1b77a9fdff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Kyure-A",
+        "repo": "centaur-tabs-vertical",
+        "type": "github"
+      }
+    },
     "closql": {
       "flake": false,
       "locked": {
@@ -1390,6 +1406,7 @@
         "beacon": "beacon",
         "cape": "cape",
         "centaur-tabs": "centaur-tabs",
+        "centaur-tabs-vertical": "centaur-tabs-vertical",
         "closql": "closql",
         "comment-translate": "comment-translate",
         "compat": "compat",
