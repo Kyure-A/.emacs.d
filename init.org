@@ -1625,12 +1625,51 @@ https://dev.classmethod.jp/articles/emacs-multiple-cursors/
 ** Utilities
 *** agent-shell
 #+begin_src emacs-lisp
+  (defconst my/ollama-coding-model "huihui_ai/qwen3.6-abliterated:35b")
+
+  (defun my/ollama-unload-coding-model ()
+    "Unload the local coding model from Ollama."
+    (let ((url-request-method "POST")
+          (url-request-extra-headers '(("Content-Type" . "application/json")))
+          (url-request-data
+           (json-encode `((model . ,my/ollama-coding-model)
+                          (keep_alive . 0)))))
+      (when-let* ((response
+                   (url-retrieve-synchronously
+                    "http://127.0.0.1:11434/api/generate" t t 2)))
+        (kill-buffer response))))
+
+  (defun my/agent-shell-pi-buffer-p (buffer)
+    "Return non-nil when BUFFER is a Pi agent-shell buffer."
+    (with-current-buffer buffer
+      (and (derived-mode-p 'agent-shell-mode)
+           (eq (map-nested-elt agent-shell--state
+                               '(:agent-config :identifier))
+               'pi))))
+
+  (defun my/agent-shell-unload-ollama-on-pi-disconnect ()
+    "Unload Ollama after the last Pi agent-shell disconnects."
+    (when (and (my/agent-shell-pi-buffer-p (current-buffer))
+               (not (seq-some
+                     (lambda (buffer)
+                       (and (not (eq buffer (current-buffer)))
+                            (my/agent-shell-pi-buffer-p buffer)))
+                     (agent-shell-buffers))))
+      (my/ollama-unload-coding-model)))
+
+  (defun my/agent-shell-install-pi-disconnect-hook ()
+    "Install the Ollama cleanup hook in Pi agent-shell buffers."
+    (when (my/agent-shell-pi-buffer-p (current-buffer))
+      (add-hook 'kill-buffer-hook
+                #'my/agent-shell-unload-ollama-on-pi-disconnect nil t)))
+
   (use-package agent-shell
     :ensure t
     :commands (agent-shell
                agent-shell-anthropic-start-claude-code
                agent-shell-openai-start-codex
                agent-shell-pi-start-agent)
+    :hook (agent-shell-mode-hook . my/agent-shell-install-pi-disconnect-hook)
     :custom
     (agent-shell-openai-default-session-mode-id "full-access"))
 #+end_src
