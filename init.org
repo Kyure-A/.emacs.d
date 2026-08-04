@@ -40,6 +40,14 @@ Refreshes archive-based package metadata under =lock/=.
 M-x twist-update
 #+end_src
 Applies updated package set without restarting Emacs.
+It diffs =~/.config/emacs/twist-manifest.json= (linked by the home-manager
+module through =createManifestFile=) against the manifest baked into the
+running build, so it reports updates only after the system has been rebuilt
+(=darwin-rebuild switch=) with a newer revision of this flake. Launching via
+=nix run .#default= goes through the throwaway =--init-directory= wrapper,
+whose manifest always matches the running build, so =twist-update= can never
+detect changes there. Only packages are hot-reloaded; =init.org= changes still
+need a restart.
 
 ** Format Repository
 #+begin_src sh
