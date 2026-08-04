@@ -195,11 +195,11 @@
     "centaur-tabs-vertical": {
       "flake": false,
       "locked": {
-        "lastModified": 1785830931,
-        "narHash": "sha256-mof9ohslH7/GyLcwm6MPtGBiVp47nsu9WUDVTNeoYks=",
+        "lastModified": 1785831605,
+        "narHash": "sha256-v240pnzIkABhVpdJroWIX7SD7QEjwIdbfTvPetgUIEk=",
         "owner": "Kyure-A",
         "repo": "centaur-tabs-vertical",
-        "rev": "7e22878bf979fa0cd9bea95a8ac78c837f845bb5",
+        "rev": "6b6e6365c10f2455d6b79e5a681e26b32df972a0",
         "type": "github"
       },
       "original": {
