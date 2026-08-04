@@ -1190,8 +1190,8 @@ jdtsmith/eglot-booster
 #+begin_src emacs-lisp
   (use-package centaur-tabs-vertical
     :ensure t
+    :demand t
     :after centaur-tabs
-    :hook (after-init-hook . centaur-tabs-vertical-mode)
     :bind (("C-c j" . centaur-tabs-vertical-jump-to-agent))
     :custom
     (centaur-tabs-vertical-buffer-group-override t)
@@ -1200,7 +1200,8 @@ jdtsmith/eglot-booster
           (lambda ()
             (if (fboundp 'dashboard-open)
                 (dashboard-open)
-              (switch-to-buffer "*dashboard*")))))
+              (switch-to-buffer "*dashboard*"))))
+    (centaur-tabs-vertical-mode 1))
 #+end_src
 
 *** consult
