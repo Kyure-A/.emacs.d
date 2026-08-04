@@ -19,11 +19,11 @@
     "acp": {
       "flake": false,
       "locked": {
-        "lastModified": 1779917551,
-        "narHash": "sha256-hN5c1kOKBPq+rbuh0ILxq8oRVDgZLxQqQmeDj5PUKzE=",
+        "lastModified": 1785789260,
+        "narHash": "sha256-fjQwxSim8nfD76xcknErYVqPQqjXqI3b9amEV0GOfKU=",
         "owner": "xenodium",
         "repo": "acp.el",
-        "rev": "3ddfa907eb7f17949a4a8e731ea5c5241e6cbcb4",
+        "rev": "7d5c16ebcf2af86aa0f14ad9ae0ce45df4e8c8a5",
         "type": "github"
       },
       "original": {
@@ -35,11 +35,11 @@
     "agent-shell": {
       "flake": false,
       "locked": {
-        "lastModified": 1781446849,
-        "narHash": "sha256-vIUXzq7vtoqpooUhykirS21OGbA7cRj99LSHdWYa1P0=",
+        "lastModified": 1785781562,
+        "narHash": "sha256-EyX4yPngOvBAhXZ9rdKxrWHDeWtjY4yVfBnC10D6JSI=",
         "owner": "xenodium",
         "repo": "agent-shell",
-        "rev": "e382e41750a27ea2fbb8ae9e9c3d88edb08fa257",
+        "rev": "5339d7fb7b7d3b97991ffa48a3c7ff8054a8ec38",
         "type": "github"
       },
       "original": {
@@ -1594,11 +1594,11 @@
     "shell-maker": {
       "flake": false,
       "locked": {
-        "lastModified": 1781029418,
-        "narHash": "sha256-nJNZBZKmzEVn5gNEL0DT4S09Hfd8hk6DLaZTtoRksS0=",
+        "lastModified": 1785781778,
+        "narHash": "sha256-HgQ+Fdceh2G/pFKBtm7MLSXwGyot/9PTjak+dccbjj4=",
         "owner": "xenodium",
         "repo": "shell-maker",
-        "rev": "43ee9e1862994cbaa89715d324edb7a424181f22",
+        "rev": "9b769dc078f1dec9588e50838d278d236ba17a3b",
         "type": "github"
       },
       "original": {
