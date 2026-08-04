@@ -176,30 +176,14 @@
         "type": "github"
       }
     },
-    "centaur-tabs": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1745368034,
-        "narHash": "sha256-/BpjpBpUNi+3p85Gql69PrKI1dFogwpuPzPsQuU13og=",
-        "owner": "ema2159",
-        "repo": "centaur-tabs",
-        "rev": "a790dc8fb6215e28685643e4d79252287adfde24",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ema2159",
-        "repo": "centaur-tabs",
-        "type": "github"
-      }
-    },
     "centaur-tabs-vertical": {
       "flake": false,
       "locked": {
-        "lastModified": 1785831605,
-        "narHash": "sha256-v240pnzIkABhVpdJroWIX7SD7QEjwIdbfTvPetgUIEk=",
+        "lastModified": 1785834981,
+        "narHash": "sha256-a+6EEP0LI8HX/RIu4fKP5VfavSRx1wLnWYBTFWYQvy0=",
         "owner": "Kyure-A",
         "repo": "centaur-tabs-vertical",
-        "rev": "6b6e6365c10f2455d6b79e5a681e26b32df972a0",
+        "rev": "39eaa30354eee457dc289b6ef00892d558a81110",
         "type": "github"
       },
       "original": {
@@ -1264,22 +1248,6 @@
         "type": "github"
       }
     },
-    "powerline": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1668110182,
-        "narHash": "sha256-a6LbnwmzUy43BLTjYW4DapK0sQSI38g6nsuPjd4tNkw=",
-        "owner": "milkypostman",
-        "repo": "powerline",
-        "rev": "c35c35bdf5ce2d992882c1f06f0f078058870d4a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "milkypostman",
-        "repo": "powerline",
-        "type": "github"
-      }
-    },
     "powershell": {
       "flake": false,
       "locked": {
@@ -1405,7 +1373,6 @@
         "avy": "avy",
         "beacon": "beacon",
         "cape": "cape",
-        "centaur-tabs": "centaur-tabs",
         "centaur-tabs-vertical": "centaur-tabs-vertical",
         "closql": "closql",
         "comment-translate": "comment-translate",
@@ -1473,7 +1440,6 @@
         "polymode": "polymode",
         "popup": "popup",
         "posframe": "posframe",
-        "powerline": "powerline",
         "powershell": "powershell",
         "projectile": "projectile",
         "projectile-rails": "projectile-rails",

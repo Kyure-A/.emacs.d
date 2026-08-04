@@ -66,12 +66,6 @@
       repo = "cape";
       type = "github";
     };
-    centaur-tabs = {
-      flake = false;
-      owner = "ema2159";
-      repo = "centaur-tabs";
-      type = "github";
-    };
     centaur-tabs-vertical = {
       flake = false;
       owner = "Kyure-A";
@@ -471,12 +465,6 @@
       flake = false;
       owner = "tumashu";
       repo = "posframe";
-      type = "github";
-    };
-    powerline = {
-      flake = false;
-      owner = "milkypostman";
-      repo = "powerline";
       type = "github";
     };
     powershell = {

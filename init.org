@@ -172,8 +172,8 @@ In this repository, =.#update= and =.#lock= require =--impure=.
   (global-set-key (kbd "C-RET") 'newline)
   (global-set-key (kbd "<backspace>") 'smart-hungry-delete-backward-char)
   (global-set-key (kbd "C-<backspace>") 'backward-delete-word)
-  (global-set-key (kbd "C-<left>") 'centaur-tabs-forward)
-  (global-set-key (kbd "C-<right>") 'centaur-tabs-backward)
+  (global-set-key (kbd "C-<left>") 'centaur-tabs-vertical-forward-tab)
+  (global-set-key (kbd "C-<right>") 'centaur-tabs-vertical-backward-tab)
   (global-set-key (kbd "C-<return>") 'newline)
   (global-set-key (kbd "C-SPC") 'toggle-input-method)
 #+end_src
@@ -1159,56 +1159,21 @@ jdtsmith/eglot-booster
     (add-to-list 'completion-at-point-functions #'cape-history))
     #+end_src
 
-*** Centaur-tabs
-#+begin_src emacs-lisp
-  (use-package centaur-tabs
-    :ensure t
-    :commands (centaur-tabs-mode centaur-tabs-local-mode)
-    :hook (after-init-hook . centaur-tabs-mode)
-    :init
-    (setq centaur-tabs-set-icons nil
-          centaur-tabs-icon-type nil)
-    :config
-    (defun toggle-centaur-tabs-local-mode()
-      (interactive)
-      (call-interactively 'centaur-tabs-local-mode)
-      (call-interactively 'centaur-tabs-local-mode))
-    (centaur-tabs-headline-match)
-    (centaur-tabs-enable-buffer-reordering)
-    (centaur-tabs-change-fonts "arial" 90)
-    (setopt centaur-tabs-height 30)
-    (setopt centaur-tabs-hide-tabs-hooks nil)
-    (setopt centaur-tabs-set-bar 'under)
-    (setopt x-underline-at-descent-line t)
-    (setopt centaur-tabs-style "box")
-    (setopt centaur-tabs-set-modified-marker t)
-    (setopt centaur-tabs-show-navigation-buttons t)
-    (setopt centaur-tabs-adjust-buffer-order t)
-    (setopt centaur-tabs-cycle-scope 'groups)
-    (run-with-idle-timer
-     1 nil
-     (lambda ()
-       (when (require 'all-the-icons nil t)
-         (setq centaur-tabs-set-icons t
-               centaur-tabs-icon-type 'all-the-icons)
-         (force-window-update t)))))
-#+end_src
-
 *** centaur-tabs-vertical
 #+begin_src emacs-lisp
   (use-package centaur-tabs-vertical
     :ensure t
     :demand t
-    :after centaur-tabs
     :bind (("C-c j" . centaur-tabs-vertical-jump-to-agent))
-    :custom
-    (centaur-tabs-vertical-buffer-group-override t)
     :config
     (setq centaur-tabs-vertical-new-tab-action
           (lambda ()
             (if (fboundp 'dashboard-open)
                 (dashboard-open)
               (switch-to-buffer "*dashboard*"))))
+    (dolist (face '(centaur-tabs-vertical-tab-selected-face
+                    centaur-tabs-vertical-tab-unselected-face))
+      (set-face-attribute face nil :family "arial" :height 90))
     (centaur-tabs-vertical-mode 1))
 #+end_src
 
@@ -1723,7 +1688,6 @@ Allows you to integrate Rich Presence from Discord.
   (use-package magit
     :ensure t
     :commands (global-git-commit-mode)
-    :hook (magit-status-mode-hook . toggle-centaur-tabs-local-mode)
     :config
     (setopt magit-repository-directories '(("~/ghq/" . 3))))
 #+end_src
