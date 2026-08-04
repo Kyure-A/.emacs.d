@@ -1170,9 +1170,6 @@ jdtsmith/eglot-booster
             (if (fboundp 'dashboard-open)
                 (dashboard-open)
               (switch-to-buffer "*dashboard*"))))
-    (dolist (face '(engawa-tab-selected-face
-                    engawa-tab-unselected-face))
-      (set-face-attribute face nil :family "arial" :height 90))
     (engawa-mode 1))
 #+end_src
 
