@@ -176,22 +176,6 @@
         "type": "github"
       }
     },
-    "centaur-tabs-vertical": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1785836310,
-        "narHash": "sha256-NeG9SkIQ1ICNPuGPDX69c2A+9Frqh0Tr+fA+hP3MAzw=",
-        "owner": "Kyure-A",
-        "repo": "centaur-tabs-vertical",
-        "rev": "c6f8f434da085bbe1c50b25146b93288e5985df0",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Kyure-A",
-        "repo": "centaur-tabs-vertical",
-        "type": "github"
-      }
-    },
     "closql": {
       "flake": false,
       "locked": {
@@ -589,6 +573,22 @@
       "original": {
         "owner": "iqbalansari",
         "repo": "emacs-emojify",
+        "type": "github"
+      }
+    },
+    "engawa": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785837645,
+        "narHash": "sha256-b3HGykGMP5rL7Nex05jQdrWEbV0divty/TU/18m93Z8=",
+        "owner": "Kyure-A",
+        "repo": "engawa",
+        "rev": "f9c52d2cac97e9e265a17646a4ab7e4371d35730",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Kyure-A",
+        "repo": "engawa",
         "type": "github"
       }
     },
@@ -1373,7 +1373,6 @@
         "avy": "avy",
         "beacon": "beacon",
         "cape": "cape",
-        "centaur-tabs-vertical": "centaur-tabs-vertical",
         "closql": "closql",
         "comment-translate": "comment-translate",
         "compat": "compat",
@@ -1399,6 +1398,7 @@
         "embark": "embark",
         "embark-consult": "embark-consult",
         "emojify": "emojify",
+        "engawa": "engawa",
         "exec-path-from-shell": "exec-path-from-shell",
         "f": "f",
         "flutter": "flutter",

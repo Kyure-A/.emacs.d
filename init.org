@@ -172,8 +172,8 @@ In this repository, =.#update= and =.#lock= require =--impure=.
   (global-set-key (kbd "C-RET") 'newline)
   (global-set-key (kbd "<backspace>") 'smart-hungry-delete-backward-char)
   (global-set-key (kbd "C-<backspace>") 'backward-delete-word)
-  (global-set-key (kbd "C-<left>") 'centaur-tabs-vertical-forward-tab)
-  (global-set-key (kbd "C-<right>") 'centaur-tabs-vertical-backward-tab)
+  (global-set-key (kbd "C-<left>") 'engawa-forward-tab)
+  (global-set-key (kbd "C-<right>") 'engawa-backward-tab)
   (global-set-key (kbd "C-<return>") 'newline)
   (global-set-key (kbd "C-SPC") 'toggle-input-method)
 #+end_src
@@ -1159,22 +1159,22 @@ jdtsmith/eglot-booster
     (add-to-list 'completion-at-point-functions #'cape-history))
     #+end_src
 
-*** centaur-tabs-vertical
+*** engawa
 #+begin_src emacs-lisp
-  (use-package centaur-tabs-vertical
+  (use-package engawa
     :ensure t
     :demand t
-    :bind (("C-c j" . centaur-tabs-vertical-jump-to-agent))
+    :bind (("C-c j" . engawa-jump-to-agent))
     :config
-    (setq centaur-tabs-vertical-new-tab-action
+    (setq engawa-new-tab-action
           (lambda ()
             (if (fboundp 'dashboard-open)
                 (dashboard-open)
               (switch-to-buffer "*dashboard*"))))
-    (dolist (face '(centaur-tabs-vertical-tab-selected-face
-                    centaur-tabs-vertical-tab-unselected-face))
+    (dolist (face '(engawa-tab-selected-face
+                    engawa-tab-unselected-face))
       (set-face-attribute face nil :family "arial" :height 90))
-    (centaur-tabs-vertical-mode 1))
+    (engawa-mode 1))
 #+end_src
 
 *** consult

@@ -66,10 +66,10 @@
       repo = "cape";
       type = "github";
     };
-    centaur-tabs-vertical = {
+    engawa = {
       flake = false;
       owner = "Kyure-A";
-      repo = "centaur-tabs-vertical";
+      repo = "engawa";
       type = "github";
     };
     closql = {
