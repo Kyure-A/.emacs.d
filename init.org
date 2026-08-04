@@ -109,8 +109,7 @@ In this repository, =.#update= and =.#lock= require =--impure=.
             (setq setup-tracker--level (1- setup-tracker--level))
             (let* ((now (current-time))
                    (start (pop setup-tracker--times))
-                   (elapsed (+ (* (- (nth 1 now) (nth 1 start)) 1000)
-                               (/ (- (nth 2 now) (nth 2 start)) 1000))))
+                   (elapsed (round (* 1000 (float-time (time-subtract now start))))))
               (with-current-buffer (get-buffer-create "*setup-tracker*")
                 (save-excursion
                   (goto-char (point-min))
