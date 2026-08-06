@@ -579,11 +579,11 @@
     "engawa": {
       "flake": false,
       "locked": {
-        "lastModified": 1785891205,
-        "narHash": "sha256-jtqqmT8n2suhwaG69JLE2DhffBWf7SbZ7rWN0regoek=",
+        "lastModified": 1786000869,
+        "narHash": "sha256-M7zl6PIOcphFbGlkjOz9UobWeqobZDL0XADrQvO7VpI=",
         "owner": "Kyure-A",
         "repo": "engawa",
-        "rev": "7cea590815620ac81cd401ffe15b14af5133f557",
+        "rev": "d70497cee9eb60952429e235e4425843f66537f3",
         "type": "github"
       },
       "original": {

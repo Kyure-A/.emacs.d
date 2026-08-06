@@ -1159,7 +1159,92 @@ jdtsmith/eglot-booster
     #+end_src
 
 *** engawa
+Past agent-shell sessions are shown as extra rows in the sidebar via
+=engawa-section-extra-rows-functions=.  Enumeration goes through the
+ACP =session/list= request, which needs a live client, so the rows
+appear once an agent shell has run in that project during the session;
+the response is cached per project and refreshed at most every
+=my/engawa-agent-sessions-ttl= seconds.  Selecting a row resumes the
+session with the preferred agent config.
 #+begin_src emacs-lisp
+  (defvar my/engawa-agent-sessions (make-hash-table :test #'equal)
+    "Map of project directory to its cached list of ACP sessions.")
+
+  (defvar my/engawa-agent-sessions-fetched (make-hash-table :test #'equal)
+    "Map of project directory to the time of the last session/list request.")
+
+  (defvar my/engawa-agent-sessions-ttl 30
+    "Seconds between session/list refreshes per project.")
+
+  (defun my/engawa--normalize-dir (dir)
+    "Return DIR expanded and without a trailing slash."
+    (directory-file-name (expand-file-name dir)))
+
+  (defun my/engawa--agent-shells-in (dir)
+    "Return the live agent-shell buffers whose project is DIR."
+    (seq-filter (lambda (buffer)
+                  (equal (my/engawa--normalize-dir
+                          (with-current-buffer buffer (agent-shell-cwd)))
+                         dir))
+                (agent-shell-buffers)))
+
+  (defun my/engawa--refresh-agent-sessions (dir)
+    "Asynchronously refresh the session cache of DIR, at most every TTL."
+    (let ((last (gethash dir my/engawa-agent-sessions-fetched)))
+      (when (or (null last)
+                (> (float-time (time-since last))
+                   my/engawa-agent-sessions-ttl))
+        (when-let* ((shell-buffer (car (my/engawa--agent-shells-in dir)))
+                    (client (map-elt (buffer-local-value
+                                      'agent-shell--state shell-buffer)
+                                     :client)))
+          (puthash dir (current-time) my/engawa-agent-sessions-fetched)
+          (acp-send-request
+           :client client
+           :request (acp-make-session-list-request :cwd dir)
+           :buffer shell-buffer
+           :on-success
+           (lambda (acp-response)
+             (puthash dir (append (map-elt acp-response 'sessions) nil)
+                      my/engawa-agent-sessions)
+             (engawa-refresh))
+           :on-failure #'ignore)))))
+
+  (defun my/engawa-resume-agent-session (dir session-id)
+    "Resume agent session SESSION-ID of project DIR in a new shell."
+    (let ((default-directory (file-name-as-directory dir)))
+      (agent-shell--start
+       :config (or (agent-shell--resolve-preferred-config)
+                   (agent-shell-select-config :prompt "Resume with agent: "))
+       :session-id session-id)))
+
+  (defun my/engawa-agent-session-rows (group)
+    "Engawa extra rows listing past agent-shell sessions of GROUP."
+    (when-let* (((fboundp 'agent-shell-buffers))
+                (root (engawa--group-project-root group)))
+      (let* ((dir (my/engawa--normalize-dir root))
+             (live (delq nil
+                         (mapcar (lambda (buffer)
+                                   (map-nested-elt
+                                    (buffer-local-value
+                                     'agent-shell--state buffer)
+                                    '(:session :id)))
+                                 (my/engawa--agent-shells-in dir)))))
+        (my/engawa--refresh-agent-sessions dir)
+        (seq-take
+         (delq nil
+               (mapcar
+                (lambda (session)
+                  (let ((id (map-elt session 'sessionId))
+                        (title (map-elt session 'title)))
+                    (when (and id (not (member id live)))
+                      (list :label (or title id)
+                            :help (format "Resume session %s" id)
+                            :visit (lambda ()
+                                     (my/engawa-resume-agent-session dir id))))))
+                (gethash dir my/engawa-agent-sessions)))
+         5))))
+
   (use-package engawa
     :ensure t
     :demand t
@@ -1170,6 +1255,12 @@ jdtsmith/eglot-booster
             (if (fboundp 'dashboard-open)
                 (dashboard-open)
               (switch-to-buffer "*dashboard*"))))
+    ;; recentf rows under each project section (recentf-mode is
+    ;; enabled in the recentf block above)
+    (setq engawa-show-recent-files t)
+    ;; agent-shell session history rows
+    (add-to-list 'engawa-section-extra-rows-functions
+                 #'my/engawa-agent-session-rows t)
     (engawa-mode 1))
 #+end_src
 
