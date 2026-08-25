@@ -45,6 +45,12 @@ in
               !(prev.lib.any (name: prev.lib.hasInfix name patchName) stalePatches)
             ) old.patches;
           });
+      # `node-pty` is built from source and needs `node-gyp`, which the pinned
+      # nixpkgs does not put on the build PATH, so yarn tries to fetch it from
+      # the network and fails.
+      devcontainer = prev.devcontainer.overrideAttrs (old: {
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ prev.node-gyp ];
+      });
       codex-acp =
         if prev.stdenv.hostPlatform.system == "aarch64-darwin" then
           prev.stdenvNoCC.mkDerivation (finalAttrs: {
