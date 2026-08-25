@@ -19,7 +19,7 @@ let
 
     cat > "$app/Contents/MacOS/Emacs" <<EOF
 #!${pkgs.runtimeShell}
-export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:$PATH"
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/homebrew/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:$PATH"
 exec "${wrappedEmacs}/bin/emacs" "\$@"
 EOF
 
