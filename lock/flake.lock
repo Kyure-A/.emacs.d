@@ -368,6 +368,22 @@
         "type": "github"
       }
     },
+    "devcontainer": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1778573909,
+        "narHash": "sha256-0u9fEPG4uydDg4ErODb9uOXXVnukRKIjsM3ANnO6FK8=",
+        "owner": "johannes-mueller",
+        "repo": "devcontainer.el",
+        "rev": "8036344ffea04950e7936b4b17dfe0700770b6c2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "johannes-mueller",
+        "repo": "devcontainer.el",
+        "type": "github"
+      }
+    },
     "dired-k": {
       "flake": false,
       "locked": {
@@ -1385,6 +1401,7 @@
         "dart-mode": "dart-mode",
         "dash": "dash",
         "dashboard": "dashboard",
+        "devcontainer": "devcontainer",
         "dired-k": "dired-k",
         "dired-toggle-sudo": "dired-toggle-sudo",
         "dirvish": "dirvish",

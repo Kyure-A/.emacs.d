@@ -192,6 +192,14 @@ In this repository, =.#update= and =.#lock= require =--impure=.
 *** C-c
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c a") 'agent-shell)
+  (global-set-key (kbd "C-c d") 'nil)
+  (global-set-key (kbd "C-c d u") 'devcontainer-up)
+  (global-set-key (kbd "C-c d d") 'devcontainer-tramp-dired)
+  (global-set-key (kbd "C-c d t") 'devcontainer-term)
+  (global-set-key (kbd "C-c d e") 'devcontainer-execute-command)
+  (global-set-key (kbd "C-c d r") 'devcontainer-restart)
+  (global-set-key (kbd "C-c d R") 'devcontainer-rebuild-and-restart)
+  (global-set-key (kbd "C-c d k") 'devcontainer-kill-container)
   (global-set-key (kbd "C-c e b") 'eval-buffer)
   (global-set-key (kbd "C-c e m") 'menu-bar-mode)
   (global-set-key (kbd "C-c m") 'minuet-configure-provider)
@@ -508,7 +516,12 @@ jdtsmith/eglot-booster
     :after eglot
     :commands (eglot-booster-mode)
     :hook (eglot . eglot-booster-mode)
-    :ensure t)
+    :ensure t
+    :config
+    ;; Over TRAMP (devcontainer), the boost wraps the server command with
+    ;; `emacs-lsp-booster', which is not installed inside a typical devcontainer
+    ;; image. Boosting local servers only.
+    (setopt eglot-booster-no-remote-boost t))
 #+end_src
 
 *** C/C++
@@ -1758,6 +1771,97 @@ https://dev.classmethod.jp/articles/emacs-multiple-cursors/
 *** Docker
 #+begin_src emacs-lisp
   (use-package docker :ensure t)
+#+end_src
+
+*** Dev Container
+Starts/stops the devcontainer defined by =.devcontainer/devcontainer.json= in the
+current project, and advises =compilation-start= so that =compile= and friends run
+inside the container. The =devcontainer= CLI is supplied by =default.nix=; the
+container engine itself (Docker / OrbStack / Podman) has to be installed on the host.
+
+Visiting a file of a project that defines a devcontainer brings the container up and
+reopens that very file inside it over TRAMP, which is what VS Code's /Reopen in
+Container/ does. Going through TRAMP is the point: =eglot= then starts the language
+server *inside* the container and sees the dependencies the image installs. Editing
+the host-side path instead would leave the LSP blind to all of them.
+See =eglot-booster= for the one setting TRAMP-based servers need.
+
+Set =my/devcontainer-auto-up= to =ask= to be prompted instead, or to =nil= to only ever
+start containers by hand with =C-c d u=.
+#+begin_src emacs-lisp
+  (defvar my/devcontainer-auto-up t
+    "Whether visiting a file should bring its project's devcontainer up.
+  `t' starts it right away, `ask' asks first, nil disables the behaviour.")
+
+  (defvar my/devcontainer--pending-files nil
+    "Alist mapping a project root to the file whose visit started the container.")
+
+  (defun my/devcontainer--host-root ()
+    "Return the host side root of the current project, or nil."
+    (when-let* ((project (project-current)))
+      (expand-file-name (project-root project))))
+
+  (defun my/devcontainer--usable-p ()
+    "Return non-nil when the devcontainer CLI and its container engine both exist."
+    (and (executable-find "devcontainer")
+         (executable-find (if (eq devcontainer-engine 'podman)
+                              tramp-podman-program
+                            tramp-docker-program))))
+
+  (defun my/devcontainer-maybe-up ()
+    "Bring the visited file's devcontainer up unless it is already running."
+    ;; This runs from `find-file-hook', where signalling would surface as a
+    ;; failure to open the file, so nothing in here may escape.
+    (with-demoted-errors "devcontainer auto-up: %S"
+      (let ((root (and my/devcontainer-auto-up
+                       (not (file-remote-p default-directory))
+                       (my/devcontainer--host-root))))
+        (when (and root
+                   (devcontainer-container-needed-p)
+                   (my/devcontainer--usable-p)
+                   ;; Consulting the cached state first keeps this off the
+                   ;; container engine for every single `find-file', and is what
+                   ;; tells a container that is starting or that failed apart from
+                   ;; one that is merely down -- without it every visit retries.
+                   (not (memq (devcontainer--current-project-state)
+                              '(devcontainer-is-up
+                                devcontainer-is-starting
+                                devcontainer-startup-failed)))
+                   (not (devcontainer-up-container-id))
+                   (or (eq my/devcontainer-auto-up t)
+                       (y-or-n-p (format "Start devcontainer for %s? "
+                                         (file-name-nondirectory
+                                          (directory-file-name root))))))
+          (setf (alist-get root my/devcontainer--pending-files nil nil #'equal)
+                buffer-file-name)
+          (devcontainer-up)))))
+
+  (defun my/devcontainer-visit-pending-file (container-id container-name remote-user remote-workdir)
+    "Reopen the file that started the container inside it, over TRAMP.
+  Falls back to `devcontainer-tramp-dired' when the startup was requested by
+  hand rather than by visiting a file. CONTAINER-ID, CONTAINER-NAME,
+  REMOTE-USER and REMOTE-WORKDIR come from `devcontainer-post-startup-hook'."
+    (let* ((root (my/devcontainer--host-root))
+           (file (and root (alist-get root my/devcontainer--pending-files nil nil #'equal)))
+           (relative (and file (file-relative-name file root))))
+      (when root
+        (setf (alist-get root my/devcontainer--pending-files nil 'remove #'equal) nil))
+      (if (and relative (not (string-prefix-p ".." relative)))
+          (find-file (format "/%s:%s@%s:%s"
+                             devcontainer-engine remote-user container-id
+                             (file-name-concat remote-workdir relative)))
+        (devcontainer-tramp-dired container-id container-name remote-user remote-workdir))))
+
+  (use-package devcontainer
+    :ensure t
+    ;; `devcontainer-term' has no autoload cookie upstream.
+    :commands (devcontainer-term)
+    :hook (after-init-hook . (lambda ()
+                               (run-with-idle-timer 2 nil #'devcontainer-mode)))
+    :config
+    (setopt devcontainer-term-environment '(("TERM" . "xterm-256color")))
+    (add-hook 'devcontainer-post-startup-hook #'my/devcontainer-visit-pending-file)
+    (add-hook 'find-file-hook #'my/devcontainer-maybe-up))
 #+end_src
 
 *** Elcord

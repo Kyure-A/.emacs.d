@@ -66,12 +66,6 @@
       repo = "cape";
       type = "github";
     };
-    engawa = {
-      flake = false;
-      owner = "Kyure-A";
-      repo = "engawa";
-      type = "github";
-    };
     closql = {
       flake = false;
       owner = "magit";
@@ -142,6 +136,12 @@
       flake = false;
       owner = "emacs-dashboard";
       repo = "emacs-dashboard";
+      type = "github";
+    };
+    devcontainer = {
+      flake = false;
+      owner = "johannes-mueller";
+      repo = "devcontainer.el";
       type = "github";
     };
     dired-k = {
@@ -220,6 +220,12 @@
       flake = false;
       owner = "iqbalansari";
       repo = "emacs-emojify";
+      type = "github";
+    };
+    engawa = {
+      flake = false;
+      owner = "Kyure-A";
+      repo = "engawa";
       type = "github";
     };
     exec-path-from-shell = {

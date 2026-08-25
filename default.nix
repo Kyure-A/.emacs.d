@@ -21,6 +21,7 @@ in
         pkgs.claude-agent-acp
         pkgs.gcc
         pkgs.codex-acp
+        pkgs.devcontainer
         pkgs.pi-acp
         pkgs.ruby
         pkgs.rubyPackages.ruby-lsp
