@@ -3,7 +3,7 @@
     "archive": {
       "narHash": "sha256-bdFXCPxe/gK4gFJebOryzItraaPXoAjW3GRl28m+Y1U=",
       "type": "tarball",
-      "url": "https://elpa.gnu.org/devel/csv-mode-1.27.0.20260505.161621.tar.lz"
+      "url": "https://mirror.nju.edu.cn/elpa/gnu-devel/csv-mode-1.27.0.20260505.161621.tar.lz"
     },
     "inventory": {
       "type": "archive",
